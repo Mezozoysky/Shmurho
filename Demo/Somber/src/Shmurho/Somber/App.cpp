@@ -32,7 +32,7 @@
 
 #include "App.hpp"
 #include "PhaseSwitcher.hpp"
-#include "ParcelLoader.hpp"
+#include "LoaderPhase.hpp"
 #include "DevKbdController.hpp"
 #include "StartMenuPhase.hpp"
 #include "WorldMapPhase.hpp"
@@ -76,8 +76,8 @@ namespace Somber
 
 App::App( Context* context )
     : Application( context )
-    , loader_( new ParcelLoader( context ) )
-    , startMenu_( new StartMenuPhase( context ) )
+    , loaderPhase_( new LoaderPhase( context ) )
+    , startMenuPhase_( new StartMenuPhase( context ) )
     , worldMapPhase_( new WorldMapPhase( context ) )
     , locationPhase_( new LocationPhase( context ) )
     , catacombPhase_( new CatacombPhase( context ) )
@@ -109,17 +109,17 @@ void App::Start()
 
     GetSubsystem<Input>()->SetTouchEmulation( true );
 
-    loader_->SetPhaseSwitcher( switcher );
+    loaderPhase_->SetPhaseSwitcher( switcher );
     catacombPhase_->SetPhaseSwitcher( switcher );
     locationPhase_->SetPhaseSwitcher( switcher );
-    startMenu_->SetPhaseSwitcher( switcher );
+    startMenuPhase_->SetPhaseSwitcher( switcher );
     worldMapPhase_->SetPhaseSwitcher( switcher );
 
     GetSubsystem<PhaseSwitcher>()->SwitchTo( GAMEPHASE_LOADER );
 
     SubscribeToEvent( Shmurho::Phase::E_PHASELEAVE, URHO3D_HANDLER( App, HandlePhaseLeave ) );
     SubscribeToEvent( Shmurho::Phase::E_PHASEENTER, URHO3D_HANDLER( App, HandlePhaseEnter ) );
-    SubscribeToEvent( startMenu_.Get(), E_STARTMENUEXITREQUESTED, URHO3D_HANDLER( App, HandleStartMenuExitRequested ) );
+    SubscribeToEvent( startMenuPhase_.Get(), E_STARTMENUEXITREQUESTED, URHO3D_HANDLER( App, HandleStartMenuExitRequested ) );
 }
 
 void App::Stop()

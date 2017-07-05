@@ -61,40 +61,6 @@ ParcelLoader::ParcelLoader( Urho3D::Context* context )
 {
 }
 
-void ParcelLoader::OnPhaseLeave( unsigned int phase )
-{
-    if ( phase != GAMEPHASE_LOADER ) return;
-
-    if ( !isFirstTime_ )
-    {
-        assert( sprite_.NotNull() );
-        sprite_->SetVisible( false );
-        sprite_->SetEnabled( false );
-    }
-    UnsubscribeFromEvent( E_BEGINFRAME );
-}
-
-void ParcelLoader::OnPhaseEnter( unsigned int phase )
-{
-    if ( phase != GAMEPHASE_LOADER ) return;
-
-    if ( !isFirstTime_ )
-    {
-        sprite_->SetEnabled( true );
-        sprite_->SetVisible( true );
-    }
-
-    if ( !StartLoading( "Parcels/Base.json" ) )
-    {
-        //TODO: do something
-        GetSubsystem<Log>()->Write( LOG_ERROR, "Can't start loading parcel!" );
-        context_->GetSubsystem<Engine>()->Exit();
-    }
-
-    SubscribeToEvent( E_BEGINFRAME, URHO3D_HANDLER( ParcelLoader, HandleBeginFrame ) );
-}
-
-
 void ParcelLoader::OnParcelLoaded( const Urho3D::String& name, bool successful )
 {
     GetSubsystem<Log>()->Write( LOG_DEBUG, ToString( "== PARCEL LOADED! '%s' (success: %u)", name.CString(), successful ) );
@@ -108,59 +74,6 @@ void ParcelLoader::OnLoaded( const Urho3D::String& name, bool successful, Resour
 void ParcelLoader::OnLoadFinished()
 {
     GetSubsystem<Log>()->Write( LOG_DEBUG, "== LOADING FINISHED! " + GetParcelName() );
-    if ( isFirstTime_ )
-    {
-        auto cache = GetSubsystem<ResourceCache>();
-        assert( cache->GetExistingResource<Shmurho::Parcel::Parcel>( "Parcels/Base.json" ) != 0 );
-        auto style = cache->GetExistingResource<XMLFile>( "UI/DefaultStyle.xml" );
-        assert( style != 0 );
-        GetSubsystem<UI>()->GetRoot()->SetDefaultStyle( style );
-        assert( cache->GetExistingResource<Texture2D>( "Textures/UI.png" ) != 0 );
-
-        sprite_ = GetSubsystem<UI>()->GetRoot()->CreateChild<Sprite>();
-        assert( sprite_.NotNull() );
-
-        {
-            auto texture = cache->GetExistingResource<Texture2D>( "Textures/ProstorLogo.png" );
-            if ( texture != 0 )
-            {
-                sprite_->SetTexture( texture );
-
-                unsigned texWidth = texture->GetWidth();
-                unsigned texHeight = texture->GetHeight();
-
-                sprite_->SetAlignment( HA_CENTER, VA_CENTER );
-                sprite_->SetSize( texWidth, texHeight );
-                sprite_->SetHotSpot( texWidth / 2.f, texHeight / 2.f );
-
-                auto graphics = GetSubsystem<Graphics>();
-                unsigned winWidth = graphics->GetWidth();
-                unsigned winHeight = graphics->GetHeight();
-                float xScale = (float)winWidth / (float)texWidth;
-                float yScale = (float)winHeight / (float)texHeight;
-                if ( xScale < 1.f || yScale < 1.f )
-                {
-                    sprite_->SetScale( (xScale < yScale) ? xScale : yScale );
-                }
-            }
-        }
-
-        StartLoading( "Parcels/Big.json" );
-
-        isFirstTime_ = false;
-    }
-}
-
-void ParcelLoader::HandleBeginFrame( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData )
-{
-    if ( IsLoading() )
-    {
-        //TODO: update data of loading progress here
-    }
-    else
-    {
-        GetSubsystem<PhaseSwitcher>()->SwitchTo( GAMEPHASE_START_MENU );
-    }
 }
 
 } // namespace Somber

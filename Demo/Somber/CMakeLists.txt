@@ -20,7 +20,7 @@ set( GROUP_HEADERS
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/PointsAndWaysData.hpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/DevKbdController.hpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/PhaseSwitcher.hpp
-    ${MODULE_ROOT}/src/${MODULE_NSPATH}/PhaseBase.hpp
+	${MODULE_ROOT}/src/${MODULE_NSPATH}/LoaderPhase.hpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/StartMenuPhase.hpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/WorldMapPhase.hpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/LocationPhase.hpp
@@ -34,7 +34,7 @@ set( GROUP_SOURCES
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/PointsAndWaysData.cpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/DevKbdController.cpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/PhaseSwitcher.cpp
-    ${MODULE_ROOT}/src/${MODULE_NSPATH}/PhaseBase.cpp
+	${MODULE_ROOT}/src/${MODULE_NSPATH}/LoaderPhase.cpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/StartMenuPhase.cpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/WorldMapPhase.cpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/LocationPhase.cpp

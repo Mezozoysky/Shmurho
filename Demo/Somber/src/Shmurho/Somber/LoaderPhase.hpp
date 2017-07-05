@@ -23,7 +23,7 @@
 // source distribution.
 
 /// \file
-/// \brief Sombers's parcel loader
+/// \brief Sombers's loader phase
 /// \author Stanislav Demyanovich <mezozoysky@gmail.com>
 /// \date 2017
 /// \copyright Shmurho is released under the terms of zlib/libpng license
@@ -32,8 +32,9 @@
 
 #pragma once
 
-#include <Shmurho/Parcel/Loader.hpp>
 #include <Shmurho/Phase/Partaker.hpp>
+#include "ParcelLoader.hpp"
+#include <Urho3D/Core/Object.h>
 
 namespace Urho3D
 {
@@ -43,22 +44,31 @@ class Sprite;
 namespace Somber
 {
 
-class ParcelLoader
-: public Shmurho::Parcel::Loader
+class LoaderPhase
+: public Urho3D::Object
+, public Shmurho::Phase::Partaker<LoaderPhase>
 {
-    URHO3D_OBJECT( ParcelLoader, Shmurho::Parcel::Loader );
+    URHO3D_OBJECT( LoaderPhase, Urho3D::Object );
 
 public:
     static void RegisterObject( Urho3D::Context* context );
 
 public:
-    ParcelLoader( Urho3D::Context* context );
-    virtual ~ParcelLoader() noexcept = default;
+    LoaderPhase ( Urho3D::Context* context );
+    virtual ~LoaderPhase() noexcept = default;
 
-protected:
-    virtual void OnParcelLoaded( const Urho3D::String& name, bool successful ) override;
-    virtual void OnLoaded( const Urho3D::String& name, bool successful, Urho3D::Resource* resource ) override;
-    virtual void OnLoadFinished() override;
+    virtual void OnPhaseLeave( unsigned phase ) override;
+    virtual void OnPhaseEnter( unsigned phase ) override;
+
+    virtual bool Setup();
+    virtual void Cleanup();
+
+private:
+    void HandleBeginFrame( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
+
+private:
+    Urho3D::UniquePtr<ParcelLoader> parcelLoader_;
+    Urho3D::SharedPtr<Urho3D::Sprite> sprite_;
 };
 
 

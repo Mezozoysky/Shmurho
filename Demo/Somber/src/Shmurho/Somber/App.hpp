@@ -42,7 +42,7 @@ class Sprite;
 namespace Somber
 {
 
-class ParcelLoader;
+class LoaderPhase;
 class StartMenuPhase;
 class WorldMapPhase;
 class LocationPhase;
@@ -68,8 +68,8 @@ protected:
     void HandleStartMenuExitRequested( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
 
 private:
-    Urho3D::UniquePtr<ParcelLoader> loader_;
-    Urho3D::UniquePtr<StartMenuPhase> startMenu_;
+    Urho3D::UniquePtr<LoaderPhase> loaderPhase_;
+    Urho3D::UniquePtr<StartMenuPhase> startMenuPhase_;
     Urho3D::UniquePtr<WorldMapPhase> worldMapPhase_;
     Urho3D::UniquePtr<LocationPhase> locationPhase_;
     Urho3D::UniquePtr<CatacombPhase> catacombPhase_;

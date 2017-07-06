@@ -67,7 +67,6 @@ private:
     void HandleBeginFrame( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
 
 private:
-    Urho3D::UniquePtr<ParcelLoader> parcelLoader_;
     Urho3D::SharedPtr<Urho3D::Sprite> sprite_;
 };
 

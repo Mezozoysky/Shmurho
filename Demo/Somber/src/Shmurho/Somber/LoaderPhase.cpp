@@ -59,7 +59,6 @@ void LoaderPhase::RegisterObject( Context* context )
 
 LoaderPhase::LoaderPhase( Context* context )
     : Object( context )
-    , parcelLoader_( new ParcelLoader( context ) )
 {
 }
 
@@ -83,7 +82,8 @@ void LoaderPhase::OnPhaseEnter( unsigned int phase )
     sprite_->SetEnabled( true );
     sprite_->SetVisible( true );
 
-    if ( !parcelLoader_->StartLoading( "Parcels/Base.json" ) )
+    auto loader = context_->GetSubsystem<ParcelLoader>();
+    if ( !loader->StartLoading( "Parcels/Base.json" ) )
     {
         //TODO: do something
         GetSubsystem<Log>()->Write( LOG_ERROR, "Can't start loading parcel!" );
@@ -143,7 +143,8 @@ void LoaderPhase::Cleanup()
 
 void LoaderPhase::HandleBeginFrame( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData )
 {
-    if ( parcelLoader_->IsLoading() )
+    auto loader = context_->GetSubsystem<ParcelLoader>();
+    if ( loader->IsLoading() )
     {
         //TODO: update data of loading progress here
     }

@@ -49,9 +49,6 @@ class ParcelLoader
     URHO3D_OBJECT( ParcelLoader, Shmurho::Parcel::Loader );
 
 public:
-    static void RegisterObject( Urho3D::Context* context );
-
-public:
     ParcelLoader( Urho3D::Context* context );
     virtual ~ParcelLoader() noexcept = default;
 

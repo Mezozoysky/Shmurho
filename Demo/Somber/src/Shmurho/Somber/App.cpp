@@ -103,6 +103,7 @@ void App::Start()
 
     auto switcher = new PhaseSwitcher( context_ );
     context_->RegisterSubsystem( switcher );
+    context_->RegisterSubsystem( new ParcelLoader( context_ ) );
     DevKbdController::RegisterObject( context_ );
     Parcel::RegisterObject( context_ );
     MapLogic::RegisterObject( context_ );

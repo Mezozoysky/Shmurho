@@ -50,12 +50,6 @@ using Shmurho::Parcel::Parcel;
 namespace Somber
 {
 
-void ParcelLoader::RegisterObject( Urho3D::Context* context )
-{
-    context->RegisterFactory<ParcelLoader>();
-}
-
-
 ParcelLoader::ParcelLoader( Urho3D::Context* context )
     : Loader( context )
 {

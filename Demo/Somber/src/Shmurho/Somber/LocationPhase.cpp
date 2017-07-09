@@ -161,22 +161,22 @@ bool LocationPhase::Setup()
 
         auto backNode = locationScene_->CreateChild( "Back" );
         auto back = backNode->CreateComponent<StaticSprite2D>();
-        back->SetSprite( cache->GetResource<Sprite2D>( "Sprites/Back.png" ) );
+        back->SetSprite( cache->GetExistingResource<Sprite2D>( "Sprites/Back.png" ) );
 
         auto doorNode = locationScene_->CreateChild( "Door" );
         doorNode->SetPosition2D( 6.f, 0.f);
         auto door = doorNode->CreateComponent<StaticSprite2D>();
-        door->SetSprite( cache->GetResource<Sprite2D>( "Haphazard/DoorDbg.png" ) );
+        door->SetSprite( cache->GetExistingResource<Sprite2D>( "Haphazard/DoorDbg.png" ) );
 
         auto merchNode = locationScene_->CreateChild( "Merchant" );
         merchNode->SetPosition2D( -6.f, 0.f);
         auto merchSprite = merchNode->CreateComponent<StaticSprite2D>();
-        merchSprite->SetSprite( cache->GetResource<Sprite2D>( "Sprites/SpaceSecurityOfficer.png" ) );
+        merchSprite->SetSprite( cache->GetExistingResource<Sprite2D>( "Sprites/SpaceSecurityOfficer.png" ) );
         merchNode->SetScale2D( 0.25f, 0.25f );
 
         auto playerNode = locationScene_->CreateChild( "Player" );
         auto playerSprite = playerNode->CreateComponent<StaticSprite2D>();
-        playerSprite->SetSprite( cache->GetResource<Sprite2D>( "Sprites/SpaceCaptain.png" ) );
+        playerSprite->SetSprite( cache->GetExistingResource<Sprite2D>( "Sprites/SpaceCaptain.png" ) );
         playerNode->SetScale2D( 0.25f, 0.25f );
 
         viewport_ = new Viewport( context_, locationScene_.Get(), camera );

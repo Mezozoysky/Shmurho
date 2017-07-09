@@ -83,7 +83,7 @@ void LoaderPhase::OnPhaseEnter( unsigned int phase )
     sprite_->SetVisible( true );
 
     auto loader = context_->GetSubsystem<ParcelLoader>();
-    if ( !loader->StartLoading( "Parcels/Base.json" ) )
+    if ( !loader->StartLoadingQueue() )
     {
         //TODO: do something
         GetSubsystem<Log>()->Write( LOG_ERROR, "Can't start loading parcel!" );

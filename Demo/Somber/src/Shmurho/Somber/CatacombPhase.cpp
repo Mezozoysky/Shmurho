@@ -150,11 +150,11 @@ bool CatacombPhase::Setup()
 
         auto backNode = catacombScene_->CreateChild( "Back" );
         auto back = backNode->CreateComponent<StaticSprite2D>();
-        back->SetSprite( cache->GetResource<Sprite2D>( "Sprites/Back.png" ) );
+        back->SetSprite( cache->GetExistingResource<Sprite2D>( "Sprites/Back.png" ) );
 
         auto playerNode = catacombScene_->CreateChild( "Player" );
         auto playerSprite = playerNode->CreateComponent<StaticSprite2D>();
-        playerSprite->SetSprite( cache->GetResource<Sprite2D>( "Sprites/SpaceCaptain.png" ) );
+        playerSprite->SetSprite( cache->GetExistingResource<Sprite2D>( "Sprites/SpaceCaptain.png" ) );
         playerNode->SetScale2D( 0.25f, 0.25f );
 
         viewport_ = new Viewport( context_, catacombScene_.Get(), camera );

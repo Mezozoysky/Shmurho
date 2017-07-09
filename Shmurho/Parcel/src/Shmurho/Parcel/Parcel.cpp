@@ -98,6 +98,7 @@ bool Parcel::EndLoad()
 
 bool Parcel::BeginLoadXML( Deserializer& source )
 {
+    assert( false && "Parcel loading from XML is NOT IMPLEMENTED" );
     return ( false );
 }
 

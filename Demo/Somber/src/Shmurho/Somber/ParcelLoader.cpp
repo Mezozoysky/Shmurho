@@ -31,7 +31,6 @@
 
 
 #include "ParcelLoader.hpp"
-#include "PhaseSwitcher.hpp"
 #include <Urho3D/Core/Context.h>
 #include <Urho3D/Core/CoreEvents.h>
 #include <Urho3D/IO/Log.h>
@@ -55,19 +54,24 @@ ParcelLoader::ParcelLoader( Urho3D::Context* context )
 {
 }
 
-void ParcelLoader::OnParcelLoaded( const Urho3D::String& name, bool successful )
+void ParcelLoader::OnQueueLoaded()
 {
-    GetSubsystem<Log>()->Write( LOG_DEBUG, ToString( "== PARCEL LOADED! '%s' (success: %u)", name.CString(), successful ) );
+    GetSubsystem<Log>()->Write( LOG_DEBUG, "== LOADING FINISHED! " );
+}
+
+void ParcelLoader::OnParcelLoaded( const Urho3D::String& name )
+{
+    GetSubsystem<Log>()->Write( LOG_DEBUG, ToString( "== PARCEL LOADED! '%s'", name.CString() ) );
 }
 
 void ParcelLoader::OnLoaded( const Urho3D::String& name, bool successful, Resource* resource )
 {
-    GetSubsystem<Log>()->Write( LOG_DEBUG, ToString( "== REAOURCE LOADED! '%s' (success: %u)", name.CString(), successful ) );
-}
-
-void ParcelLoader::OnLoadFinished()
-{
-    GetSubsystem<Log>()->Write( LOG_DEBUG, "== LOADING FINISHED! " + GetParcelName() );
+    GetSubsystem<Log>()->Write( LOG_DEBUG, ToString( "== RESOURCE LOADED! '%s' (success: %u)", name.CString(), successful ) );
+    if ( resource->GetTypeName() == Shmurho::Parcel::Parcel::GetTypeNameStatic() && name != GetCurrParcel() )
+    {
+        AddToQueue( name );
+        GetSubsystem<Log>()->Write( LOG_DEBUG, ToString( "== Loaded resource '%s' (Parcel) added to queue.", name.CString() ) );
+    }
 }
 
 } // namespace Somber

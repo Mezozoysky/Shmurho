@@ -36,7 +36,6 @@
 #include <Urho3D/Core/Object.h>
 #include <Urho3D/Container/List.h>
 #include <Urho3D/Container/Str.h>
-#include <Urho3D/Container/Ptr.h>
 
 
 namespace Shmurho
@@ -54,27 +53,33 @@ public:
     Loader( Urho3D::Context* context );
     virtual ~Loader() noexcept = default;
 
-    bool StartLoading( const Urho3D::String& parcelName );
-    bool StartLoading( Parcel* parcel  );
+    bool StartLoadingQueue();
+    void AddToQueue( const Urho3D::String& parcelName ) noexcept;
+    void ClearQueue() noexcept;
+    inline const Urho3D::List<Urho3D::String>& GetQueue() const noexcept
+    {
+        return ( queue_ );
+    }
 
     inline bool IsLoading() const noexcept { return ( isParcelLoading_ || isLoading_ ); };
-    inline const Urho3D::String& GetParcelName() const noexcept { return ( parcelName_ ); }
-    inline const Urho3D::SharedPtr<Parcel>& GetParcel() const noexcept { return ( parcel_ ); };
+    inline const Urho3D::String& GetCurrParcel() const noexcept { return ( currParcel_ ); };
 
     void HandleResourceBackgroundLoaded( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
 
 protected:
-    virtual void OnParcelLoaded( const Urho3D::String& name, bool successful ) = 0;
+    virtual void OnQueueLoaded() = 0;
+    virtual void OnParcelLoaded( const Urho3D::String& name ) = 0;
     virtual void OnLoaded( const Urho3D::String& name, bool successful, Urho3D::Resource* resource ) = 0;
-    virtual void OnLoadFinished() = 0;
 
 private:
+    bool StartLoadingParcel( const Urho3D::String& parcelName );
+    bool StartLoadingParcel( Parcel* parcel  );
     bool StartLoading();
 
 private:
-    Urho3D::String parcelName_;
-    Urho3D::SharedPtr<Parcel> parcel_;
-    Urho3D::List<Urho3D::String> scheduledList_;
+    Urho3D::String currParcel_;
+    Urho3D::List<Urho3D::String> queue_;
+    Urho3D::List<Urho3D::String> resourceQueue_;
 
     bool isParcelLoading_;
     bool isLoading_;

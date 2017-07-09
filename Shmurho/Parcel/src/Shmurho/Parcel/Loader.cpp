@@ -54,10 +54,34 @@ Loader::Loader( Urho3D::Context* context )
 {
 }
 
-bool Loader::StartLoading( const Urho3D::String& parcelName )
+bool Loader::StartLoadingQueue()
+{
+    if ( queue_.Empty() )
+    {
+        return ( false );
+    }
+
+    Urho3D::String nextParcel = queue_.Front();
+    queue_.PopFront();
+    bool success = StartLoadingParcel( nextParcel );
+    if ( !success )
+    {
+        GetSubsystem<Log>()->Write( LOG_ERROR, "Cant start loading parcel: " + nextParcel );
+        return ( false );
+    }
+
+    return ( true );
+}
+
+void Loader::AddToQueue( const Urho3D::String& parcelName ) noexcept
+{
+    queue_.Push( parcelName );
+}
+
+bool Loader::StartLoadingParcel( const Urho3D::String& parcelName )
 {
     assert( !parcelName.Empty() );
-    parcelName_.Clear();
+    currParcel_ = String::EMPTY;
 
     auto log = GetSubsystem<Log>();
 
@@ -76,9 +100,7 @@ bool Loader::StartLoading( const Urho3D::String& parcelName )
     if ( parcel != 0 )
     {
         log->Write( LOG_DEBUG, "== Parcel already loaded: " + parcelName );
-        OnParcelLoaded( parcelName, true );
-        isLoading_ = StartLoading( parcel );
-        return ( isLoading_ );
+        return ( StartLoadingParcel( parcel ) );
     }
     else
     {
@@ -86,22 +108,21 @@ bool Loader::StartLoading( const Urho3D::String& parcelName )
 
         if ( !isParcelLoading_ )
         {
-            log->Write( LOG_ERROR, "== Can't load parcel " + parcelName_ );
+            log->Write( LOG_ERROR, "== Can't load parcel " + parcelName );
             return ( false );
         }
 
-        parcelName_ = parcelName;
+        currParcel_ = parcelName;
         SubscribeToEvent( E_RESOURCEBACKGROUNDLOADED, URHO3D_HANDLER( Loader, HandleResourceBackgroundLoaded ) );
         return ( true );
     }
 }
 
-bool Loader::StartLoading( Parcel* parcel )
+bool Loader::StartLoadingParcel( Parcel* parcel )
 {
     assert( !IsLoading() );
     assert( parcel != 0 );
-    parcel_ = parcel;
-    parcelName_ = parcel_->GetName();
+    currParcel_ = parcel->GetName();
     isLoading_ = StartLoading();
 
     if ( isLoading_ )
@@ -119,56 +140,60 @@ void Loader::HandleResourceBackgroundLoaded( Urho3D::StringHash eventType, Urho3
 
     String name = eventData[ P_RESOURCENAME ].GetString();
     bool success = eventData[ P_SUCCESS ].GetBool();
+    Resource* resource = success ? static_cast<Resource*>( eventData[ P_RESOURCE ].GetPtr() ) : 0;
 
-    if ( isParcelLoading_ && name == parcelName_ )
+    if ( isParcelLoading_ && name == currParcel_ )
     {
         isParcelLoading_ = false;
 
-        OnParcelLoaded( name, success );
+        OnLoaded( name, success, resource );
         if ( success )
         {
-            auto res = eventData[ P_RESOURCE ].GetPtr();
-            assert( res != 0 );
-            parcel_ = static_cast<Parcel*>( res );
+            assert( resource != 0 );
             isLoading_ = StartLoading();
             if ( !isLoading_ )
             {
+                OnParcelLoaded( name );
                 UnsubscribeFromEvent( E_RESOURCEBACKGROUNDLOADED );
-                OnLoadFinished();
+                if ( !StartLoadingQueue() )
+                {
+                    OnQueueLoaded();
+                }
             }
         }
-
     }
     else if ( isLoading_ )
     {
-        assert( !scheduledList_.Empty() );
+        assert( !resourceQueue_.Empty() );
 
-        auto it = scheduledList_.Find( name );
+        auto it = resourceQueue_.Find( name );
 
-        if ( it == scheduledList_.End() )
+        if ( it == resourceQueue_.End() )
         {
             return;
         }
 
-        Resource* resource = 0;
         if ( success )
         {
             log->Write( LOG_DEBUG, "== Resource loaded: " + name );
-            resource = static_cast<Resource*>( eventData[ P_RESOURCE ].GetPtr() );
         }
         else
         {
             log->Write( LOG_DEBUG, "== Failed to load resource: " + name );
         }
 
-        scheduledList_.Erase( it );
+        resourceQueue_.Erase( it );
         OnLoaded( name, success, resource );
 
-        if ( scheduledList_.Empty() ) // the last resource is loaded
+        if ( resourceQueue_.Empty() ) // the last resource of parcel is loaded
         {
+            OnParcelLoaded( currParcel_ );
             isLoading_ = false;
             UnsubscribeFromEvent( E_RESOURCEBACKGROUNDLOADED );
-            OnLoadFinished();
+            if ( !StartLoadingQueue() )
+            {
+                OnQueueLoaded();
+            }
         }
 
         return;
@@ -176,7 +201,7 @@ void Loader::HandleResourceBackgroundLoaded( Urho3D::StringHash eventType, Urho3
 }
 
 
-void Loader::OnLoadFinished()
+void Loader::OnQueueLoaded()
 {
     // Do nothing
 }
@@ -185,19 +210,20 @@ void Loader::OnLoadFinished()
 bool Loader::StartLoading()
 {
     auto log = GetSubsystem<Log>();
+    auto cache = GetSubsystem<ResourceCache>();
 
-    assert( parcel_.NotNull() );
+    Parcel* parcel = cache->GetExistingResource<Parcel>( currParcel_ );
+    assert( parcel );
     assert( !IsLoading() );
 
     bool success = false;
 
-    const auto& lists = parcel_->GetLists();
-    scheduledList_.Clear();
+    const auto& lists = parcel->GetLists();
+    resourceQueue_.Clear();
 
     for ( auto listsIt = lists.Begin(); listsIt != lists.End(); ++listsIt )
     {
         StringHash resType = listsIt->type_;
-        auto cache = GetSubsystem<ResourceCache>();
 
         for ( auto it = listsIt->names_.Begin(); it != listsIt->names_.End(); ++it )
         {
@@ -205,7 +231,7 @@ bool Loader::StartLoading()
 
             if ( cache->BackgroundLoadResource( resType, resName ) )
             {
-                scheduledList_.Push( resName );
+                resourceQueue_.Push( resName );
                 log->Write( LOG_DEBUG, "== ParcelLoader just started background resource loading: " + resName );
             }
             else
@@ -215,7 +241,7 @@ bool Loader::StartLoading()
         }
     }
 
-    if ( scheduledList_.Size() > 0 )
+    if ( resourceQueue_.Size() > 0 )
     {
         success = true;
     }

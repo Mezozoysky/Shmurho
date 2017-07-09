@@ -120,7 +120,7 @@ void MapLogic::Start()
     auto backNode = node_->CreateChild( "MapBack" );
     auto backSprite = backNode->CreateComponent<StaticSprite2D>();
     backSprite->SetLayer( 0 );
-    backSprite->SetSprite( cache->GetResource<Sprite2D>( "Sprites/SomberMapIzvestnyak.png" ) );
+    backSprite->SetSprite( cache->GetExistingResource<Sprite2D>( "Sprites/SomberMapIzvestnyak.png" ) );
 
     for ( auto it = mapData_->locations_.Begin();
             it != mapData_->locations_.End();
@@ -132,7 +132,7 @@ void MapLogic::Start()
 
         auto sprite = node->CreateComponent<StaticSprite2D>();
         sprite->SetLayer( 1 );
-        sprite->SetSprite( cache->GetResource<Sprite2D>( "Sprites/LocationDefault.png" ) );
+        sprite->SetSprite( cache->GetExistingResource<Sprite2D>( "Sprites/LocationDefault.png" ) );
         sprite->SetColor( Color::YELLOW );
 
         node->SetScale2D( 0.5f, 0.5f );
@@ -147,7 +147,7 @@ void MapLogic::Start()
     MoveToLocation( 3 );
 
     lastTouch_ = mapUI_->CreateChild<Sprite>( "LastTouch" );
-    auto texture = cache->GetResource<Texture2D>( "Sprites/LastTouch.png" );
+    auto texture = cache->GetExistingResource<Texture2D>( "Textures/LastTouch.png" );
     assert( texture != 0 );
     lastTouch_->SetTexture( texture );
     lastTouch_->SetSize( texture->GetWidth(), texture->GetHeight() );
@@ -318,7 +318,7 @@ void MapLogic::SetupArrows()
             arrow->SetVar( "TargetNode", Variant( way.to_ ) );
             ++arrowIndex;
 
-            auto texture = cache->GetResource<Texture2D>( "Sprites/Arrow.png" );
+            auto texture = cache->GetExistingResource<Texture2D>( "Textures/Arrow.png" );
             assert( texture != 0 );
             arrow->SetTexture( texture );
 

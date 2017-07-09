@@ -33,7 +33,7 @@
 #pragma once
 
 #include <Shmurho/Parcel/Loader.hpp>
-#include <Shmurho/Phase/Partaker.hpp>
+#include <Urho3D/Container/Str.h>
 
 namespace Urho3D
 {
@@ -53,9 +53,9 @@ public:
     virtual ~ParcelLoader() noexcept = default;
 
 protected:
-    virtual void OnParcelLoaded( const Urho3D::String& name, bool successful ) override;
+    virtual void OnQueueLoaded() override;
+    virtual void OnParcelLoaded( const Urho3D::String& name ) override;
     virtual void OnLoaded( const Urho3D::String& name, bool successful, Urho3D::Resource* resource ) override;
-    virtual void OnLoadFinished() override;
 };
 
 

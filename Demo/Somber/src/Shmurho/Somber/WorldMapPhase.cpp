@@ -133,7 +133,8 @@ bool WorldMapPhase::Setup()
 
         auto playerNode = mapScene_->CreateChild( "Player" );
         auto playerSprite = playerNode->CreateComponent<StaticSprite2D>();
-        playerSprite->SetSprite( cache->GetResource<Sprite2D>( "Sprites/SpaceCaptain.png" ) );
+        playerSprite->SetSprite( cache->GetExistingResource<Sprite2D>( "Sprites/SpaceCaptain.png" ) );
+        playerSprite->SetLayer( 1 );
         playerNode->SetScale2D( 0.25f, 0.25f );
 
         viewport_ = new Viewport( context_, mapScene_.Get(), camera );

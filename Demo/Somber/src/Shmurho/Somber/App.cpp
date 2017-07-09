@@ -103,7 +103,8 @@ void App::Start()
 
     auto switcher = new PhaseSwitcher( context_ );
     context_->RegisterSubsystem( switcher );
-    context_->RegisterSubsystem( new ParcelLoader( context_ ) );
+    auto loader = new ParcelLoader( context_ );
+    context_->RegisterSubsystem( loader );
     DevKbdController::RegisterObject( context_ );
     Parcel::RegisterObject( context_ );
     MapLogic::RegisterObject( context_ );
@@ -116,6 +117,7 @@ void App::Start()
     startMenuPhase_->SetPhaseSwitcher( switcher );
     worldMapPhase_->SetPhaseSwitcher( switcher );
 
+    loader->AddToQueue( "Parcels/Base.json" );
     GetSubsystem<PhaseSwitcher>()->SwitchTo( GAMEPHASE_LOADER );
 
     SubscribeToEvent( Shmurho::Phase::E_PHASELEAVE, URHO3D_HANDLER( App, HandlePhaseLeave ) );

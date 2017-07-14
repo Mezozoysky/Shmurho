@@ -22,7 +22,6 @@ set_property( GLOBAL PROPERTY USE_FOLDERS ON )
 set_property( GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake" )
 
 set( URHO3D_HOME $ENV{URHO3D_HOME} CACHE PATH "Top directory containing Urho3D library and includes" )
-set( SUSA_DIR /home/mezozoy/dev/_c_cpp/susa/package CACHE PATH "Top directory containing susa installation" )
 
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake/Modules" )
 list( APPEND CMAKE_MODULE_PATH "${URHO3D_HOME}/share/Urho3D/CMake/Modules" )

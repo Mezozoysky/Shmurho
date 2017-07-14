@@ -31,10 +31,7 @@
 
 #pragma once
 
-#include <susa/phase/switcher.hpp>
 #include <Urho3D/Core/Object.h>
-
-using susa::phase::switcher;
 
 namespace Shmurho
 {
@@ -43,30 +40,27 @@ namespace Phase
 
 class Switcher
     : public Urho3D::Object
-    , public switcher<>
 {
     URHO3D_OBJECT( Switcher, Urho3D::Object );
-
-public:
-    using BasePhaseSwitcher = switcher<>;
-    using PhaseId = switcher<>::phase_id;
 
 public:
     Switcher( Urho3D::Context* context );
     virtual ~Switcher() noexcept = default;
 
-    inline void SwitchTo( unsigned phase ) { switch_to( phase ); }; // mimicry
-    inline unsigned CurrPhase() const noexcept { return ( curr_phase() ); }; // mimicry
-protected:
-    virtual void OnPhaseLeave(); // mimicry
-    virtual void OnPhaseEnter(); // mimicry
+    void SwitchTo( unsigned phase );
+    inline unsigned int CurrPhase() const noexcept { return ( currPhase_ ); };
 
-    inline virtual void on_phase_leave() override final { OnPhaseLeave(); }; // mimicry
-    inline virtual void on_phase_enter() override final { OnPhaseEnter(); }; // mimicry
+protected:
+    virtual void OnPhaseLeave();
+    virtual void OnPhaseEnter();
 
 private:
     void HandleBeginFrame( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
 
+private:
+	unsigned int currPhase_;
+	unsigned int nextPhase_;
+	bool isSwitchRequested_;
 };
 
 } // namespace Phase

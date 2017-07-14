@@ -33,6 +33,7 @@
 #include <Shmurho/Phase/Switcher.hpp>
 #include <Shmurho/Phase/PhaseEvents.hpp>
 #include <Urho3D/Core/CoreEvents.h>
+#include <cassert>
 
 using namespace Urho3D;
 using namespace Shmurho;
@@ -44,27 +45,50 @@ namespace Phase
 
 Switcher::Switcher( Urho3D::Context* context )
     : Object( context )
+	, currPhase_( 0 )
+	, nextPhase_( 0 )
+	, isSwitchRequested_( false )
 {
     SubscribeToEvent( Urho3D::E_BEGINFRAME, URHO3D_HANDLER( Switcher, HandleBeginFrame ) );
+}
+
+void Switcher::SwitchTo( unsigned phase )
+{
+	nextPhase_ = phase;
+	isSwitchRequested_ = true;
 }
 
 void Switcher::OnPhaseLeave()
 {
     Urho3D::VariantMap& eventData = GetEventDataMap();
-    eventData[ Phase::PhaseLeave::P_PHASE ] = (curr_phase()); // unsigned
+	eventData[ Phase::PhaseLeave::P_PHASE ] = currPhase_; // unsigned
     SendEvent( Phase::E_PHASELEAVE, eventData );
 }
 
 void Switcher::OnPhaseEnter()
 {
     Urho3D::VariantMap& eventData = GetEventDataMap();
-    eventData[ Phase::PhaseEnter::P_PHASE] = (unsigned)(curr_phase()); // unsigned
+    eventData[ Phase::PhaseEnter::P_PHASE] = currPhase_; // unsigned
     SendEvent( Phase::E_PHASEENTER, eventData );
 }
 
 void Switcher::HandleBeginFrame( StringHash eventType, VariantMap& eventData )
 {
-    apply_switch();
+	if ( isSwitchRequested_ )
+	{
+		assert( nextPhase_ != 0 );
+
+		if ( currPhase_ != 0 )
+		{
+			OnPhaseLeave();
+		}
+
+		currPhase_ = nextPhase_;
+		nextPhase_ = 0;
+		OnPhaseEnter();
+
+		isSwitchRequested_ = false;
+	}
 }
 
 } // namespace Phase

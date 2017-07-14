@@ -216,8 +216,6 @@ bool Loader::StartLoading()
     assert( parcel );
     assert( !IsLoading() );
 
-    bool success = false;
-
     const auto& lists = parcel->GetLists();
     resourceQueue_.Clear();
 
@@ -241,12 +239,7 @@ bool Loader::StartLoading()
         }
     }
 
-    if ( resourceQueue_.Size() > 0 )
-    {
-        success = true;
-    }
-
-    return ( success );
+    return ( resourceQueue_.Size() > 0 );
 }
 
 } // namespace Parcel

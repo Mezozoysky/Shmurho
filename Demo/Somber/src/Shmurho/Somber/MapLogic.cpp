@@ -120,7 +120,7 @@ void MapLogic::Start()
     auto backNode = node_->CreateChild( "MapBack" );
     auto backSprite = backNode->CreateComponent<StaticSprite2D>();
     backSprite->SetLayer( 0 );
-    backSprite->SetSprite( cache->GetExistingResource<Sprite2D>( "Sprites/SomberMapIzvestnyak.png" ) );
+    backSprite->SetSprite( cache->GetExistingResource<Sprite2D>( "Sprites/Grass.png" ) );
 
     for ( auto it = mapData_->locations_.Begin();
             it != mapData_->locations_.End();
@@ -133,9 +133,6 @@ void MapLogic::Start()
         auto sprite = node->CreateComponent<StaticSprite2D>();
         sprite->SetLayer( 1 );
         sprite->SetSprite( cache->GetExistingResource<Sprite2D>( "Sprites/LocationDefault.png" ) );
-        sprite->SetColor( Color::YELLOW );
-
-        node->SetScale2D( 0.5f, 0.5f );
 
         auto text = mapUI_->CreateChild<Text>( "MapTitle_" + it->name_ );
         text->SetTextAlignment( Urho3D::HA_LEFT );

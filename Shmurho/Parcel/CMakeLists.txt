@@ -40,3 +40,13 @@ target_include_directories( ${MODULE_TGT} INTERFACE
     $<BUILD_INTERFACE:${MODULE_ROOT}/include>
     $<INSTALL_INTERFACE:include>
 )
+
+install(
+	TARGETS ${MODULE_TGT}
+	ARCHIVE DESTINATION lib
+)
+install(
+	FILES ${MODULE_HEADERS}
+	DESTINATION include/${MODULE_NSPATH}
+)
+

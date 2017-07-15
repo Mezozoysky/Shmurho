@@ -41,3 +41,8 @@ set( CMAKE_CXX_STANDARD_REQURED ON )
 add_subdirectory( Shmurho )
 add_subdirectory( Demo )
 
+install(
+	DIRECTORY CMake
+	DESTINATION share/Shmurho
+)
+

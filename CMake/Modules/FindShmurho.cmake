@@ -1,15 +1,17 @@
 # FindShmurho
-# Module: locating Shmurho library with cmake
-# Author: Stanislav Demyanovich <mezozoysky@gmail.com>
+# Module:  locating Shmurho library with cmake
+# Author:  Stanislav Demyanovich <mezozoysky@gmail.com>
+# License: Zlib/libpng
 #
 # Usage:
 #	set( ENV{SHMURHO_HOME} /path/to/shmurho )
-#	find_package( Shmurho REQUIRED )
+#	find_package( Shmurho REQUIRED Phase Parcel )
 #
 # Defines:
-# Shmurho_INCLUDE_DIR	path to Shmurho includes
-# Shmurho_LIBRARIES		path to Shmurho library file
-# Shmurho_FOUND		true if Shmurho includes were found
+# Shmurho_INCLUDE_DIR   path to Shmurho includes
+# Shmurho_LIBRARIES     list of found Shmurho libraries
+# Shmurho_XXX_LIBRARY   found library file (XXX for component name: Phase, Parcel, etc)
+# Shmurho_FOUND         true if Shmurho components were found
 #
 # Note:  Works with static library only. No time for more.
 

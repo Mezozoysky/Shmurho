@@ -45,4 +45,8 @@ install(
 	DIRECTORY CMake
 	DESTINATION share/Shmurho
 )
+install(
+	FILES README.md LICENSE.md
+	DESTINATION share/Shmurho
+)
 

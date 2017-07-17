@@ -22,39 +22,30 @@ set_property( GLOBAL PROPERTY USE_FOLDERS ON )
 set_property( GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake" )
 
 set( URHO3D_HOME $ENV{URHO3D_HOME} CACHE PATH "Top directory containing Urho3D library and includes" )
+###: if project.deps.shmurho
+set( SHMURHO_HOME $ENV{SHMURHO_HOME} CACHE PATH "Top directory containing Shmurho library and includes" )
+###: end_if
 
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake/Modules" )
 list( APPEND CMAKE_MODULE_PATH "${URHO3D_HOME}/share/Urho3D/CMake/Modules" )
+###: if project.deps.shmurho
+list( APPEND CMAKE_MODULE_PATH "${SHMURHO_HOME}/share/Shmurho/CMake/Modules" )
+###: end_if
 
 #
 # Project
 #
-project( Shmurho C CXX )
+###: replace Prj/project.name
+project( Prj C CXX )
 
+###: if project.cpp.std is cpp11
 set( CMAKE_CXX_STANDARD 11 )
 set( CMAKE_CXX_STANDARD_REQURED ON )
-
+###: end_if
 
 #
 # Submodules
 #
-add_subdirectory( Shmurho )
-add_subdirectory( Demo )
-
-install(
-	DIRECTORY CMake
-	DESTINATION share/Shmurho
-)
-install(
-	DIRECTORY ProjectTemplates
-	DESTINATION share/Shmurho
-)
-install(
-	DIRECTORY Scripts
-	DESTINATION share/Shmurho
-)
-install(
-	FILES README.md LICENSE.md
-	DESTINATION share/Shmurho
-)
+###: replace Prj/project.name
+add_subdirectory( Prj )
 

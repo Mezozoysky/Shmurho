@@ -86,7 +86,7 @@ App::App( Context* context )
 
 void App::Setup()
 {
-    engineParameters_[ "ResourcePaths" ] = "Data;CoreData;";
+    engineParameters_[ "ResourcePaths" ] = "../share/Shmurho/Somber/Data;../share/Shmurho/Somber/CoreData;";
     engineParameters_[ "Fullscreen" ] = false;
     engineParameters_[ "WindowWidth" ] = 1280;
     engineParameters_[ "WindowHeight" ] = 720;
@@ -148,5 +148,3 @@ void App::HandleStartMenuExitRequested( StringHash eventType, VariantMap& eventD
 
 
 } // namespace Somber
-
-URHO3D_DEFINE_APPLICATION_MAIN( Somber::App );

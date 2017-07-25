@@ -39,6 +39,7 @@ set( GROUP_SOURCES
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/WorldMapPhase.cpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/LocationPhase.cpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/CatacombPhase.cpp
+    ${MODULE_ROOT}/src/main.cpp
 )
 source_group( "${MODULE_NAME}\\${MODULE_NSPATH}"
   FILES ${GROUP_HEADERS} ${GROUP_SOURCES}
@@ -59,3 +60,9 @@ set( INCLUDE_DIRS ${MODULE_ROOT}/src ${MODULE_ROOT}/include ${URHO3D_INCLUDE_DIR
 set( LIBS ${MODULE_TGT_ARC} shmurho-parcel shmurho-phase )
 set( TARGET_PROPERTIES LINKER_LANGUAGE CXX )
 setup_main_executable()
+
+#
+# Post-build
+#
+
+file( COPY ${MODULE_ROOT}/share DESTINATION ${CMAKE_BINARY_DIR} )

@@ -196,6 +196,70 @@ sub getProp
     }
 }
 
+sub setProp
+{
+	my ( $self, $key, $value, %opts ) = @_;
+
+	$self->{props} = {} unless( exists( $self->{ props } ) );
+
+    my $ref = 0;
+    my $sigil = '';
+    if ( $key =~ /^($self->{re_sig_ref}?)([$self->{re_sig_array}$self->{re_sig_hash}$self->{re_sig_scalar}]?)($self->{re_prop_key})$/ )
+    {
+        $ref = 1 unless ( ! $1 );
+        $sigil = $2;
+        $key = $3;
+#         print( "GET:: sigil: ''$sigil'', key: ''$key'';\n" );
+    }
+    else
+    {
+        croak( "Given key ''$key'' is invalid" ) unless ( $key =~ $self->{ re_prop_key } );
+    }
+
+    my $currHash = $self->{ props };
+    my @subkeys = split( $self->{ re_key_sepr }, $key );
+    my $keyLen = scalar( @subkeys );
+    for ( my $i = 0; $i < $keyLen; ++$i )
+    {
+        my $subkey = $subkeys[ $i ];
+        if ( $i == $keyLen - 1 ) # last subkey
+        {
+            if ( ! exists( $currHash->{ $subkey } ) )
+            {
+                my $str = 'Prop props';
+                for ( my $j = 0; $j <= $i; ++$j )
+                {
+                    $str .= "->$subkeys[ $j ]";
+                }
+                $str .= ' doesnt exist';
+                carp( $str );
+                return ( $deflt );
+            }
+
+            if ( $sigil =~ $self->{ re_sig_array } )
+            {
+                carp( "Prop at given key ''$sigil$key'' is not an Array" ) unless ( ref( $currHash->{ $subkey } ) eq 'ARRAY' );
+            }
+            return ( $currHash->{ $subkey } );
+        }
+        else
+        {
+            if ( ! exists( $currHash->{ $subkey } ) )
+            {
+                my $str = 'Prop props';
+                for ( my $j = 0; $j <= $i; ++$j )
+                {
+                    $str .= "->$subkeys[ $j ]";
+                }
+                $str .= ' doesnt exist';
+                carp( $str );
+                return ( $deflt );
+            }
+            $currHash = $currHash->{ $subkey };
+        }
+    }
+}
+
 sub _parseFile
 {
     my ( $self, $file ) = @_;

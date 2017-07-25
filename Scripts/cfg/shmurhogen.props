@@ -1,1 +1,2 @@
-$some_prop : "def_val"
+$project.name: "MyPrj"
+

@@ -124,16 +124,18 @@ sub main
 	# Set verbosity
     my $verbose = $cmdLine->isOptMatched( 'verbose' );
 
+
 	#
 	# Handle command line arguments
 	#
 
     my $argsCount = $cmdLine->getArgsCount();
-	my $projectName = "MyProject";
+	#my $projectName = "MyProject";
     if ( $argsCount > 0 )
     {
-        $projectName = $cmdLine->getArg( 0 );
+        $props->setProp( 'project.name', $cmdLine->getArg( 0 ) );
     }
+
 
 	#
 	# Handle other command line options
@@ -158,11 +160,11 @@ sub main
     if ( $verbose )
     {
 		print( "Requested template: $projectTemplate\n" );
-        print( "Requested project name: $projectName\n" );
+        print( "Requested project name: ", $props->getProp( 'project.name' ), "\n" );
         print( "Requested base dir: $baseDir\n" );
-		print( "Requested template: $projectTemplate\n" );
-        print( "Requested project name: $projectName\n" );
-        print( "Requested base dir: $baseDir\n" );
+		#print( "Requested template: $projectTemplate\n" );
+		#print( "Requested project name: $projectName\n" );
+		#print( "Requested base dir: $baseDir\n" );
     }
 
 	#print( Data::Dumper::Dumper( 'Props: <<<', $props->getProps(), '>>>' ) );

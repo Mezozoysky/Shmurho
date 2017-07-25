@@ -12,7 +12,7 @@ see full license text in LICENSE.md file or at https://opensource.org/licenses/Z
 	cd Shmurho
 	mkdir build
 	cd build
-	cmake .. [-DURHO3D_HOME="<urho3d_home>"] [-DCMAKE_INSTALL_PREFIX="<install_prefix>"]
+	cmake ../Shmurho [-DURHO3D_HOME="<urho3d_home>"] [-DCMAKE_INSTALL_PREFIX="<install_prefix>"]
 	make
 	make install # or 'sudo make install' if <install_prefix> isn't in user's paths
 
@@ -32,7 +32,7 @@ And some variables will be defined for You:
 
 * `Shmurho_LIBRARIES` - list of all found Shmurho libraries
 
-* `Shmurho_XXX_LIBRARY` - path to found library (XXX is for Phase, Parcel, etc) 
+* `Shmurho_XXX_LIBRARY` - path to found library (XXX is for Phase, Parcel, etc)
 
 * `Shmurho_FOUND` - TRUE if libraries are found
 

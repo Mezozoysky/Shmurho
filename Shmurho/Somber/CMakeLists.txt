@@ -20,7 +20,7 @@ set( GROUP_HEADERS
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/PointsAndWaysData.hpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/DevKbdController.hpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/PhaseSwitcher.hpp
-	${MODULE_ROOT}/src/${MODULE_NSPATH}/LoaderPhase.hpp
+    ${MODULE_ROOT}/src/${MODULE_NSPATH}/LoaderPhase.hpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/StartMenuPhase.hpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/WorldMapPhase.hpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/LocationPhase.hpp
@@ -34,7 +34,7 @@ set( GROUP_SOURCES
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/PointsAndWaysData.cpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/DevKbdController.cpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/PhaseSwitcher.cpp
-	${MODULE_ROOT}/src/${MODULE_NSPATH}/LoaderPhase.cpp
+    ${MODULE_ROOT}/src/${MODULE_NSPATH}/LoaderPhase.cpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/StartMenuPhase.cpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/WorldMapPhase.cpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/LocationPhase.cpp
@@ -46,28 +46,16 @@ source_group( "${MODULE_NAME}\\${MODULE_NSPATH}"
 set( MODULE_HEADERS ${MODULE_HEADERS} ${GROUP_HEADERS} )
 set( MODULE_SOURCES ${MODULE_SOURCES} ${GROUP_SOURCES} )
 
+#
+# Discover dependencies
+#
 
-include( UrhoCommon )
-find_package( Urho3D REQUIRED )
-#include_directories( URHO3D_INCLUDE_DIRS )
-#include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../Phase )
-#include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../Parcel )
-
-set( TARGET_NAME ${MODULE_TGT}-archive )
-set( SOURCE_FILES ${MODULE_SOURCES} )
-set( INCLUDE_DIRS ${MODULE_ROOT}/include ${SUSA_INCLUDE_DIR} ${URHO3D_INCLUDE_DIRS} )
-set( LIBS shmurho-phase shmurho-parcel )
-set( TARGET_PROPERTIES LINKER_LANGUAGE CXX )
-setup_library( NODEPS STATIC )
-
-target_include_directories( ${MODULE_TGT}-archive INTERFACE
-    $<BUILD_INTERFACE:${MODULE_ROOT}/include>
-    $<INSTALL_INTERFACE:include>
-)
-
+#
+# Build
+#
 set( TARGET_NAME ${MODULE_TGT} )
-#set( SOURCE_FILES ${MODULE_SOURCES} )
-set( INCLUDE_DIRS ${MODULE_ROOT}/include ${URHO3D_INCLUDE_DIRS} )
-set( LIBS ${MODULE_TGT}-archive )
+set( SOURCE_FILES ${MODULE_SOURCES} )
+set( INCLUDE_DIRS ${MODULE_ROOT}/src ${MODULE_ROOT}/include ${URHO3D_INCLUDE_DIRS} )
+set( LIBS ${MODULE_TGT_ARC} shmurho-parcel shmurho-phase )
 set( TARGET_PROPERTIES LINKER_LANGUAGE CXX )
 setup_main_executable()

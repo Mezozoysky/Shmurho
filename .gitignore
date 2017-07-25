@@ -1,3 +1,5 @@
 build
+build-*
+install
 *.kdev4
-
+CMakeLists.txt.user

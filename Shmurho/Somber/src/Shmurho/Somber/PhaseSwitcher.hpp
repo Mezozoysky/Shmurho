@@ -32,6 +32,7 @@
 #pragma once
 
 #include <Shmurho/Phase/Switcher.hpp>
+#include <Urho3D/Core/Object.h>
 
 namespace Somber
 {

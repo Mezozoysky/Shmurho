@@ -26,16 +26,15 @@ source_group( "${MODULE_NAME}\\${MODULE_NSPATH}"
 set( MODULE_HEADERS ${MODULE_HEADERS} ${GROUP_HEADERS} )
 set( MODULE_SOURCES ${MODULE_SOURCES} ${GROUP_SOURCES} )
 
-include( UrhoCommon )
-find_package( Urho3D REQUIRED )
 
 set( TARGET_NAME ${MODULE_TGT} )
 set( SOURCE_FILES ${MODULE_SOURCES} )
-set( INCLUDE_DIRS ${MODULE_ROOT}/include ${URHO3D_INCLUDE_DIRS} )
+set( INCLUDE_DIRS ${MODULE_ROOT}/src ${MODULE_ROOT}/include ${URHO3D_INCLUDE_DIRS} )
 set( TARGET_PROPERTIES LINKER_LANGUAGE CXX )
 setup_library( NODEPS STATIC )
 
-target_include_directories( ${MODULE_TGT} INTERFACE
+target_include_directories( ${MODULE_TGT}
+	PUBLIC
     $<BUILD_INTERFACE:${MODULE_ROOT}/include>
     $<INSTALL_INTERFACE:include>
 )

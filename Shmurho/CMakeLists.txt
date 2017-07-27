@@ -33,8 +33,7 @@ project( Shmurho C CXX )
 set( CMAKE_CXX_STANDARD 11 )
 set( CMAKE_CXX_STANDARD_REQURED ON )
 
-option( SHMURHO_BUILD_SOMBER "Build Somber, the demo game" ON )
-#set( SHMURHO_BUILD_SOMBER ON )
+option( SHMURHO_BUILD_DEMO "Build the demo game" ON )
 
 #
 # Global dependencies
@@ -48,8 +47,8 @@ find_package( Urho3D REQUIRED )
 #
 add_subdirectory( Phase )
 add_subdirectory( Parcel )
-if( SHMURHO_BUILD_SOMBER )
-	add_subdirectory( Somber )
+if( SHMURHO_BUILD_DEMO )
+	add_subdirectory( Demo )
 endif()
 
 install(

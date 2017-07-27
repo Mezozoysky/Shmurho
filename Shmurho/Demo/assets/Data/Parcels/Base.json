@@ -1,0 +1,24 @@
+{
+	"resource-lists" : [
+		{
+			"type" : "XMLFile",
+			"names" : [
+				"UI/DefaultStyle.xml"
+			]
+		},
+		{
+			"type" : "Texture2D",
+			"names" : [
+				"Textures/UI.png",
+                "Textures/DesertTile.png"
+			]
+		},
+		{
+			"type" : "Font",
+			"names" : [
+				"Fonts/Anonymous Pro.ttf"
+			]
+		}
+
+	]
+}

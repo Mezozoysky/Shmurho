@@ -1,5 +1,7 @@
 build
 build-*
+cmake-build-*
 install
 *.kdev4
+.idea
 CMakeLists.txt.user

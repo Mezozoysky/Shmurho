@@ -162,7 +162,7 @@ bool Parcel::BeginLoadJSON( Deserializer& source )
 
             if ( context_->GetTypeName( type ) != typeStr )
             {
-                log->Write( LOG_DEBUG, "== Parcel parsing error: bad resource type " + typeStr );
+                log->Write( Urho3D::LOG_ERROR, "== Parcel parsing error: bad resource type " + typeStr );
                 continue;
             }
 

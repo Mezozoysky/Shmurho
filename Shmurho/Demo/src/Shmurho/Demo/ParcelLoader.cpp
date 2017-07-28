@@ -69,7 +69,11 @@ void ParcelLoader::OnParcelLoaded( const Urho3D::String& name )
 void ParcelLoader::OnLoaded( const Urho3D::String& name, bool successful, Resource* resource )
 {
     GetSubsystem<Log>()->Write( LOG_DEBUG, ToString( "== RESOURCE LOADED! '%s' (success: %u)", name.CString(), successful ) );
-    if ( resource->GetTypeName() == Shmurho::Parcel::Parcel::GetTypeNameStatic() && name != GetCurrParcel() )
+    if (
+        successful
+        && resource->GetTypeName() == Shmurho::Parcel::Parcel::GetTypeNameStatic()
+        && name != GetCurrParcel()
+        )
     {
         AddToQueue( name );
         GetSubsystem<Log>()->Write( LOG_DEBUG, ToString( "== Loaded resource '%s' (Parcel) added to queue.", name.CString() ) );

@@ -65,12 +65,23 @@ public:
     virtual bool Setup();
     virtual void Cleanup();
 
+    inline unsigned GetTargetPhase() const noexcept;
+    void SetTargetPhase( unsigned phase ) noexcept;
+
 private:
     void HandleBeginFrame( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
 
 private:
+    unsigned targetPhase_;
     Urho3D::SharedPtr<Urho3D::Sprite> sprite_;
 };
+
+// Inliners
+
+inline unsigned LoaderPhase::GetTargetPhase() const noexcept
+{
+    return targetPhase_;
+}
 
 
 } // namespace Demo

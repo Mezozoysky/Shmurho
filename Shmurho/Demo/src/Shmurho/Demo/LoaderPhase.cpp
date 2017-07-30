@@ -61,6 +61,7 @@ void LoaderPhase::RegisterObject( Context* context )
 
 LoaderPhase::LoaderPhase( Context* context )
     : Object( context )
+    , targetPhase_( GAMEPHASE_NONE )
 {
 }
 
@@ -101,14 +102,6 @@ bool LoaderPhase::Setup()
     {
         auto cache = GetSubsystem<ResourceCache>();
 
-//        auto style = cache->GetResource<XMLFile>( "UI/DefaultStyle.xml" );
-//        assert( style != 0 );
-//        if ( style != 0 )
-//        {
-//            GetSubsystem<UI>()->GetRoot()->SetDefaultStyle( style );
-//        }
-//        cache->GetResource<Texture2D>( "Textures/UI.png" );
-
         sprite_ = GetSubsystem<UI>()->GetRoot()->CreateChild<Sprite>();
         if ( sprite_.NotNull() )
         {
@@ -144,6 +137,11 @@ void LoaderPhase::Cleanup()
 {
 }
 
+void LoaderPhase::SetTargetPhase( unsigned phase ) noexcept
+{
+    targetPhase_ = phase;
+}
+
 void LoaderPhase::HandleBeginFrame( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData )
 {
     auto loader = context_->GetSubsystem<ParcelLoader>();
@@ -153,16 +151,8 @@ void LoaderPhase::HandleBeginFrame( Urho3D::StringHash eventType, Urho3D::Varian
     }
     else // Loading just finished
     {
-        auto cache = GetSubsystem<ResourceCache>();
-        auto style = cache->GetExistingResource<XMLFile>( "UI/DefaultStyle.xml" );
-        assert( style != 0 );
-        if ( style != 0 )
-        {
-            GetSubsystem<UI>()->GetRoot()->SetDefaultStyle( style );
-        }
-        cache->GetExistingResource<Texture2D>( "Textures/UI.png" );
-
-        GetSubsystem<PhaseSwitcher>()->SwitchTo( GAMEPHASE_START_MENU );
+        GetSubsystem<PhaseSwitcher>()->SwitchTo( targetPhase_ );
+        targetPhase_ = GAMEPHASE_NONE;
     }
 }
 

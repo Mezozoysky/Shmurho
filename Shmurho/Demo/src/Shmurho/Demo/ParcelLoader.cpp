@@ -31,6 +31,7 @@
 
 
 #include "ParcelLoader.hpp"
+#include "PhaseSwitcher.hpp"
 #include <Urho3D/Core/Context.h>
 #include <Urho3D/Core/CoreEvents.h>
 #include <Urho3D/IO/Log.h>
@@ -53,12 +54,22 @@ namespace Demo
 
 ParcelLoader::ParcelLoader( Urho3D::Context* context )
     : Loader( context )
+    , onQueueFinishedCallback_( nullptr )
 {
+}
+
+void ParcelLoader::SetOnQueueFinishedCallback( const std::function<void(void)>& callback ) noexcept
+{
+    onQueueFinishedCallback_ = callback;
 }
 
 void ParcelLoader::OnQueueLoaded()
 {
     GetSubsystem<Log>()->Write( LOG_DEBUG, "== LOADING FINISHED! " );
+    if ( onQueueFinishedCallback_ != nullptr )
+    {
+        onQueueFinishedCallback_();
+    }
 }
 
 void ParcelLoader::OnParcelLoaded( const Urho3D::String& name )

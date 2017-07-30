@@ -110,6 +110,22 @@ void App::Start()
     startMenuPhase_->SetPhaseSwitcher( switcher );
 
     loader->AddToQueue( "Parcels/Base.json" );
+    loader->SetOnQueueFinishedCallback(
+        [=]() {
+            auto cache = GetSubsystem<ResourceCache>();
+            auto style = cache->GetExistingResource<XMLFile>( "UI/DefaultStyle.xml" );
+            assert( style != 0 );
+            if ( style != 0 )
+            {
+                GetSubsystem<UI>()->GetRoot()->SetDefaultStyle( style );
+            }
+            auto uiTexture = cache->GetExistingResource<Texture2D>( "Textures/UI.png" );
+            assert( uiTexture != 0 );
+
+            loader->SetOnQueueFinishedCallback( nullptr );
+        }
+    );
+    loaderPhase_->SetTargetPhase( GAMEPHASE_START_MENU );
     GetSubsystem<PhaseSwitcher>()->SwitchTo( GAMEPHASE_LOADER );
 
     SubscribeToEvent( Shmurho::Phase::E_PHASELEAVE, URHO3D_HANDLER( App, HandlePhaseLeave ) );

@@ -32,10 +32,12 @@
 
 #include <Shmurho/Parcel/Loader.hpp>
 #include <Shmurho/Parcel/Parcel.hpp>
+#include <Shmurho/Parcel/ParcelEvents.hpp>
 
 #include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/Resource/ResourceEvents.h>
 #include <Urho3D/IO/Log.h>
+// #include <Urho3D/Scene/Scene.h>
 
 using namespace Urho3D;
 
@@ -66,16 +68,20 @@ bool Loader::StartLoadingQueue()
     bool success = StartLoadingParcel( nextParcel );
     if ( !success )
     {
-        GetSubsystem<Log>()->Write( LOG_ERROR, "Cant start loading parcel: " + nextParcel );
-        return ( false );
+        GetSubsystem<Log>()->Write(LOG_ERROR, "Failed to start loading parcel queue.");
     }
 
-    return ( true );
+    return ( success );
 }
 
 void Loader::AddToQueue( const Urho3D::String& parcelName ) noexcept
 {
     queue_.Push( parcelName );
+}
+
+void Loader::ClearQueue() noexcept
+{
+    queue_.Clear();
 }
 
 bool Loader::StartLoadingParcel( const Urho3D::String& parcelName )
@@ -89,7 +95,10 @@ bool Loader::StartLoadingParcel( const Urho3D::String& parcelName )
 
     if ( IsLoading() )
     {
-        log->Write( LOG_ERROR, "== Can't start loading: already loading" );
+        log->Write( LOG_ERROR,
+                    ToString("Failed to start loading parcel '%s': parcel '%s' is already loading.",
+                             parcelName.CString(),
+                             currParcel_.CString()) );
         return ( false );
     }
 
@@ -99,7 +108,6 @@ bool Loader::StartLoadingParcel( const Urho3D::String& parcelName )
 
     if ( parcel != 0 )
     {
-        log->Write( LOG_DEBUG, "== Parcel already loaded: " + parcelName );
         return ( StartLoadingParcel( parcel ) );
     }
     else
@@ -108,7 +116,9 @@ bool Loader::StartLoadingParcel( const Urho3D::String& parcelName )
 
         if ( !isParcelLoading_ )
         {
-            log->Write( LOG_ERROR, "== Can't load parcel " + parcelName );
+            log->Write( LOG_ERROR,
+                        ToString("Failed to start loading parcel '%s': parcel file doesnt exist or is corrupted.",
+                                 parcelName.CString()) );
             return ( false );
         }
 
@@ -146,19 +156,29 @@ void Loader::HandleResourceBackgroundLoaded( Urho3D::StringHash eventType, Urho3
     {
         isParcelLoading_ = false;
 
-        OnLoaded( name, success, resource );
         if ( success )
         {
+            OnLoaded( name, success, resource );
             assert( resource != 0 );
             isLoading_ = StartLoading();
             if ( !isLoading_ )
             {
-                OnParcelLoaded( name );
+                OnParcelLoaded( name, success );
                 UnsubscribeFromEvent( E_RESOURCEBACKGROUNDLOADED );
                 if ( !StartLoadingQueue() )
                 {
                     OnQueueLoaded();
                 }
+            }
+        }
+        else
+        {
+            OnLoaded( name, success, resource );
+            OnParcelLoaded( name, success );
+            // here isLoading_ == false and isParcelLoading_ == false, so trying to resume queue loading
+            if ( !StartLoadingQueue() )
+            {
+                OnQueueLoaded();
             }
         }
     }
@@ -173,21 +193,12 @@ void Loader::HandleResourceBackgroundLoaded( Urho3D::StringHash eventType, Urho3
             return;
         }
 
-        if ( success )
-        {
-            log->Write( LOG_DEBUG, "== Resource loaded: " + name );
-        }
-        else
-        {
-            log->Write( LOG_DEBUG, "== Failed to load resource: " + name );
-        }
-
         resourceQueue_.Erase( it );
         OnLoaded( name, success, resource );
 
         if ( resourceQueue_.Empty() ) // the last resource of parcel is loaded
         {
-            OnParcelLoaded( currParcel_ );
+            OnParcelLoaded( currParcel_, true );
             isLoading_ = false;
             UnsubscribeFromEvent( E_RESOURCEBACKGROUNDLOADED );
             if ( !StartLoadingQueue() )
@@ -200,12 +211,35 @@ void Loader::HandleResourceBackgroundLoaded( Urho3D::StringHash eventType, Urho3
     }
 }
 
+void Loader::OnLoaded( const Urho3D::String& name, bool successful, Urho3D::Resource* resource )
+{
+    if (
+        successful
+        && resource->GetTypeName() == Shmurho::Parcel::Parcel::GetTypeNameStatic()
+        && name != GetCurrParcel()
+        )
+    {
+        AddToQueue( name );
+        GetSubsystem<Log>()->Write( LOG_DEBUG, ToString( "Just loaded parcel '%s' added to loader queue.", name.CString() ) );
+    }
+}
+
+void Loader::OnParcelLoaded( const Urho3D::String& name, bool successful)
+{
+    assert( name == GetCurrParcel() );
+
+    Urho3D::VariantMap& eventData = GetEventDataMap();
+    eventData[ Shmurho::Parcel::ParcelLoaded::P_PARCEL_NAME ] = name; // String
+    eventData[ Shmurho::Parcel::ParcelLoaded::P_SUCCESS ] = successful; // bool
+
+    SendEvent( Shmurho::Parcel::E_PARCEL_LOADED, eventData );
+}
 
 void Loader::OnQueueLoaded()
 {
-    // Do nothing
+    Urho3D::VariantMap& eventData = GetEventDataMap();
+    SendEvent( Shmurho::Parcel::E_PARCEL_QUEUE_LOADED, eventData );
 }
-
 
 bool Loader::StartLoading()
 {
@@ -219,6 +253,12 @@ bool Loader::StartLoading()
     const auto& lists = parcel->GetLists();
     resourceQueue_.Clear();
 
+    if ( lists.Size() == 0 )
+    {
+        log->Write(LOG_WARNING, ToString("Parcel '%s' is empty, so nothing to load.", currParcel_.CString()));
+        return (false);
+    }
+
     for ( auto listsIt = lists.Begin(); listsIt != lists.End(); ++listsIt )
     {
         StringHash resType = listsIt->type_;
@@ -227,14 +267,13 @@ bool Loader::StartLoading()
         {
             const auto& resName = ( *it );
 
+//             if ( resType == Urho3D::Scene::Scene::GetTypeNameStatic() )
+//             {
+//
+//             }
             if ( cache->BackgroundLoadResource( resType, resName ) )
             {
                 resourceQueue_.Push( resName );
-                log->Write( LOG_DEBUG, "== ParcelLoader just started background resource loading: " + resName );
-            }
-            else
-            {
-                log->Write( LOG_ERROR, "== ParcelLoader can't start background resource loading: " + resName );
             }
         }
     }

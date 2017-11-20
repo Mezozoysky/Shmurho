@@ -59,7 +59,7 @@ public:
 
 protected:
     virtual void OnQueueLoaded() override;
-    virtual void OnParcelLoaded( const Urho3D::String& name ) override;
+    virtual void OnParcelLoaded( const Urho3D::String& name, bool successful ) override;
     virtual void OnLoaded( const Urho3D::String& name, bool successful, Urho3D::Resource* resource ) override;
 
 private:

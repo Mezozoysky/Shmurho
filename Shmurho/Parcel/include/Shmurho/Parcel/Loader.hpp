@@ -67,9 +67,9 @@ public:
     void HandleResourceBackgroundLoaded( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
 
 protected:
-    virtual void OnQueueLoaded() = 0;
-    virtual void OnParcelLoaded( const Urho3D::String& name ) = 0;
-    virtual void OnLoaded( const Urho3D::String& name, bool successful, Urho3D::Resource* resource ) = 0;
+    virtual void OnLoaded( const Urho3D::String& name, bool successful, Urho3D::Resource* resource );
+    virtual void OnParcelLoaded( const Urho3D::String& name, bool successful );
+    virtual void OnQueueLoaded();
 
 private:
     bool StartLoadingParcel( const Urho3D::String& parcelName );

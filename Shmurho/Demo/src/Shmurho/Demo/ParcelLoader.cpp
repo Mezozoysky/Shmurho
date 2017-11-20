@@ -72,9 +72,9 @@ void ParcelLoader::OnQueueLoaded()
     }
 }
 
-void ParcelLoader::OnParcelLoaded( const Urho3D::String& name )
+void ParcelLoader::OnParcelLoaded( const Urho3D::String& name, bool successful )
 {
-    GetSubsystem<Log>()->Write( LOG_DEBUG, ToString( "== PARCEL LOADED! '%s'", name.CString() ) );
+    GetSubsystem<Log>()->Write( LOG_DEBUG, ToString( "== PARCEL LOADED! '%s' (success: %u)", name.CString(), successful ) );
 }
 
 void ParcelLoader::OnLoaded( const Urho3D::String& name, bool successful, Resource* resource )

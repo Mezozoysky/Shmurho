@@ -9,9 +9,14 @@
 		{
 			"type" : "Texture2D",
 			"names" : [
-				"Textures/UI.png",
-                "Textures/DesertTile.png"
+				"Textures/UI.png"
 			]
+		},
+		{
+            "type" : "Sprite2D",
+            "names" : [
+                "Textures/DesertTile.png"
+            ]
 		},
 		{
 			"type" : "Font",
@@ -19,6 +24,5 @@
 				"Fonts/Anonymous Pro.ttf"
 			]
 		}
-
 	]
 }

@@ -33,6 +33,7 @@
 #include <Shmurho/Phase/Switcher.hpp>
 #include <Shmurho/Phase/PhaseEvents.hpp>
 #include <Urho3D/Core/CoreEvents.h>
+#include <Urho3D/IO/Log.h>
 #include <cassert>
 
 using namespace Urho3D;
@@ -43,51 +44,122 @@ namespace Shmurho
 namespace Phase
 {
 
-Switcher::Switcher( Urho3D::Context* context )
+Switcher::Switcher( Urho3D::Context* context ) noexcept
     : Object( context )
-	, lastPhase_( 0 )
-	, currPhase_( 0 )
-	, nextPhase_( 0 )
-	, isSwitchRequested_( false )
+    , phaseCurrent_( 0 )
+    , phaseRequested_( 0 )
+    , phasePrevious_( 0 )
+    , opRequested_( static_cast<unsigned>(OP_NONE) )
 {
     SubscribeToEvent( Urho3D::E_BEGINFRAME, URHO3D_HANDLER( Switcher, HandleBeginFrame ) );
 }
 
-void Switcher::SwitchTo( unsigned phase )
-{
-	nextPhase_ = phase;
-	isSwitchRequested_ = true;
-}
-
 void Switcher::OnPhaseLeave()
 {
+    unsigned phaseNext = 0;
+    if ( opRequested_ == OP_POP )
+    {
+        if (stack_.Size() > 1)
+        {
+            phaseNext = stack_[ stack_.Size() - 2 ];
+        }
+    }
+    else
+    {
+        phaseNext = phaseRequested_;
+    }
     Urho3D::VariantMap& eventData = GetEventDataMap();
-	eventData[ Phase::PhaseLeave::P_PHASE ] = currPhase_; // unsigned
+	eventData[ Phase::PhaseLeave::P_PHASE ] = CurrPhase(); // unsigned
+    eventData[ Phase::PhaseLeave::P_OP ] = opRequested_;
+    eventData[ Phase::PhaseLeave::P_PHASE_NEXT ] = phaseRequested_;
     SendEvent( Phase::E_PHASELEAVE, eventData );
 }
 
 void Switcher::OnPhaseEnter()
 {
     Urho3D::VariantMap& eventData = GetEventDataMap();
-    eventData[ Phase::PhaseEnter::P_PHASE] = currPhase_; // unsigned
+    eventData[ Phase::PhaseEnter::P_PHASE ] = CurrPhase(); // unsigned
+    eventData[ Phase::PhaseEnter::P_OP ] = opRequested_;
+    eventData[ Phase::PhaseEnter::P_PHASE_PREV ] = PrevPhase();
     SendEvent( Phase::E_PHASEENTER, eventData );
 }
 
 void Switcher::HandleBeginFrame( StringHash eventType, VariantMap& eventData )
 {
-	if ( isSwitchRequested_ )
+	if (opRequested_ != OP_NONE)
 	{
-        if ( nextPhase_ != currPhase_ )
+        switch (opRequested_)
         {
-            OnPhaseLeave();
+            case OP_PUSH :
+            {
+                if (phaseRequested_ != CurrPhase()) //if CurrPhase() returns 0 then it's like the "current push is the first op"
+                {
+                    OnPhaseLeave();
+                    phasePrevious_ = stack_.Back();
+                    stack_.Push(phaseRequested_);
+                    OnPhaseEnter();
+                }
+            }
+            break;
 
-            lastPhase_ = currPhase_;
-            currPhase_ = nextPhase_;
-            OnPhaseEnter();
+            case OP_POP :
+            {
+                if (!CurrPhase()) //if CurrPhase returns 0 then it's like the "last op is already done"
+                {
+                    OnPhaseLeave();
+                    phasePrevious_ = stack_.Back();
+                    stack_.Pop();
+                    OnPhaseEnter();
+                }
+            }
+            break;
+
+            case OP_SWITCH :
+            {
+                if (phaseRequested_ != CurrPhase()) //if CurrPhase returns 0 then it's like the "current switch is the first op"
+                {
+                    OnPhaseLeave();
+                    if (CurrPhase())
+                    {
+                        phasePrevious_ = stack_.Back();
+                        stack_.Pop();
+                    }
+                    stack_.Push(phaseRequested_);
+                    OnPhaseEnter();
+                }
+            }
+            break;
+
+            case OP_SET :
+            {
+                if (phaseRequested_ != CurrPhase()) //if CurrPhase returns 0 then it's like the "current set is the first op"
+                {
+                    OnPhaseLeave();
+                    if (CurrPhase())
+                    {
+                        phasePrevious_ = stack_.Back();
+                        stack_.Pop();
+                    }
+                    while(!stack_.Empty())
+                    {
+                        stack_.Pop();
+                    }
+                    stack_.Push(phaseRequested_);
+                    OnPhaseEnter();
+                }
+            }
+
+            default :
+            {
+                GetSubsystem<Log>()->Write(LOG_ERROR,
+                                           ToString("Wrong phase switcher operation: %u",
+                                                    static_cast<unsigned>(opRequested_)) );
+            }
+            break;
         }
 
-        isSwitchRequested_ = false;
-	}
+        opRequested_ = static_cast<unsigned>(OP_NONE);
+    }
 }
 
 } // namespace Phase

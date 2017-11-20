@@ -56,7 +56,7 @@ public:
     static void RegisterObject( Urho3D::Context* context );
 
 public:
-    LoaderPhase ( Urho3D::Context* context );
+    LoaderPhase( Urho3D::Context* context ) noexcept;
     virtual ~LoaderPhase() noexcept = default;
 
     virtual void OnPhaseLeave( unsigned phase ) override;
@@ -65,22 +65,22 @@ public:
     virtual bool Setup();
     virtual void Cleanup();
 
-    inline unsigned GetTargetPhase() const noexcept;
-    void SetTargetPhase( unsigned phase ) noexcept;
+    inline unsigned GetSwitchPhase() const noexcept;
+    void SetSwitchPhase( unsigned phase ) noexcept;
 
 private:
     void HandleBeginFrame( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
 
 private:
-    unsigned targetPhase_;
+    int switchPhase_; //int instead unsigned int is just to have negative value
     Urho3D::SharedPtr<Urho3D::Sprite> sprite_;
 };
 
 // Inliners
 
-inline unsigned LoaderPhase::GetTargetPhase() const noexcept
+inline unsigned LoaderPhase::GetSwitchPhase() const noexcept
 {
-    return targetPhase_;
+    return switchPhase_;
 }
 
 

@@ -40,12 +40,16 @@ namespace Phase
 
 URHO3D_EVENT( E_PHASELEAVE, PhaseLeave )
 {
-    URHO3D_PARAM( P_PHASE, Phase );
+    URHO3D_PARAM( P_PHASE, Phase );             // unsigned
+    URHO3D_PARAM( P_OP, Op );                   // unsigned
+    URHO3D_PARAM( P_PHASE_NEXT, PhaseNext );    // unsigned
 }
 
 URHO3D_EVENT( E_PHASEENTER, PhaseEnter )
 {
-    URHO3D_PARAM( P_PHASE, Phase );
+    URHO3D_PARAM( P_PHASE, Phase );             // unsigned
+    URHO3D_PARAM( P_OP, Op );                   // unsigned
+    URHO3D_PARAM( P_PHASE_PREV, PhasePrev );    // unsigned
 }
 
 } // namespace Phase

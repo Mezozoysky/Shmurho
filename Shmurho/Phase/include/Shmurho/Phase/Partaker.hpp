@@ -90,12 +90,12 @@ public:
     virtual void OnPhaseEnter( unsigned phase ) = 0;
 
 protected:
-    void HandlePhaseLeave( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData )
+    inline void HandlePhaseLeave( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData )
     {
         OnPhaseLeave( eventData[ PhaseLeave::P_PHASE ].GetUInt() );
     }
 
-    void HandlePhaseEnter( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData )
+    inline void HandlePhaseEnter( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData )
     {
         OnPhaseEnter( eventData[ PhaseEnter::P_PHASE ].GetUInt() );
     }

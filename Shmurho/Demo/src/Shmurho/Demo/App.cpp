@@ -132,8 +132,8 @@ void App::Start()
             loader->SetOnQueueFinishedCallback( nullptr );
         }
     );
-    loaderPhase_->SetTargetPhase( GAMEPHASE_START_MENU );
-    GetSubsystem<PhaseSwitcher>()->SwitchTo( GAMEPHASE_LOADER );
+    loaderPhase_->SetSwitchPhase( GAMEPHASE_START_MENU );
+    GetSubsystem<PhaseSwitcher>()->SetPhase( GAMEPHASE_LOADER );
 
     SubscribeToEvent( Shmurho::Phase::E_PHASELEAVE, URHO3D_HANDLER( App, HandlePhaseLeave ) );
     SubscribeToEvent( Shmurho::Phase::E_PHASEENTER, URHO3D_HANDLER( App, HandlePhaseEnter ) );

@@ -59,9 +59,9 @@ void LoaderPhase::RegisterObject( Context* context )
     context->RegisterFactory<LoaderPhase>();
 }
 
-LoaderPhase::LoaderPhase( Context* context )
+LoaderPhase::LoaderPhase( Context* context ) noexcept
     : Object( context )
-    , targetPhase_( GAMEPHASE_NONE )
+    , switchPhase_( -1 )
 {
 }
 
@@ -137,9 +137,9 @@ void LoaderPhase::Cleanup()
 {
 }
 
-void LoaderPhase::SetTargetPhase( unsigned phase ) noexcept
+void LoaderPhase::SetSwitchPhase( unsigned phase ) noexcept
 {
-    targetPhase_ = phase;
+    switchPhase_ = phase;
 }
 
 void LoaderPhase::HandleBeginFrame( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData )
@@ -151,8 +151,15 @@ void LoaderPhase::HandleBeginFrame( Urho3D::StringHash eventType, Urho3D::Varian
     }
     else // Loading just finished
     {
-        GetSubsystem<PhaseSwitcher>()->SwitchTo( targetPhase_ );
-        targetPhase_ = GAMEPHASE_NONE;
+        if (switchPhase_ < 0)
+        {
+            GetSubsystem<PhaseSwitcher>()->PopPhase();
+        }
+        else
+        {
+            GetSubsystem<PhaseSwitcher>()->SwitchPhase(switchPhase_);
+            switchPhase_ = -1;
+        }
     }
 }
 

@@ -44,12 +44,25 @@ class Switcher
     URHO3D_OBJECT( Switcher, Urho3D::Object );
 
 public:
-    Switcher( Urho3D::Context* context );
+    enum Op
+    {
+        OP_NONE = 0,
+        OP_PUSH,
+        OP_POP,
+        OP_SWITCH,
+        OP_SET
+    };
+
+    Switcher( Urho3D::Context* context ) noexcept;
     virtual ~Switcher() noexcept = default;
 
-    void SwitchTo( unsigned phase );
-    inline unsigned int CurrPhase() const noexcept { return ( currPhase_ ); };
-    inline unsigned int LastPhase() const noexcept { return ( lastPhase_ ); };
+    inline void PushPhase(unsigned phase) const noexcept;
+    inline void PopPhase() const noexcept;
+    inline void SwitchPhase(unsigned phase) const noexcept;
+    inline void SetPhase(unsigned phase) const noexcept;
+
+    unsigned CurrPhase() const noexcept;
+    inline unsigned PrevPhase() const noexcept;
 
 protected:
     virtual void OnPhaseLeave();
@@ -59,11 +72,46 @@ private:
     void HandleBeginFrame( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
 
 private:
-    unsigned int lastPhase_;
-	unsigned int currPhase_;
-	unsigned int nextPhase_;
-	bool isSwitchRequested_;
+    unsigned phaseCurrent_;
+    mutable unsigned phaseRequested_;
+    unsigned phasePrevious_;
+    mutable unsigned opRequested_;
+
+    Urho3D::PODVector<unsigned> stack_;
 };
+
+inline void Switcher::PushPhase(unsigned phase) const noexcept
+{
+    phaseRequested_ = phase;
+    opRequested_ = OP_PUSH;
+}
+
+inline void Switcher::PopPhase() const noexcept
+{
+    opRequested_ = OP_POP;
+}
+
+inline void Switcher::SwitchPhase( unsigned phase ) const noexcept
+{
+    phaseRequested_ = phase;
+    opRequested_ = OP_SWITCH;
+}
+
+inline void Switcher::SetPhase(unsigned phase) const noexcept
+{
+    phaseRequested_ = phase;
+    opRequested_ = OP_SET;
+}
+
+inline unsigned Switcher::CurrPhase() const noexcept
+{
+    return (stack_.Empty() ? 0 : stack_.Back());
+}
+
+inline unsigned Switcher::PrevPhase() const noexcept
+{
+    return ( phasePrevious_ );
+}
 
 } // namespace Phase
 } // namespace Shmurho

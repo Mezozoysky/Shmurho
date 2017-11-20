@@ -23,7 +23,7 @@
 // source distribution.
 
 /// \file
-/// \brief Start menu phase
+/// \brief Background container
 /// \author Stanislav Demyanovich <mezozoysky@gmail.com>
 /// \date 2017
 /// \copyright Shmurho is released under the terms of zlib/libpng license
@@ -38,6 +38,8 @@
 
 namespace Urho3D
 {
+class Scene;
+class Viewport;
 class Window;
 } // namespace Urho3D
 
@@ -47,38 +49,30 @@ namespace Shmurho
 namespace Demo
 {
 
-URHO3D_EVENT( E_STARTMENUEXITREQUESTED, StartMenuExitRequested)
+class Bg
+    : public Urho3D::Object, public Shmurho::Phase::Partaker< Bg >
 {
-}
-
-class StartMenuPhase
-    : public Urho3D::Object
-    , public Shmurho::Phase::Partaker<StartMenuPhase>
-{
-    URHO3D_OBJECT( StartMenuPhase, Urho3D::Object );
+    URHO3D_OBJECT(Bg, Object);
 
 public:
-    static void RegisterObject( Urho3D::Context* context );
+    static void RegisterObject(Urho3D::Context *context);
 
 public:
-    StartMenuPhase( Urho3D::Context* context );
-    virtual ~StartMenuPhase() noexcept = default;
+    Bg(Urho3D::Context *context);
+    virtual ~Bg() noexcept = default;
 
-    virtual void OnPhaseLeave( unsigned phase ) override;
-    virtual void OnPhaseEnter( unsigned phase ) override;
+    virtual void OnPhaseLeave(unsigned phase) override;
+    virtual void OnPhaseEnter(unsigned phase) override;
 
     virtual bool Setup();
     virtual void Cleanup();
 
-    virtual void OnExitRequested();
-    virtual void OnNewGameRequested();
+private:
+    void HandleToLocationButtonClicked(Urho3D::StringHash eventType, Urho3D::VariantMap &eventData);
 
 private:
-    void HandleNewGameButtonClicked( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
-    void HandleExitButtonClicked( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
-
-private:
-    Urho3D::SharedPtr<Urho3D::Window> window_;
+    Urho3D::SharedPtr< Urho3D::Scene > bgScene_;
+    Urho3D::SharedPtr< Urho3D::Viewport > viewport_;
 };
 
 } // namespace Demo

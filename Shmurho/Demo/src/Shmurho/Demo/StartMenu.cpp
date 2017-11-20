@@ -23,14 +23,14 @@
 // source distribution.
 
 /// \file
-/// \brief Start menu phase
+/// \brief Start menu
 /// \author Stanislav Demyanovich <mezozoysky@gmail.com>
 /// \date 2017
 /// \copyright Shmurho is released under the terms of zlib/libpng license
 /// \details --
 
 
-#include "StartMenuPhase.hpp"
+#include "StartMenu.hpp"
 #include "PhaseSwitcher.hpp"
 
 #include <Urho3D/Core/Context.h>
@@ -49,18 +49,18 @@ namespace Shmurho
 namespace Demo
 {
 
-void StartMenuPhase::RegisterObject( Context* context )
+void StartMenu::RegisterObject( Context* context )
 {
-    context->RegisterFactory<StartMenuPhase>();
+    context->RegisterFactory<StartMenu>();
 }
 
-StartMenuPhase::StartMenuPhase( Context* context )
+StartMenu::StartMenu( Context* context )
     : Object( context )
-    , Partaker<StartMenuPhase>()
+    , Partaker<StartMenu>()
 {
 }
 
-void StartMenuPhase::OnPhaseLeave( unsigned phase )
+void StartMenu::OnPhaseLeave( unsigned phase )
 {
     if ( phase != GAMEPHASE_START_MENU ) return;
 
@@ -69,7 +69,7 @@ void StartMenuPhase::OnPhaseLeave( unsigned phase )
     window_->SetVisible( false );
 }
 
-void StartMenuPhase::OnPhaseEnter( unsigned phase )
+void StartMenu::OnPhaseEnter( unsigned phase )
 {
     if ( phase != GAMEPHASE_START_MENU ) return;
 
@@ -79,7 +79,7 @@ void StartMenuPhase::OnPhaseEnter( unsigned phase )
     window_->SetVisible( true );
 }
 
-bool StartMenuPhase::Setup()
+bool StartMenu::Setup()
 {
     if ( window_.Null() )
     {
@@ -94,7 +94,7 @@ bool StartMenuPhase::Setup()
         buttonNewGame->SetMinHeight( 24 );
         buttonNewGame->SetLayout( Urho3D::LM_HORIZONTAL, 6, IntRect( 6, 6, 6, 6 ) );
         buttonNewGame->SetStyleAuto();
-        SubscribeToEvent( buttonNewGame, E_CLICK, URHO3D_HANDLER( StartMenuPhase, HandleNewGameButtonClicked ) );
+        SubscribeToEvent( buttonNewGame, E_CLICK, URHO3D_HANDLER( StartMenu, HandleNewGameButtonClicked ) );
 
         auto textNewGame = buttonNewGame->CreateChild<Text>( "TextNewGame" );
         textNewGame->SetText( "Play the new game" );
@@ -105,7 +105,7 @@ bool StartMenuPhase::Setup()
         buttonExit->SetMinHeight( 24 );
         buttonExit->SetLayout( Urho3D::LM_HORIZONTAL, 6, IntRect( 6, 6, 6, 6 ) );
         buttonExit->SetStyleAuto();
-        SubscribeToEvent( buttonExit, E_CLICK, URHO3D_HANDLER( StartMenuPhase, HandleExitButtonClicked ) );
+        SubscribeToEvent( buttonExit, E_CLICK, URHO3D_HANDLER( StartMenu, HandleExitButtonClicked ) );
 
         auto textExit = buttonExit->CreateChild<Text>( "TextExit" );
         textExit->SetText( "Exit and live the life" );
@@ -116,30 +116,30 @@ bool StartMenuPhase::Setup()
     return ( window_.NotNull() );
 }
 
-void StartMenuPhase::Cleanup()
+void StartMenu::Cleanup()
 {
 }
 
-void StartMenuPhase::OnExitRequested()
+void StartMenu::OnExitRequested()
 {
     Urho3D::VariantMap& eventData = GetEventDataMap();
     SendEvent( E_STARTMENUEXITREQUESTED, eventData );
 }
 
-void StartMenuPhase::OnNewGameRequested()
+void StartMenu::OnNewGameRequested()
 {
 //    GetSubsystem<PhaseSwitcher>()->SwitchTo( GAMEPHASE_NONE );
     Urho3D::VariantMap& eventData = GetEventDataMap();
     SendEvent( E_STARTMENUEXITREQUESTED, eventData );
 }
 
-void StartMenuPhase::HandleNewGameButtonClicked( StringHash eventType, VariantMap& eventData )
+void StartMenu::HandleNewGameButtonClicked( StringHash eventType, VariantMap& eventData )
 {
     GetSubsystem<Log>()->Write( LOG_DEBUG, "== NEW GAME CLICKED!!!" );
     OnNewGameRequested();
 }
 
-void StartMenuPhase::HandleExitButtonClicked( StringHash eventType, VariantMap& eventData )
+void StartMenu::HandleExitButtonClicked( StringHash eventType, VariantMap& eventData )
 {
     GetSubsystem<Log>()->Write( LOG_DEBUG, "== EXIT AND LIVE CLICKED!!!" );
     OnExitRequested();

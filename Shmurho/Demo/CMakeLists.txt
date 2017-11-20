@@ -19,7 +19,8 @@ set( GROUP_HEADERS
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/DevKbdController.hpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/PhaseSwitcher.hpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/LoaderPhase.hpp
-    ${MODULE_ROOT}/src/${MODULE_NSPATH}/StartMenuPhase.hpp
+    ${MODULE_ROOT}/src/${MODULE_NSPATH}/StartMenu.hpp
+	${MODULE_ROOT}/src/${MODULE_NSPATH}/Bg.hpp
 )
 set( GROUP_SOURCES
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/App.cpp
@@ -28,7 +29,8 @@ set( GROUP_SOURCES
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/DevKbdController.cpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/PhaseSwitcher.cpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/LoaderPhase.cpp
-    ${MODULE_ROOT}/src/${MODULE_NSPATH}/StartMenuPhase.cpp
+    ${MODULE_ROOT}/src/${MODULE_NSPATH}/StartMenu.cpp
+	${MODULE_ROOT}/src/${MODULE_NSPATH}/Bg.cpp
     ${MODULE_ROOT}/src/main.cpp
 )
 source_group( "${MODULE_NAME}\\${MODULE_NSPATH}"

@@ -34,7 +34,8 @@
 #include "PhaseSwitcher.hpp"
 #include "LoaderPhase.hpp"
 #include "DevKbdController.hpp"
-#include "StartMenuPhase.hpp"
+#include "StartMenu.hpp"
+#include "Bg.hpp"
 
 #include <Shmurho/Phase/PhaseEvents.hpp>
 #include <Shmurho/Parcel/Parcel.hpp>
@@ -63,6 +64,7 @@
 #include <Urho3D/UI/UIEvents.h>
 #include <Urho3D/Core/StringUtils.h>
 #include <Urho3D/Core/CoreEvents.h>
+#include <Urho3D/AngelScript/Script.h>
 
 using namespace Urho3D;
 
@@ -74,7 +76,8 @@ namespace Demo
 App::App( Context* context )
     : Application( context )
     , loaderPhase_( new LoaderPhase( context ) )
-    , startMenuPhase_( new StartMenuPhase( context ) )
+    , startMenu_( new StartMenu( context ) )
+    , bg_( new Bg( context ) )
 {
 }
 
@@ -101,13 +104,16 @@ void App::Start()
     context_->RegisterSubsystem( switcher );
     auto loader = new ParcelLoader( context_ );
     context_->RegisterSubsystem( loader );
+    context_->RegisterSubsystem(new Script(context_));
+
     DevKbdController::RegisterObject( context_ );
     Shmurho::Parcel::Parcel::RegisterObject( context_ );
 
     GetSubsystem<Input>()->SetTouchEmulation( true );
 
     loaderPhase_->SetPhaseSwitcher( switcher );
-    startMenuPhase_->SetPhaseSwitcher( switcher );
+    startMenu_->SetPhaseSwitcher( switcher );
+    bg_->SetPhaseSwitcher( switcher );
 
     loader->AddToQueue( "Parcels/Base.json" );
     loader->SetOnQueueFinishedCallback(
@@ -118,6 +124,7 @@ void App::Start()
             if ( style != 0 )
             {
                 GetSubsystem<UI>()->GetRoot()->SetDefaultStyle( style );
+//                 GetSubsystem<UI>()->GetRoot()->SetOpacity(0.6f);
             }
             auto uiTexture = cache->GetExistingResource<Texture2D>( "Textures/UI.png" );
             assert( uiTexture != 0 );
@@ -130,7 +137,7 @@ void App::Start()
 
     SubscribeToEvent( Shmurho::Phase::E_PHASELEAVE, URHO3D_HANDLER( App, HandlePhaseLeave ) );
     SubscribeToEvent( Shmurho::Phase::E_PHASEENTER, URHO3D_HANDLER( App, HandlePhaseEnter ) );
-    SubscribeToEvent( startMenuPhase_.Get(), E_STARTMENUEXITREQUESTED, URHO3D_HANDLER( App, HandleStartMenuExitRequested ) );
+    SubscribeToEvent( startMenu_.Get(), E_STARTMENUEXITREQUESTED, URHO3D_HANDLER( App, HandleStartMenuExitRequested ) );
 }
 
 void App::Stop()

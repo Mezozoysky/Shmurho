@@ -23,57 +23,63 @@
 // source distribution.
 
 /// \file
-/// \brief Demo app definition
+/// \brief Start menu
 /// \author Stanislav Demyanovich <mezozoysky@gmail.com>
 /// \date 2017
 /// \copyright Shmurho is released under the terms of zlib/libpng license
 /// \details --
 
+
 #pragma once
 
-#include <Urho3D/Engine/Application.h>
+#include <Shmurho/Phase/Partaker.hpp>
+#include <Urho3D/Core/Object.h>
+#include <Urho3D/Container/Ptr.h>
 
 namespace Urho3D
 {
-class Scene;
-class Sprite;
+class Window;
 } // namespace Urho3D
+
 
 namespace Shmurho
 {
 namespace Demo
 {
 
-class LoaderPhase;
-class StartMenu;
-class Bg;
-
-class App
-    : public Urho3D::Application
+URHO3D_EVENT( E_STARTMENUEXITREQUESTED, StartMenuExitRequested)
 {
-    URHO3D_OBJECT( App, Urho3D::Application );
+}
+
+class StartMenu
+    : public Urho3D::Object
+    , public Shmurho::Phase::Partaker<StartMenu>
+{
+    URHO3D_OBJECT( StartMenu, Urho3D::Object );
 
 public:
-    App( Urho3D::Context* context );
-    virtual ~App() noexcept = default;
+    static void RegisterObject( Urho3D::Context* context );
 
-    virtual void Setup() override;
-    virtual void Start() override;
-    virtual void Stop() override;
+public:
+    StartMenu( Urho3D::Context* context );
+    virtual ~StartMenu() noexcept = default;
 
-protected:
-    void HandlePhaseLeave( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
-    void HandlePhaseEnter( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
+    virtual void OnPhaseLeave( unsigned phase ) override;
+    virtual void OnPhaseEnter( unsigned phase ) override;
 
-    void HandleStartMenuExitRequested( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
+    virtual bool Setup();
+    virtual void Cleanup();
+
+    virtual void OnExitRequested();
+    virtual void OnNewGameRequested();
 
 private:
-    Urho3D::UniquePtr<LoaderPhase> loaderPhase_;
-    Urho3D::UniquePtr<StartMenu> startMenu_;
-    Urho3D::UniquePtr<Bg> bg_;
+    void HandleNewGameButtonClicked( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
+    void HandleExitButtonClicked( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
+
+private:
+    Urho3D::SharedPtr<Urho3D::Window> window_;
 };
 
 } // namespace Demo
 } // namespace Shmurho
-
-

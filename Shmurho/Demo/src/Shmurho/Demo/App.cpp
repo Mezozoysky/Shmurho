@@ -135,8 +135,8 @@ void App::Start()
     loaderPhase_->SetSwitchPhase( GAMEPHASE_START_MENU );
     GetSubsystem<PhaseSwitcher>()->SetPhase( GAMEPHASE_LOADER );
 
-    SubscribeToEvent( Shmurho::Phase::E_PHASELEAVE, URHO3D_HANDLER( App, HandlePhaseLeave ) );
-    SubscribeToEvent( Shmurho::Phase::E_PHASEENTER, URHO3D_HANDLER( App, HandlePhaseEnter ) );
+    SubscribeToEvent( GetSubsystem<PhaseSwitcher>(), Shmurho::Phase::E_PHASELEAVE, URHO3D_HANDLER( App, HandlePhaseLeave ) );
+    SubscribeToEvent( GetSubsystem<PhaseSwitcher>(), Shmurho::Phase::E_PHASEENTER, URHO3D_HANDLER( App, HandlePhaseEnter ) );
     SubscribeToEvent( startMenu_.Get(), E_STARTMENUEXITREQUESTED, URHO3D_HANDLER( App, HandleStartMenuExitRequested ) );
 }
 
@@ -148,11 +148,25 @@ void App::Stop()
 void App::HandlePhaseLeave( StringHash eventType, VariantMap& eventData )
 {
     auto phase = eventData[ Shmurho::Phase::PhaseLeave::P_PHASE ].GetUInt();
+    auto op = eventData[ Shmurho::Phase::PhaseLeave::P_OP ].GetUInt();
+    auto phaseNext = eventData[ Shmurho::Phase::PhaseLeave::P_PHASE_NEXT ].GetUInt();
+    GetSubsystem<Log>()->Write(LOG_INFO,
+                               ToString("-- Leaving '%u' phase; operation: %u; next phase: '%u'",
+                                        phase,
+                                        op,
+                                        phaseNext));
 }
 
 void App::HandlePhaseEnter( StringHash eventType, VariantMap& eventData )
 {
     auto phase = eventData[ Shmurho::Phase::PhaseEnter::P_PHASE ].GetUInt();
+    auto op = eventData[ Shmurho::Phase::PhaseEnter::P_OP ].GetUInt();
+    auto phasePrev = eventData[ Shmurho::Phase::PhaseEnter::P_PHASE_PREV ].GetUInt();
+    GetSubsystem<Log>()->Write(LOG_INFO,
+                               ToString("-- Entering '%u' phase; operation: %u; prev phase: '%u'",
+                                        phase,
+                                        op,
+                                        phasePrev));
 }
 
 void App::HandleStartMenuExitRequested( StringHash eventType, VariantMap& eventData )

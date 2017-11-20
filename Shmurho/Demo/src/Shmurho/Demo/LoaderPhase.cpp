@@ -151,14 +151,18 @@ void LoaderPhase::HandleBeginFrame( Urho3D::StringHash eventType, Urho3D::Varian
     }
     else // Loading just finished
     {
-        if (switchPhase_ < 0)
+        auto switcher = PartakerBaseT::GetPhaseSwitcher().Get();
+        if (switcher != nullptr)
         {
-            GetSubsystem<PhaseSwitcher>()->PopPhase();
-        }
-        else
-        {
-            GetSubsystem<PhaseSwitcher>()->SwitchPhase(switchPhase_);
-            switchPhase_ = -1;
+            if (switchPhase_ < 0)
+            {
+                switcher->PopPhase();
+            }
+            else
+            {
+                switcher->SwitchPhase(switchPhase_);
+                switchPhase_ = -1;
+            }
         }
     }
 }

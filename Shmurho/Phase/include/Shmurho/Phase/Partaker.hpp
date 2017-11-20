@@ -48,61 +48,83 @@ template<typename DerivedT>
 class Partaker
 {
 public:
-    typedef DerivedT ActualPartaker;// = DerivedT;
+    using PartakerActualT = DerivedT;
+    using PartakerBaseT = Partaker<DerivedT>;
 
 public:
-    Partaker()
-    {
-        static_assert(
-            std::is_base_of<::Urho3D::Object, DerivedT>::value
-            , "DerivedT should extend Urho3D::Object"
-        );
-    }
+    Partaker();
 
     virtual ~Partaker() noexcept = default;
 
-    void SetPhaseSwitcher( Switcher* switcher ) noexcept
-    {
-        if ( !switcher_.Expired() )
-        {
-            ((ActualPartaker*)this)->UnsubscribeFromEvent( switcher_.Get(), E_PHASELEAVE );
-            ((ActualPartaker*)this)->UnsubscribeFromEvent( switcher_.Get(), E_PHASEENTER );
-        }
-
-        switcher_ = switcher;
-
-        if ( switcher != 0 )
-        {
-            ((ActualPartaker*)this)->SubscribeToEvent(
-                switcher
-                    , E_PHASELEAVE
-                    , new Urho3D::EventHandlerImpl<ActualPartaker>( (ActualPartaker*)this, &ActualPartaker::HandlePhaseLeave )
-            );
-            ((ActualPartaker*)this)->SubscribeToEvent(
-                switcher
-                    , E_PHASEENTER
-                    , new Urho3D::EventHandlerImpl<ActualPartaker>( (ActualPartaker*)this, &ActualPartaker::HandlePhaseEnter )
-            );
-        }
-    };
+    void SetPhaseSwitcher( Switcher* switcher ) noexcept;
 
     virtual void OnPhaseLeave( unsigned phase ) = 0;
     virtual void OnPhaseEnter( unsigned phase ) = 0;
 
 protected:
-    inline void HandlePhaseLeave( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData )
-    {
-        OnPhaseLeave( eventData[ PhaseLeave::P_PHASE ].GetUInt() );
-    }
+    inline void HandlePhaseLeave( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
+    inline void HandlePhaseEnter( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
 
-    inline void HandlePhaseEnter( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData )
-    {
-        OnPhaseEnter( eventData[ PhaseEnter::P_PHASE ].GetUInt() );
-    }
+    inline Urho3D::WeakPtr<Switcher> GetPhaseSwitcher() const noexcept;
 
 private:
     Urho3D::WeakPtr<Switcher> switcher_;
 };
+
+template<typename DerivedT>
+Partaker<DerivedT>::Partaker()
+{
+    static_assert(
+        std::is_base_of<::Urho3D::Object, DerivedT>::value
+        , "DerivedT should extend Urho3D::Object"
+    );
+}
+
+template<typename DerivedT>
+void Partaker<DerivedT>::SetPhaseSwitcher( Switcher* switcher ) noexcept
+{
+    if ( !switcher_.Expired() )
+    {
+        ((PartakerActualT*)this)->UnsubscribeFromEvent( switcher_.Get(), E_PHASELEAVE );
+        ((PartakerActualT*)this)->UnsubscribeFromEvent( switcher_.Get(), E_PHASEENTER );
+    }
+
+    switcher_ = switcher;
+
+    if ( switcher != 0 )
+    {
+        ((PartakerActualT*)this)->SubscribeToEvent(
+            switcher
+                , E_PHASELEAVE
+                , new Urho3D::EventHandlerImpl<PartakerActualT>( (PartakerActualT*)this, &PartakerActualT::HandlePhaseLeave )
+        );
+        ((PartakerActualT*)this)->SubscribeToEvent(
+            switcher
+                , E_PHASEENTER
+                , new Urho3D::EventHandlerImpl<PartakerActualT>( (PartakerActualT*)this, &PartakerActualT::HandlePhaseEnter )
+        );
+    }
+};
+
+// Inliners
+
+template<typename DerivedT>
+inline void Partaker<DerivedT>::HandlePhaseLeave( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData )
+{
+    OnPhaseLeave( eventData[ PhaseLeave::P_PHASE ].GetUInt() );
+}
+
+template<typename DerivedT>
+inline void Partaker<DerivedT>::HandlePhaseEnter( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData )
+{
+    OnPhaseEnter( eventData[ PhaseEnter::P_PHASE ].GetUInt() );
+}
+
+template<typename DerivedT>
+inline Urho3D::WeakPtr<Switcher> Partaker<DerivedT>::GetPhaseSwitcher() const noexcept
+{
+    return (switcher_);
+}
 
 } // namespace Phase
 } // namespace Shmurho

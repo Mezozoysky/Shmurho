@@ -63,22 +63,18 @@ bool Parcel::BeginLoad( Deserializer& source )
 
     bool success = false;
 
-    if ( extension == ".xml" )
-    {
-        success = BeginLoadXML( source );
-    }
-    else if ( extension == ".json" )
+    if ( extension == ".json" )
     {
         success = BeginLoadJSON( source );
     }
     else
     {
-        GetSubsystem<Log>()->Write( LOG_ERROR, "== Can't start loading parcel '" + source.GetName() + "': unknown extension '" + extension + "';" );
+        success = BeginLoadXML( source );
     }
 
     if ( !success )
     {
-        GetSubsystem<Log>()->Write( LOG_ERROR, "== Can't start loading parcel: " + source.GetName() );
+        GetSubsystem<Log>()->Write( LOG_ERROR, "Failed to load parcel file: " + source.GetName() );
     }
     else
     {
@@ -162,7 +158,7 @@ bool Parcel::BeginLoadJSON( Deserializer& source )
 
             if ( context_->GetTypeName( type ) != typeStr )
             {
-                log->Write( Urho3D::LOG_ERROR, "== Parcel parsing error: bad resource type " + typeStr );
+                log->Write( Urho3D::LOG_ERROR, ToString("Failed to parse parcel file '%s'.", typeStr.CString()));
                 continue;
             }
 
@@ -189,7 +185,10 @@ bool Parcel::BeginLoadJSON( Deserializer& source )
                 listsIt->names_.Push( nameVal.GetString() );
             }
         }
-
+    }
+    else
+    {
+        log->Write(LOG_ERROR, ToString("Failed to open parcel file '%s'.", source.GetName().CString()));
     }
 
     return ( success );

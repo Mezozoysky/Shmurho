@@ -49,6 +49,7 @@ public:
 
     void SwitchTo( unsigned phase );
     inline unsigned int CurrPhase() const noexcept { return ( currPhase_ ); };
+    inline unsigned int LastPhase() const noexcept { return ( lastPhase_ ); };
 
 protected:
     virtual void OnPhaseLeave();
@@ -58,6 +59,7 @@ private:
     void HandleBeginFrame( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
 
 private:
+    unsigned int lastPhase_;
 	unsigned int currPhase_;
 	unsigned int nextPhase_;
 	bool isSwitchRequested_;

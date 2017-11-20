@@ -45,6 +45,7 @@ namespace Phase
 
 Switcher::Switcher( Urho3D::Context* context )
     : Object( context )
+	, lastPhase_( 0 )
 	, currPhase_( 0 )
 	, nextPhase_( 0 )
 	, isSwitchRequested_( false )
@@ -76,18 +77,16 @@ void Switcher::HandleBeginFrame( StringHash eventType, VariantMap& eventData )
 {
 	if ( isSwitchRequested_ )
 	{
-		assert( nextPhase_ != 0 );
+        if ( nextPhase_ != currPhase_ )
+        {
+            OnPhaseLeave();
 
-		if ( currPhase_ != 0 )
-		{
-			OnPhaseLeave();
-		}
+            lastPhase_ = currPhase_;
+            currPhase_ = nextPhase_;
+            OnPhaseEnter();
+        }
 
-		currPhase_ = nextPhase_;
-		nextPhase_ = 0;
-		OnPhaseEnter();
-
-		isSwitchRequested_ = false;
+        isSwitchRequested_ = false;
 	}
 }
 

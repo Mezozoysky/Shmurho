@@ -22,7 +22,7 @@ set_property( GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake" )
 
 set( URHO3D_HOME $ENV{URHO3D_HOME} CACHE PATH "Top directory containing Urho3D library and includes" )
 
-list( APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../CMake/Modules" )
+list( APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake/Modules" )
 list( APPEND CMAKE_MODULE_PATH "${URHO3D_HOME}/share/Urho3D/CMake/Modules" )
 
 #
@@ -45,18 +45,18 @@ find_package( Urho3D REQUIRED )
 #
 # Modules
 #
-add_subdirectory( Phase )
-add_subdirectory( Parcel )
+add_subdirectory( Shmurho/Phase )
+add_subdirectory( Shmurho/Parcel )
 if( SHMURHO_BUILD_DEMO )
-	add_subdirectory( Demo )
+	add_subdirectory( Shmurho/Demo )
 endif()
 
 install(
-	DIRECTORY ../CMake
+	DIRECTORY ./CMake
 	DESTINATION share/Shmurho
 )
 install(
-	FILES ../README.md ../LICENSE.md
+	FILES ./README.md ./LICENSE.md
 	DESTINATION share/Shmurho
 )
 

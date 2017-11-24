@@ -115,25 +115,20 @@ void App::Start()
     startMenu_->SetPhaseSwitcher( switcher );
     bg_->SetPhaseSwitcher( switcher );
 
-    loader->AddToQueue( "Parcels/Base.json" );
-    loader->SetOnQueueFinishedCallback(
-        [=]() {
-            auto cache = GetSubsystem<ResourceCache>();
-            auto style = cache->GetExistingResource<XMLFile>( "UI/DefaultStyle.xml" );
-            assert( style != 0 );
-            if ( style != 0 )
-            {
-                GetSubsystem<UI>()->GetRoot()->SetDefaultStyle( style );
-//                 GetSubsystem<UI>()->GetRoot()->SetOpacity(0.6f);
-            }
-            auto uiTexture = cache->GetExistingResource<Texture2D>( "Textures/UI.png" );
-            assert( uiTexture != 0 );
+    auto cache = GetSubsystem<ResourceCache>();
+    auto style = cache->GetResource<XMLFile>( "UI/DefaultStyle.xml" );
+    assert( style != 0 );
+    if ( style != 0 )
+    {
+        GetSubsystem<UI>()->GetRoot()->SetDefaultStyle( style );
+//         GetSubsystem<UI>()->GetRoot()->SetOpacity(0.6f);
+    }
+    auto uiTexture = cache->GetResource<Texture2D>( "Textures/UI.png" );
+    assert( uiTexture != 0 );
 
-            loader->SetOnQueueFinishedCallback( nullptr );
-        }
-    );
-    loaderPhase_->SetSwitchPhase( GAMEPHASE_START_MENU );
-    GetSubsystem<PhaseSwitcher>()->SetPhase( GAMEPHASE_LOADER );
+    switcher->PushPhase( GAMEPHASE_START_MENU );
+    switcher->PushPhase( GAMEPHASE_LOADER );
+    loader->AddToQueue("Parcels/Base.json");
 
     SubscribeToEvent( GetSubsystem<PhaseSwitcher>(), Shmurho::Phase::E_PHASELEAVE, URHO3D_HANDLER( App, HandlePhaseLeave ) );
     SubscribeToEvent( GetSubsystem<PhaseSwitcher>(), Shmurho::Phase::E_PHASEENTER, URHO3D_HANDLER( App, HandlePhaseEnter ) );

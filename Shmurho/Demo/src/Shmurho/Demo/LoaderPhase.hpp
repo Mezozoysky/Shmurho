@@ -65,24 +65,12 @@ public:
     virtual bool Setup();
     virtual void Cleanup();
 
-    inline unsigned GetSwitchPhase() const noexcept;
-    void SetSwitchPhase( unsigned phase ) noexcept;
-
 private:
     void HandleBeginFrame( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
 
 private:
-    int switchPhase_; //int instead unsigned int is just to have negative value
     Urho3D::SharedPtr<Urho3D::Sprite> sprite_;
 };
-
-// Inliners
-
-inline unsigned LoaderPhase::GetSwitchPhase() const noexcept
-{
-    return switchPhase_;
-}
-
 
 } // namespace Demo
 } // namespace Shmurho

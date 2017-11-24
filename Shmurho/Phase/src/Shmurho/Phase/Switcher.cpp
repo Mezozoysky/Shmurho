@@ -95,7 +95,10 @@ void Switcher::HandleBeginFrame( StringHash eventType, VariantMap& eventData )
                 if (phaseRequested_ != CurrPhase()) //if CurrPhase() returns 0 then it's like the "current push is the first op"
                 {
                     OnPhaseLeave();
-                    phasePrevious_ = stack_.Back();
+                    if (CurrPhase())
+                    {
+                        phasePrevious_ = stack_.Back();
+                    }
                     stack_.Push(phaseRequested_);
                     OnPhaseEnter();
                 }
@@ -104,7 +107,7 @@ void Switcher::HandleBeginFrame( StringHash eventType, VariantMap& eventData )
 
             case OP_POP :
             {
-                if (!CurrPhase()) //if CurrPhase returns 0 then it's like the "last op is already done"
+                if (CurrPhase()) //if CurrPhase returns 0 then it's like the "last op is already done"
                 {
                     OnPhaseLeave();
                     phasePrevious_ = stack_.Back();

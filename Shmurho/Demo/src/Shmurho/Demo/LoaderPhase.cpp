@@ -33,6 +33,7 @@
 #include "LoaderPhase.hpp"
 #include "PhaseSwitcher.hpp"
 #include "ParcelLoader.hpp"
+#include "Shmurho/Parcel/ParcelEvents.hpp"
 #include <Urho3D/Core/Context.h>
 #include <Urho3D/Core/CoreEvents.h>
 #include <Urho3D/IO/Log.h>
@@ -72,7 +73,9 @@ void LoaderPhase::OnPhaseLeave( unsigned int phase )
     sprite_->SetVisible( false );
     sprite_->SetEnabled( false );
 
-    UnsubscribeFromEvent( Urho3D::E_BEGINFRAME );
+    auto loader = GetSubsystem<ParcelLoader>();
+    UnsubscribeFromEvent(loader, Shmurho::Parcel::E_PARCEL_LOADED);
+    UnsubscribeFromEvent(loader, Shmurho::Parcel::E_PARCEL_QUEUE_LOADED);
 }
 
 void LoaderPhase::OnPhaseEnter( unsigned int phase )
@@ -92,7 +95,12 @@ void LoaderPhase::OnPhaseEnter( unsigned int phase )
         PartakerBaseT::GetPhaseSwitcher()->PopPhase();
     }
 
-    SubscribeToEvent( Urho3D::E_BEGINFRAME, URHO3D_HANDLER( LoaderPhase, HandleBeginFrame ) );
+    SubscribeToEvent(loader,
+                     Shmurho::Parcel::E_PARCEL_LOADED,
+                     URHO3D_HANDLER(LoaderPhase, HandleParcelLoaded));
+    SubscribeToEvent(loader,
+                     Shmurho::Parcel::E_PARCEL_QUEUE_LOADED,
+                     URHO3D_HANDLER(LoaderPhase, HandleParcelQueueLoaded));
 }
 
 bool LoaderPhase::Setup()
@@ -152,6 +160,36 @@ void LoaderPhase::HandleBeginFrame( Urho3D::StringHash eventType, Urho3D::Varian
         }
     }
 }
+
+void LoaderPhase::HandleParcelLoaded(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData)
+{
+    String parcelName = eventData[ Shmurho::Parcel::ParcelLoaded::P_PARCEL_NAME ].GetString();
+    bool success = eventData[ Shmurho::Parcel::ParcelLoaded::P_SUCCESS ] .GetBool();
+
+    if (parcelName == "Parcels/Base.json")
+    {
+        if (success)
+        {
+            auto cache = GetSubsystem<ResourceCache>();
+            auto style = cache->GetResource<XMLFile>( "UI/DefaultStyle.xml" );
+            assert( style != 0 );
+            if ( style != 0 )
+            {
+                GetSubsystem<UI>()->GetRoot()->SetDefaultStyle( style );
+                //         GetSubsystem<UI>()->GetRoot()->SetOpacity(0.6f);
+            }
+            auto uiTexture = cache->GetResource<Texture2D>( "Textures/UI.png" );
+            assert( uiTexture != 0 );
+
+        }
+    }
+}
+
+void LoaderPhase::HandleParcelQueueLoaded(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData)
+{
+    GetSubsystem<PhaseSwitcher>()->PopPhase();
+}
+
 
 } // namespace Demo
 } // namespace Shmurho

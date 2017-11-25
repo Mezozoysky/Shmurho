@@ -54,16 +54,6 @@ class ParcelLoader
 public:
     ParcelLoader( Urho3D::Context* context );
     virtual ~ParcelLoader() noexcept = default;
-
-    void SetOnQueueFinishedCallback( const std::function<void(void)>& callback ) noexcept;
-
-protected:
-    virtual void OnQueueLoaded() override;
-    virtual void OnParcelLoaded( const Urho3D::String& name, bool successful ) override;
-    virtual void OnLoaded( const Urho3D::String& name, bool successful, Urho3D::Resource* resource ) override;
-
-private:
-    std::function<void(void)> onQueueFinishedCallback_;
 };
 
 } // namespace Demo

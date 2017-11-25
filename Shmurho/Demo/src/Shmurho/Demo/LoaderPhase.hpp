@@ -66,7 +66,9 @@ public:
     virtual void Cleanup();
 
 private:
-    void HandleBeginFrame( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
+    void HandleBeginFrame(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
+    void HandleParcelLoaded(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
+    void HandleParcelQueueLoaded(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
 
 private:
     Urho3D::SharedPtr<Urho3D::Sprite> sprite_;

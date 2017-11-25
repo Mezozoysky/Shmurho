@@ -54,41 +54,7 @@ namespace Demo
 
 ParcelLoader::ParcelLoader( Urho3D::Context* context )
     : Loader( context )
-    , onQueueFinishedCallback_( nullptr )
 {
-}
-
-void ParcelLoader::SetOnQueueFinishedCallback( const std::function<void(void)>& callback ) noexcept
-{
-    onQueueFinishedCallback_ = callback;
-}
-
-void ParcelLoader::OnQueueLoaded()
-{
-    GetSubsystem<Log>()->Write( LOG_DEBUG, "== LOADING FINISHED! " );
-    if ( onQueueFinishedCallback_ != nullptr )
-    {
-        onQueueFinishedCallback_();
-    }
-}
-
-void ParcelLoader::OnParcelLoaded( const Urho3D::String& name, bool successful )
-{
-    GetSubsystem<Log>()->Write( LOG_DEBUG, ToString( "== PARCEL LOADED! '%s' (success: %u)", name.CString(), successful ) );
-}
-
-void ParcelLoader::OnLoaded( const Urho3D::String& name, bool successful, Resource* resource )
-{
-    GetSubsystem<Log>()->Write( LOG_DEBUG, ToString( "== RESOURCE LOADED! '%s' (success: %u)", name.CString(), successful ) );
-    if (
-        successful
-        && resource->GetTypeName() == Shmurho::Parcel::Parcel::GetTypeNameStatic()
-        && name != GetCurrParcel()
-        )
-    {
-        AddToQueue( name );
-        GetSubsystem<Log>()->Write( LOG_DEBUG, ToString( "== Loaded resource '%s' (Parcel) added to queue.", name.CString() ) );
-    }
 }
 
 } // namespace Demo

@@ -115,23 +115,13 @@ void App::Start()
     startMenu_->SetPhaseSwitcher( switcher );
     bg_->SetPhaseSwitcher( switcher );
 
-    auto cache = GetSubsystem<ResourceCache>();
-    auto style = cache->GetResource<XMLFile>( "UI/DefaultStyle.xml" );
-    assert( style != 0 );
-    if ( style != 0 )
-    {
-        GetSubsystem<UI>()->GetRoot()->SetDefaultStyle( style );
-//         GetSubsystem<UI>()->GetRoot()->SetOpacity(0.6f);
-    }
-    auto uiTexture = cache->GetResource<Texture2D>( "Textures/UI.png" );
-    assert( uiTexture != 0 );
-
     switcher->PushPhase( GAMEPHASE_START_MENU );
     switcher->PushPhase( GAMEPHASE_LOADER );
     loader->AddToQueue("Parcels/Base.json");
+    loader->AddToQueue("Parcels/Big.json");
 
-    SubscribeToEvent( GetSubsystem<PhaseSwitcher>(), Shmurho::Phase::E_PHASELEAVE, URHO3D_HANDLER( App, HandlePhaseLeave ) );
-    SubscribeToEvent( GetSubsystem<PhaseSwitcher>(), Shmurho::Phase::E_PHASEENTER, URHO3D_HANDLER( App, HandlePhaseEnter ) );
+    SubscribeToEvent( switcher, Shmurho::Phase::E_PHASELEAVE, URHO3D_HANDLER( App, HandlePhaseLeave ) );
+    SubscribeToEvent( switcher, Shmurho::Phase::E_PHASEENTER, URHO3D_HANDLER( App, HandlePhaseEnter ) );
     SubscribeToEvent( startMenu_.Get(), E_STARTMENUEXITREQUESTED, URHO3D_HANDLER( App, HandleStartMenuExitRequested ) );
 }
 

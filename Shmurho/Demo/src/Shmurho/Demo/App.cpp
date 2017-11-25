@@ -115,8 +115,9 @@ void App::Start()
     startMenu_->SetPhaseSwitcher( switcher );
     bg_->SetPhaseSwitcher( switcher );
 
-    switcher->PushPhase( GAMEPHASE_START_MENU );
-    switcher->PushPhase( GAMEPHASE_LOADER );
+    switcher->Push( GAMEPHASE_START_MENU );
+    switcher->Push( GAMEPHASE_LOADER );
+    switcher->Switch();
     loader->AddToQueue("Parcels/Base.json");
     loader->AddToQueue("Parcels/Big.json");
 
@@ -133,24 +134,20 @@ void App::Stop()
 void App::HandlePhaseLeave( StringHash eventType, VariantMap& eventData )
 {
     auto phase = eventData[ Shmurho::Phase::PhaseLeave::P_PHASE ].GetUInt();
-    auto op = eventData[ Shmurho::Phase::PhaseLeave::P_OP ].GetUInt();
     auto phaseNext = eventData[ Shmurho::Phase::PhaseLeave::P_PHASE_NEXT ].GetUInt();
     GetSubsystem<Log>()->Write(LOG_INFO,
-                               ToString("-- Leaving '%u' phase; operation: %u; next phase: '%u'",
+                               ToString("-- Leaving '%u' phase; next phase: '%u'",
                                         phase,
-                                        op,
                                         phaseNext));
 }
 
 void App::HandlePhaseEnter( StringHash eventType, VariantMap& eventData )
 {
     auto phase = eventData[ Shmurho::Phase::PhaseEnter::P_PHASE ].GetUInt();
-    auto op = eventData[ Shmurho::Phase::PhaseEnter::P_OP ].GetUInt();
     auto phasePrev = eventData[ Shmurho::Phase::PhaseEnter::P_PHASE_PREV ].GetUInt();
     GetSubsystem<Log>()->Write(LOG_INFO,
-                               ToString("-- Entering '%u' phase; operation: %u; prev phase: '%u'",
+                               ToString("-- Entering '%u' phase; prev phase: '%u'",
                                         phase,
-                                        op,
                                         phasePrev));
 }
 

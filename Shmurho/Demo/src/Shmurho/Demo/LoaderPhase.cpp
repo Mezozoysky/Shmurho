@@ -92,7 +92,8 @@ void LoaderPhase::OnPhaseEnter( unsigned int phase )
     {
         //TODO: do something
         GetSubsystem<Log>()->Write( LOG_ERROR, "Can't start loading parcel queue!" );
-        PartakerBaseT::GetPhaseSwitcher()->PopPhase();
+        PartakerBaseT::GetPhaseSwitcher()->Pop();
+        PartakerBaseT::GetPhaseSwitcher()->Switch();
     }
 
     SubscribeToEvent(loader,
@@ -156,7 +157,8 @@ void LoaderPhase::HandleBeginFrame( Urho3D::StringHash eventType, Urho3D::Varian
         auto switcher = PartakerBaseT::GetPhaseSwitcher().Get();
         if (switcher != nullptr)
         {
-            switcher->PopPhase();
+            switcher->Pop();
+            switcher->Switch();
         }
     }
 }
@@ -187,7 +189,9 @@ void LoaderPhase::HandleParcelLoaded(Urho3D::StringHash eventType, Urho3D::Varia
 
 void LoaderPhase::HandleParcelQueueLoaded(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData)
 {
-    GetSubsystem<PhaseSwitcher>()->PopPhase();
+    auto switcher = GetSubsystem<PhaseSwitcher>();
+    switcher->Pop();
+    switcher->Switch();
 }
 
 

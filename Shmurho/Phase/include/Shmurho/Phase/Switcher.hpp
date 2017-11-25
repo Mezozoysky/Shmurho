@@ -44,25 +44,18 @@ class Switcher
     URHO3D_OBJECT( Switcher, Urho3D::Object );
 
 public:
-    enum Op
-    {
-        OP_NONE = 0,
-        OP_PUSH,
-        OP_POP,
-        OP_SWITCH,
-        OP_SET
-    };
-
-    Switcher( Urho3D::Context* context ) noexcept;
+    Switcher(Urho3D::Context* context);
     virtual ~Switcher() noexcept = default;
 
-    inline void PushPhase(unsigned phase) const noexcept;
-    inline void PopPhase() const noexcept;
-    inline void SwitchPhase(unsigned phase) const noexcept;
-    inline void SetPhase(unsigned phase) const noexcept;
+    inline void Push(unsigned phase) noexcept;
+    inline void Push(const Urho3D::PODVector<unsigned>& phases) noexcept;
+    inline void Pop() noexcept;
+    inline void Replace(unsigned phase) noexcept;
+    inline void Switch() noexcept;
 
-    unsigned CurrPhase() const noexcept;
-    inline unsigned PrevPhase() const noexcept;
+    inline unsigned GetTopPhase() const noexcept;
+    inline unsigned GetCurrPhase() const noexcept;
+    inline unsigned GetPrevPhase() const noexcept;
 
 protected:
     virtual void OnPhaseLeave();
@@ -72,45 +65,51 @@ private:
     void HandleBeginFrame( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
 
 private:
-    unsigned phaseCurrent_;
-    mutable unsigned phaseRequested_;
-    unsigned phasePrevious_;
-    mutable unsigned opRequested_;
-
     Urho3D::PODVector<unsigned> stack_;
+    unsigned phaseCurrent_;
+    unsigned phasePrevious_;
+    bool isSwitchRequested_;
 };
 
-inline void Switcher::PushPhase(unsigned phase) const noexcept
+inline void Switcher::Push(unsigned phase) noexcept
 {
-    phaseRequested_ = phase;
-    opRequested_ = OP_PUSH;
+    stack_.Push(phase);
 }
 
-inline void Switcher::PopPhase() const noexcept
+inline void Switcher::Push(const Urho3D::PODVector<unsigned>& phases) noexcept
 {
-    opRequested_ = OP_POP;
+    stack_.Push(phases);
 }
 
-inline void Switcher::SwitchPhase( unsigned phase ) const noexcept
+inline void Switcher::Pop() noexcept
 {
-    phaseRequested_ = phase;
-    opRequested_ = OP_SWITCH;
+    stack_.Pop();
 }
 
-inline void Switcher::SetPhase(unsigned phase) const noexcept
+inline void Switcher::Replace(unsigned phase) noexcept
 {
-    phaseRequested_ = phase;
-    opRequested_ = OP_SET;
+    stack_.Pop();
+    stack_.Push(phase);
 }
 
-inline unsigned Switcher::CurrPhase() const noexcept
+inline void Switcher::Switch() noexcept
+{
+    Switcher::isSwitchRequested_ = true;
+}
+
+inline unsigned Switcher::GetTopPhase() const noexcept
 {
     return (stack_.Empty() ? 0 : stack_.Back());
 }
 
-inline unsigned Switcher::PrevPhase() const noexcept
+inline unsigned Switcher::GetCurrPhase() const noexcept
 {
-    return ( phasePrevious_ );
+    return (phaseCurrent_);
+}
+
+inline unsigned Switcher::GetPrevPhase() const noexcept
+{
+    return (phasePrevious_);
 }
 
 } // namespace Phase

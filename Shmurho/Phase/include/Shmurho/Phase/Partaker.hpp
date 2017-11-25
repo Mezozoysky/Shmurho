@@ -58,8 +58,8 @@ public:
 
     void SetPhaseSwitcher( Switcher* switcher ) noexcept;
 
-    virtual void OnPhaseLeave( unsigned phase ) = 0;
-    virtual void OnPhaseEnter( unsigned phase ) = 0;
+    virtual void OnPhaseLeave(unsigned phase, unsigned phaseNext) = 0;
+    virtual void OnPhaseEnter(unsigned phase, unsigned phasePrev) = 0;
 
 protected:
     inline void HandlePhaseLeave( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
@@ -111,13 +111,17 @@ void Partaker<DerivedT>::SetPhaseSwitcher( Switcher* switcher ) noexcept
 template<typename DerivedT>
 inline void Partaker<DerivedT>::HandlePhaseLeave( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData )
 {
-    OnPhaseLeave( eventData[ PhaseLeave::P_PHASE ].GetUInt() );
+    auto phase = eventData[ PhaseLeave::P_PHASE ].GetUInt();
+    auto phaseNext = eventData[ PhaseLeave::P_PHASE_NEXT ].GetUInt();
+    OnPhaseLeave(phase, phaseNext);
 }
 
 template<typename DerivedT>
 inline void Partaker<DerivedT>::HandlePhaseEnter( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData )
 {
-    OnPhaseEnter( eventData[ PhaseEnter::P_PHASE ].GetUInt() );
+    auto phase = eventData[ PhaseEnter::P_PHASE ].GetUInt();
+    auto phasePrev = eventData[ PhaseEnter::P_PHASE_PREV ].GetUInt();
+    OnPhaseEnter(phase, phasePrev);
 }
 
 template<typename DerivedT>

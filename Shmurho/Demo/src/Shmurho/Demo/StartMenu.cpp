@@ -60,7 +60,7 @@ StartMenu::StartMenu( Context* context )
 {
 }
 
-void StartMenu::OnPhaseLeave( unsigned phase )
+void StartMenu::OnPhaseLeave(unsigned phase, unsigned phaseNext)
 {
     if ( phase != GAMEPHASE_START_MENU ) return;
 
@@ -69,7 +69,7 @@ void StartMenu::OnPhaseLeave( unsigned phase )
     window_->SetVisible( false );
 }
 
-void StartMenu::OnPhaseEnter( unsigned phase )
+void StartMenu::OnPhaseEnter(unsigned phase, unsigned phasePrev)
 {
     if ( phase != GAMEPHASE_START_MENU ) return;
 

@@ -65,9 +65,9 @@ LoaderPhase::LoaderPhase( Context* context ) noexcept
 {
 }
 
-void LoaderPhase::OnPhaseLeave( unsigned int phase )
+void LoaderPhase::OnPhaseLeave(unsigned phase, unsigned phaseNext)
 {
-    if ( phase != GAMEPHASE_LOADER ) return;
+    if ( phase != GAMEPHASE_LOADER) return;
 
     assert( sprite_.NotNull() );
     sprite_->SetVisible( false );
@@ -78,9 +78,9 @@ void LoaderPhase::OnPhaseLeave( unsigned int phase )
     UnsubscribeFromEvent(loader, Shmurho::Parcel::E_PARCEL_QUEUE_LOADED);
 }
 
-void LoaderPhase::OnPhaseEnter( unsigned int phase )
+void LoaderPhase::OnPhaseEnter(unsigned phase, unsigned phasePrev)
 {
-    if ( phase != GAMEPHASE_LOADER ) return;
+    if (phase != GAMEPHASE_LOADER) return;
 
     Setup();
     assert( sprite_.NotNull() );
@@ -145,23 +145,23 @@ void LoaderPhase::Cleanup()
 {
 }
 
-void LoaderPhase::HandleBeginFrame( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData )
-{
-    auto loader = context_->GetSubsystem<ParcelLoader>();
-    if ( loader->IsLoading() )
-    {
-        //TODO: update data of loading progress here
-    }
-    else // Loading just finished
-    {
-        auto switcher = PartakerBaseT::GetPhaseSwitcher().Get();
-        if (switcher != nullptr)
-        {
-            switcher->Pop();
-            switcher->Switch();
-        }
-    }
-}
+// void LoaderPhase::HandleBeginFrame( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData )
+// {
+//     auto loader = context_->GetSubsystem<ParcelLoader>();
+//     if ( loader->IsLoading() )
+//     {
+//         //TODO: update data of loading progress here
+//     }
+//     else // Loading just finished
+//     {
+//         auto switcher = PartakerBaseT::GetPhaseSwitcher().Get();
+//         if (switcher != nullptr)
+//         {
+//             switcher->Pop();
+//             switcher->Switch();
+//         }
+//     }
+// }
 
 void LoaderPhase::HandleParcelLoaded(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData)
 {

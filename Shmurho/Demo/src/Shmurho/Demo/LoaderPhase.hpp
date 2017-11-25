@@ -59,14 +59,14 @@ public:
     LoaderPhase( Urho3D::Context* context ) noexcept;
     virtual ~LoaderPhase() noexcept = default;
 
-    virtual void OnPhaseLeave( unsigned phase ) override;
-    virtual void OnPhaseEnter( unsigned phase ) override;
+    virtual void OnPhaseLeave(unsigned phase, unsigned phaseNext) override;
+    virtual void OnPhaseEnter(unsigned phase, unsigned phasePrev) override;
 
     virtual bool Setup();
     virtual void Cleanup();
 
 private:
-    void HandleBeginFrame(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
+//     void HandleBeginFrame(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
     void HandleParcelLoaded(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
     void HandleParcelQueueLoaded(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
 

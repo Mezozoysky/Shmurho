@@ -61,8 +61,8 @@ public:
     Bg(Urho3D::Context *context);
     virtual ~Bg() noexcept = default;
 
-    virtual void OnPhaseLeave(unsigned phase) override;
-    virtual void OnPhaseEnter(unsigned phase) override;
+    virtual void OnPhaseLeave(unsigned phase, unsigned phaseNext) override;
+    virtual void OnPhaseEnter(unsigned phase, unsigned phasePrev) override;
 
     virtual bool Setup();
     virtual void Cleanup();

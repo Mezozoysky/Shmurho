@@ -64,8 +64,8 @@ public:
     StartMenu( Urho3D::Context* context );
     virtual ~StartMenu() noexcept = default;
 
-    virtual void OnPhaseLeave( unsigned phase ) override;
-    virtual void OnPhaseEnter( unsigned phase ) override;
+    virtual void OnPhaseLeave(unsigned phase, unsigned phaseNext) override;
+    virtual void OnPhaseEnter(unsigned phase, unsigned phasePrev) override;
 
     virtual bool Setup();
     virtual void Cleanup();

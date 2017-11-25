@@ -74,14 +74,14 @@ Bg::Bg(Context* context)
 {
 }
 
-void Bg::OnPhaseLeave(unsigned phase)
+void Bg::OnPhaseLeave(unsigned phase, unsigned phaseNext)
 {
 //     if (phase != GAMEPHASE_START_MENU) return;
 //     assert(bgScene_.NotNull());
 //     bgScene_->SetUpdateEnabled(false);
 }
 
-void Bg::OnPhaseEnter(unsigned phase)
+void Bg::OnPhaseEnter(unsigned phase, unsigned phasePrev)
 {
     if (phase != GAMEPHASE_START_MENU) return;
 

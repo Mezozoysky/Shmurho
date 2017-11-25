@@ -167,24 +167,6 @@ void LoaderPhase::HandleParcelLoaded(Urho3D::StringHash eventType, Urho3D::Varia
 {
     String parcelName = eventData[ Shmurho::Parcel::ParcelLoaded::P_PARCEL_NAME ].GetString();
     bool success = eventData[ Shmurho::Parcel::ParcelLoaded::P_SUCCESS ] .GetBool();
-
-    if (parcelName == "Parcels/Base.json")
-    {
-        if (success)
-        {
-            auto cache = GetSubsystem<ResourceCache>();
-            auto style = cache->GetResource<XMLFile>( "UI/DefaultStyle.xml" );
-            assert( style != 0 );
-            if ( style != 0 )
-            {
-                GetSubsystem<UI>()->GetRoot()->SetDefaultStyle( style );
-                //         GetSubsystem<UI>()->GetRoot()->SetOpacity(0.6f);
-            }
-            auto uiTexture = cache->GetResource<Texture2D>( "Textures/UI.png" );
-            assert( uiTexture != 0 );
-
-        }
-    }
 }
 
 void LoaderPhase::HandleParcelQueueLoaded(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData)

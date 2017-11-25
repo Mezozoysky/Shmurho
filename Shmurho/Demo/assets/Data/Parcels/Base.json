@@ -1,24 +1,6 @@
 {
 	"resource-lists" : [
 		{
-			"type" : "XMLFile",
-			"names" : [
-				"UI/DefaultStyle.xml"
-			]
-		},
-		{
-			"type" : "Texture2D",
-			"names" : [
-				"Textures/UI.png"
-			]
-		},
-		{
-            "type" : "Sprite2D",
-            "names" : [
-                "Textures/DesertTile.png"
-            ]
-		},
-		{
 			"type" : "Font",
 			"names" : [
 				"Fonts/Anonymous Pro.ttf"

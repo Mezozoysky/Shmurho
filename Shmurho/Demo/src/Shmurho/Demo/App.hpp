@@ -61,6 +61,8 @@ public:
     virtual void Start() override;
     virtual void Stop() override;
 
+    virtual bool RequestQuit();
+
 protected:
     void HandlePhaseLeave( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
     void HandlePhaseEnter( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );

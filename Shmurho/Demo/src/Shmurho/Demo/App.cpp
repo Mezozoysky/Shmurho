@@ -115,11 +115,10 @@ void App::Start()
     startMenu_->SetPhaseSwitcher( switcher );
     bg_->SetPhaseSwitcher( switcher );
 
-    switcher->Push( GAMEPHASE_START_MENU );
-    switcher->Push( GAMEPHASE_LOADER );
-    switcher->Switch();
     loader->AddToQueue("Parcels/Base.json");
     loader->AddToQueue("Parcels/Big.json");
+    switcher->Push({GAMEPHASE_START_MENU, GAMEPHASE_LOADER});
+    switcher->Switch();
 
     SubscribeToEvent( switcher, Shmurho::Phase::E_PHASELEAVE, URHO3D_HANDLER( App, HandlePhaseLeave ) );
     SubscribeToEvent( switcher, Shmurho::Phase::E_PHASEENTER, URHO3D_HANDLER( App, HandlePhaseEnter ) );
@@ -131,6 +130,13 @@ void App::Stop()
     UnsubscribeFromAllEvents();
 }
 
+bool App::RequestQuit()
+{
+    bool accepted = true;
+    GetSubsystem<Engine>()->Exit();
+    return (accepted);
+}
+
 void App::HandlePhaseLeave( StringHash eventType, VariantMap& eventData )
 {
     auto phase = eventData[ Shmurho::Phase::PhaseLeave::P_PHASE ].GetUInt();
@@ -139,6 +145,25 @@ void App::HandlePhaseLeave( StringHash eventType, VariantMap& eventData )
                                ToString("-- Leaving '%u' phase; next phase: '%u'",
                                         phase,
                                         phaseNext));
+
+    if (phase == GAMEPHASE_NONE)
+    {
+        auto cache = GetSubsystem<ResourceCache>();
+
+        // setup ui root with default ui style
+        auto style = cache->GetResource<XMLFile>( "UI/DefaultStyle.xml" );
+        assert( style != 0 );
+        if ( style != 0 )
+        {
+            auto uiRoot = GetSubsystem<UI>()->GetRoot();
+            uiRoot->SetDefaultStyle( style );
+            uiRoot->SetOpacity(0.6f);
+        }
+
+        // preload ui markup image
+        auto uiTexture = cache->GetResource<Texture2D>( "Textures/UI.png" );
+        assert( uiTexture != 0 );
+    }
 }
 
 void App::HandlePhaseEnter( StringHash eventType, VariantMap& eventData )
@@ -149,12 +174,16 @@ void App::HandlePhaseEnter( StringHash eventType, VariantMap& eventData )
                                ToString("-- Entering '%u' phase; prev phase: '%u'",
                                         phase,
                                         phasePrev));
+    if (phase == GAMEPHASE_NONE)
+    {
+        RequestQuit();
+    }
 }
 
 void App::HandleStartMenuExitRequested( StringHash eventType, VariantMap& eventData )
 {
     GetSubsystem<Log>()->Write( LOG_DEBUG, "== EXIT REQUEST DONE!!!" );
-    engine_->Exit();
+    RequestQuit();
 }
 
 

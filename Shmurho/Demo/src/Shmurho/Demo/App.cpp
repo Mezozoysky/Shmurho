@@ -90,6 +90,13 @@ void App::Setup()
     engineParameters_[ "WindowWidth" ] = 1280;
     engineParameters_[ "WindowHeight" ] = 720;
     engineParameters_[ "WindowResizable" ] = true;
+
+    context_->RegisterSubsystem( new PhaseSwitcher( context_ ) );
+    context_->RegisterSubsystem( new ParcelLoader( context_ ) );
+    context_->RegisterSubsystem(new Script(context_));
+
+    DevKbdController::RegisterObject( context_ );
+    Shmurho::Parcel::Parcel::RegisterObject( context_ );
 }
 
 void App::Start()
@@ -99,22 +106,14 @@ void App::Start()
     log->Write( LOG_DEBUG, "== App start" );
 
     SetRandomSeed( Time::GetSystemTime() );
-
-    auto switcher = new PhaseSwitcher( context_ );
-    context_->RegisterSubsystem( switcher );
-    auto loader = new ParcelLoader( context_ );
-    context_->RegisterSubsystem( loader );
-    context_->RegisterSubsystem(new Script(context_));
-
-    DevKbdController::RegisterObject( context_ );
-    Shmurho::Parcel::Parcel::RegisterObject( context_ );
-
     GetSubsystem<Input>()->SetTouchEmulation( true );
 
+    auto switcher = GetSubsystem<PhaseSwitcher>();
     loaderPhase_->SetPhaseSwitcher( switcher );
     startMenu_->SetPhaseSwitcher( switcher );
     bg_->SetPhaseSwitcher( switcher );
 
+    auto loader = GetSubsystem<ParcelLoader>();
     loader->AddToQueue("Parcels/Base.json");
     loader->AddToQueue("Parcels/Big.json");
     switcher->Push({GAMEPHASE_START_MENU, GAMEPHASE_LOADER});

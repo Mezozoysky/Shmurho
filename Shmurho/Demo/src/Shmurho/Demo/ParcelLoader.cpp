@@ -43,8 +43,8 @@
 #include <Urho3D/Graphics/Texture2D.h>
 
 using namespace Urho3D;
-using Shmurho::Parcel::Loader;
 using Shmurho::Parcel::Parcel;
+
 
 
 namespace Shmurho
@@ -53,7 +53,7 @@ namespace Demo
 {
 
 ParcelLoader::ParcelLoader( Urho3D::Context* context )
-    : Loader( context )
+    : Shmurho::Parcel::ParcelLoader( context )
 {
 }
 

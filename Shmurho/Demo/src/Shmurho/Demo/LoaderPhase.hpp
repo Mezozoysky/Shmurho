@@ -33,7 +33,6 @@
 #pragma once
 
 #include <Shmurho/Phase/Partaker.hpp>
-#include "ParcelLoader.hpp"
 #include <Urho3D/Core/Object.h>
 
 namespace Urho3D

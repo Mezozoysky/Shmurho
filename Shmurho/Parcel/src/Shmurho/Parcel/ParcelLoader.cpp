@@ -30,7 +30,7 @@
 /// \details --
 
 
-#include <Shmurho/Parcel/Loader.hpp>
+#include <Shmurho/Parcel/ParcelLoader.hpp>
 #include <Shmurho/Parcel/Parcel.hpp>
 #include <Shmurho/Parcel/ParcelEvents.hpp>
 
@@ -49,22 +49,22 @@ namespace Parcel
 {
 
 
-Loader::Loader( Urho3D::Context* context )
+ParcelLoader::ParcelLoader( Urho3D::Context* context )
     : Urho3D::Object( context )
     , isParcelLoading_( false )
     , isLoading_( false )
 {
 }
 
-bool Loader::StartLoadingQueue()
+bool ParcelLoader::StartLoadingQueue()
 {
-    if ( queue_.Empty() )
+    if ( parcelQueue_.Empty() )
     {
         return ( false );
     }
 
-    Urho3D::String nextParcel = queue_.Front();
-    queue_.PopFront();
+    Urho3D::String nextParcel = parcelQueue_.Front();
+    parcelQueue_.PopFront();
     bool success = StartLoadingParcel( nextParcel );
     if ( !success )
     {
@@ -74,17 +74,17 @@ bool Loader::StartLoadingQueue()
     return ( success );
 }
 
-void Loader::AddToQueue( const Urho3D::String& parcelName ) noexcept
+void ParcelLoader::AddToQueue( const Urho3D::String& parcelName ) noexcept
 {
-    queue_.Push( parcelName );
+    parcelQueue_.Push( parcelName );
 }
 
-void Loader::ClearQueue() noexcept
+void ParcelLoader::ClearQueue() noexcept
 {
-    queue_.Clear();
+    parcelQueue_.Clear();
 }
 
-bool Loader::StartLoadingParcel( const Urho3D::String& parcelName )
+bool ParcelLoader::StartLoadingParcel( const Urho3D::String& parcelName )
 {
     assert( !parcelName.Empty() );
     currParcel_ = String::EMPTY;
@@ -123,12 +123,12 @@ bool Loader::StartLoadingParcel( const Urho3D::String& parcelName )
         }
 
         currParcel_ = parcelName;
-        SubscribeToEvent( E_RESOURCEBACKGROUNDLOADED, URHO3D_HANDLER( Loader, HandleResourceBackgroundLoaded ) );
+        SubscribeToEvent( E_RESOURCEBACKGROUNDLOADED, URHO3D_HANDLER( ParcelLoader, HandleResourceBackgroundLoaded ) );
         return ( true );
     }
 }
 
-bool Loader::StartLoadingParcel( Parcel* parcel )
+bool ParcelLoader::StartLoadingParcel( Parcel* parcel )
 {
     assert( !IsLoading() );
     assert( parcel != 0 );
@@ -137,12 +137,12 @@ bool Loader::StartLoadingParcel( Parcel* parcel )
 
     if ( isLoading_ )
     {
-        SubscribeToEvent( E_RESOURCEBACKGROUNDLOADED, URHO3D_HANDLER( Loader, HandleResourceBackgroundLoaded ) );
+        SubscribeToEvent( E_RESOURCEBACKGROUNDLOADED, URHO3D_HANDLER( ParcelLoader, HandleResourceBackgroundLoaded ) );
     }
     return ( isLoading_ );
 }
 
-void Loader::HandleResourceBackgroundLoaded( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData )
+void ParcelLoader::HandleResourceBackgroundLoaded( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData )
 {
     using namespace ResourceBackgroundLoaded;
 
@@ -211,7 +211,7 @@ void Loader::HandleResourceBackgroundLoaded( Urho3D::StringHash eventType, Urho3
     }
 }
 
-void Loader::OnLoaded( const Urho3D::String& name, bool successful, Urho3D::Resource* resource )
+void ParcelLoader::OnLoaded( const Urho3D::String& name, bool successful, Urho3D::Resource* resource )
 {
     if (
         successful
@@ -224,7 +224,7 @@ void Loader::OnLoaded( const Urho3D::String& name, bool successful, Urho3D::Reso
     }
 }
 
-void Loader::OnParcelLoaded( const Urho3D::String& name, bool successful)
+void ParcelLoader::OnParcelLoaded( const Urho3D::String& name, bool successful)
 {
     assert( name == GetCurrParcel() );
 
@@ -235,13 +235,13 @@ void Loader::OnParcelLoaded( const Urho3D::String& name, bool successful)
     SendEvent( Shmurho::Parcel::E_PARCEL_LOADED, eventData );
 }
 
-void Loader::OnQueueLoaded()
+void ParcelLoader::OnQueueLoaded()
 {
     Urho3D::VariantMap& eventData = GetEventDataMap();
     SendEvent( Shmurho::Parcel::E_PARCEL_QUEUE_LOADED, eventData );
 }
 
-bool Loader::StartLoading()
+bool ParcelLoader::StartLoading()
 {
     auto log = GetSubsystem<Log>();
     auto cache = GetSubsystem<ResourceCache>();

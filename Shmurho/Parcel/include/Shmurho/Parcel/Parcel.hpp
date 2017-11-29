@@ -47,7 +47,7 @@ namespace Shmurho
 namespace Parcel
 {
 
-class Parcel
+class URHO3D_API Parcel
     : public Urho3D::Resource
 {
     URHO3D_OBJECT( Parcel, Urho3D::Resource )

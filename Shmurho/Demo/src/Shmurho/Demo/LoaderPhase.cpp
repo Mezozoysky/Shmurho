@@ -46,7 +46,6 @@
 
 using namespace Urho3D;
 using Urho3D::Context;
-using Shmurho::Parcel::Loader;
 using Shmurho::Parcel::Parcel;
 
 

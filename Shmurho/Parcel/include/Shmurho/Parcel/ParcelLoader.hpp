@@ -44,21 +44,21 @@ namespace Parcel
 {
 
 
-class Loader
+class ParcelLoader
 : public Urho3D::Object
 {
-    URHO3D_OBJECT( Loader, Urho3D::Object );
+    URHO3D_OBJECT( ParcelLoader, Urho3D::Object );
 
 public:
-    Loader( Urho3D::Context* context );
-    virtual ~Loader() noexcept = default;
+    ParcelLoader( Urho3D::Context* context );
+    virtual ~ParcelLoader() noexcept = default;
 
     bool StartLoadingQueue();
     void AddToQueue( const Urho3D::String& parcelName ) noexcept;
     void ClearQueue() noexcept;
     inline const Urho3D::List<Urho3D::String>& GetQueue() const noexcept
     {
-        return ( queue_ );
+        return ( parcelQueue_ );
     }
 
     inline bool IsLoading() const noexcept { return ( isParcelLoading_ || isLoading_ ); };
@@ -78,7 +78,7 @@ private:
 
 private:
     Urho3D::String currParcel_;
-    Urho3D::List<Urho3D::String> queue_;
+    Urho3D::List<Urho3D::String> parcelQueue_;
     Urho3D::List<Urho3D::String> resourceQueue_;
 
     bool isParcelLoading_;

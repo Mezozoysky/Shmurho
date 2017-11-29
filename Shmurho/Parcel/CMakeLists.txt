@@ -14,12 +14,12 @@ set( MODULE_SOURCES "" )
 # ===============================================
 set( GROUP_HEADERS
     ${MODULE_ROOT}/include/${MODULE_NSPATH}/Parcel.hpp
-    ${MODULE_ROOT}/include/${MODULE_NSPATH}/Loader.hpp
+    ${MODULE_ROOT}/include/${MODULE_NSPATH}/ParcelLoader.hpp
     ${MODULE_ROOT}/include/${MODULE_NSPATH}/ParcelEvents.hpp
 )
 set( GROUP_SOURCES
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/Parcel.cpp
-    ${MODULE_ROOT}/src/${MODULE_NSPATH}/Loader.cpp
+    ${MODULE_ROOT}/src/${MODULE_NSPATH}/ParcelLoader.cpp
 )
 source_group( "${MODULE_NAME}\\${MODULE_NSPATH}"
   FILES ${GROUP_HEADERS} ${GROUP_SOURCES}

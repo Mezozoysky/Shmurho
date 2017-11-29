@@ -133,6 +133,7 @@ bool Parcel::BeginLoadXML( Deserializer& source )
 ///     ]
 /// }
 ///
+
 bool Parcel::BeginLoadJSON( Deserializer& source )
 {
     auto log = GetSubsystem<Log>();

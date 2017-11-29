@@ -32,6 +32,7 @@
 
 #include "App.hpp"
 #include "PhaseSwitcher.hpp"
+#include "ParcelLoader.hpp"
 #include "LoaderPhase.hpp"
 #include "DevKbdController.hpp"
 #include "StartMenu.hpp"

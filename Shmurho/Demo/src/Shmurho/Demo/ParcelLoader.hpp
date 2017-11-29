@@ -32,7 +32,7 @@
 
 #pragma once
 
-#include <Shmurho/Parcel/Loader.hpp>
+#include <Shmurho/Parcel/ParcelLoader.hpp>
 #include <Urho3D/Container/Str.h>
 #include <functional>
 
@@ -47,12 +47,12 @@ namespace Demo
 {
 
 class ParcelLoader
-: public Shmurho::Parcel::Loader
+: public Shmurho::Parcel::ParcelLoader
 {
-    URHO3D_OBJECT( ParcelLoader, Shmurho::Parcel::Loader );
+    URHO3D_OBJECT( ParcelLoader, Shmurho::Parcel::ParcelLoader );
 
 public:
-    ParcelLoader( Urho3D::Context* context );
+    ParcelLoader ( Urho3D::Context* context );
     virtual ~ParcelLoader() noexcept = default;
 };
 

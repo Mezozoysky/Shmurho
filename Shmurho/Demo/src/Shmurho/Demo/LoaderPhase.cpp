@@ -45,8 +45,8 @@
 #include <Urho3D/Graphics/Texture2D.h>
 
 using namespace Urho3D;
-using Urho3D::Context;
 using Shmurho::Parcel::Parcel;
+using Urho3D::Context;
 
 
 namespace Shmurho
@@ -54,23 +54,24 @@ namespace Shmurho
 namespace Demo
 {
 
-void LoaderPhase::RegisterObject( Context* context )
+void LoaderPhase::RegisterObject(Context* context)
 {
     context->RegisterFactory<LoaderPhase>();
 }
 
-LoaderPhase::LoaderPhase( Context* context ) noexcept
-    : Object( context )
+LoaderPhase::LoaderPhase(Context* context) noexcept
+: Object(context)
 {
 }
 
 void LoaderPhase::OnPhaseLeave(unsigned phase, unsigned phaseNext)
 {
-    if ( phase != GAMEPHASE_LOADER) return;
+    if (phase != GAMEPHASE_LOADER)
+        return;
 
-    assert( sprite_.NotNull() );
-    sprite_->SetVisible( false );
-    sprite_->SetEnabled( false );
+    assert(sprite_.NotNull());
+    sprite_->SetVisible(false);
+    sprite_->SetEnabled(false);
 
     auto loader = GetSubsystem<ParcelLoader>();
     UnsubscribeFromEvent(loader, Shmurho::Parcel::E_PARCEL_LOADED);
@@ -79,18 +80,19 @@ void LoaderPhase::OnPhaseLeave(unsigned phase, unsigned phaseNext)
 
 void LoaderPhase::OnPhaseEnter(unsigned phase, unsigned phasePrev)
 {
-    if (phase != GAMEPHASE_LOADER) return;
+    if (phase != GAMEPHASE_LOADER)
+        return;
 
     Setup();
-    assert( sprite_.NotNull() );
-    sprite_->SetEnabled( true );
-    sprite_->SetVisible( true );
+    assert(sprite_.NotNull());
+    sprite_->SetEnabled(true);
+    sprite_->SetVisible(true);
 
     auto loader = context_->GetSubsystem<ParcelLoader>();
-    if ( !loader->StartLoadingQueue() )
+    if (!loader->StartLoadingQueue())
     {
-        //TODO: do something
-        GetSubsystem<Log>()->Write( LOG_ERROR, "Can't start loading parcel queue!" );
+        // TODO: do something
+        GetSubsystem<Log>()->Write(LOG_ERROR, "Can't start loading parcel queue!");
         PartakerBaseT::GetPhaseSwitcher()->Pop();
         PartakerBaseT::GetPhaseSwitcher()->Switch();
     }
@@ -105,46 +107,45 @@ void LoaderPhase::OnPhaseEnter(unsigned phase, unsigned phasePrev)
 
 bool LoaderPhase::Setup()
 {
-    if ( sprite_.Null() )
+    if (sprite_.Null())
     {
         auto cache = GetSubsystem<ResourceCache>();
 
         sprite_ = GetSubsystem<UI>()->GetRoot()->CreateChild<Sprite>();
-        if ( sprite_.NotNull() )
+        if (sprite_.NotNull())
         {
-            auto texture = cache->GetResource<Texture2D>( "Textures/Shmurho.png" );
-            if ( texture != 0 )
+            auto texture = cache->GetResource<Texture2D>("Textures/Shmurho.png");
+            if (texture != 0)
             {
-                sprite_->SetTexture( texture );
+                sprite_->SetTexture(texture);
 
                 unsigned texWidth = texture->GetWidth();
                 unsigned texHeight = texture->GetHeight();
 
-                sprite_->SetAlignment( Urho3D::HA_CENTER, Urho3D::VA_CENTER );
-                sprite_->SetSize( texWidth, texHeight );
-                sprite_->SetHotSpot( texWidth / 2.f, texHeight / 2.f );
+                sprite_->SetAlignment(Urho3D::HA_CENTER, Urho3D::VA_CENTER);
+                sprite_->SetSize(texWidth, texHeight);
+                sprite_->SetHotSpot(texWidth / 2.f, texHeight / 2.f);
 
                 auto graphics = GetSubsystem<Graphics>();
                 unsigned winWidth = graphics->GetWidth();
                 unsigned winHeight = graphics->GetHeight();
                 float xScale = (float)winWidth / (float)texWidth;
                 float yScale = (float)winHeight / (float)texHeight;
-                if ( xScale < 1.f || yScale < 1.f )
+                if (xScale < 1.f || yScale < 1.f)
                 {
-                    sprite_->SetScale( (xScale < yScale) ? xScale : yScale );
+                    sprite_->SetScale((xScale < yScale) ? xScale : yScale);
                 }
             }
         }
     }
 
-    return ( sprite_.NotNull() );
+    return (sprite_.NotNull());
 }
 
-void LoaderPhase::Cleanup()
-{
-}
+void LoaderPhase::Cleanup() {}
 
-// void LoaderPhase::HandleBeginFrame( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData )
+// void LoaderPhase::HandleBeginFrame( Urho3D::StringHash eventType, Urho3D::VariantMap&
+// eventData )
 // {
 //     auto loader = context_->GetSubsystem<ParcelLoader>();
 //     if ( loader->IsLoading() )
@@ -162,13 +163,16 @@ void LoaderPhase::Cleanup()
 //     }
 // }
 
-void LoaderPhase::HandleParcelLoaded(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData)
+void LoaderPhase::HandleParcelLoaded(Urho3D::StringHash eventType,
+                                     Urho3D::VariantMap& eventData)
 {
-    String parcelName = eventData[ Shmurho::Parcel::ParcelLoaded::P_PARCEL_NAME ].GetString();
-    bool success = eventData[ Shmurho::Parcel::ParcelLoaded::P_SUCCESS ] .GetBool();
+    String parcelName =
+    eventData[ Shmurho::Parcel::ParcelLoaded::P_PARCEL_NAME ].GetString();
+    bool success = eventData[ Shmurho::Parcel::ParcelLoaded::P_SUCCESS ].GetBool();
 }
 
-void LoaderPhase::HandleParcelQueueLoaded(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData)
+void LoaderPhase::HandleParcelQueueLoaded(Urho3D::StringHash eventType,
+                                          Urho3D::VariantMap& eventData)
 {
     auto switcher = GetSubsystem<PhaseSwitcher>();
     switcher->Pop();

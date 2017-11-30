@@ -44,36 +44,43 @@ namespace Parcel
 {
 
 
-class ParcelLoader
-: public Urho3D::Object
+class ParcelLoader : public Urho3D::Object
 {
-    URHO3D_OBJECT( ParcelLoader, Urho3D::Object );
+    URHO3D_OBJECT(ParcelLoader, Urho3D::Object);
 
 public:
-    ParcelLoader( Urho3D::Context* context );
+    ParcelLoader(Urho3D::Context* context);
     virtual ~ParcelLoader() noexcept = default;
 
     bool StartLoadingQueue();
-    void AddToQueue( const Urho3D::String& parcelName ) noexcept;
+    void AddToQueue(const Urho3D::String& parcelName) noexcept;
     void ClearQueue() noexcept;
     inline const Urho3D::List<Urho3D::String>& GetQueue() const noexcept
     {
-        return ( parcelQueue_ );
+        return (parcelQueue_);
     }
 
-    inline bool IsLoading() const noexcept { return ( isParcelLoading_ || isLoading_ ); };
-    inline const Urho3D::String& GetCurrParcel() const noexcept { return ( currParcel_ ); };
+    inline bool IsLoading() const noexcept
+    {
+        return (isParcelLoading_ || isLoading_);
+    };
+    inline const Urho3D::String& GetCurrParcel() const noexcept
+    {
+        return (currParcel_);
+    };
 
-    void HandleResourceBackgroundLoaded( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
+    void HandleResourceBackgroundLoaded(Urho3D::StringHash eventType,
+                                        Urho3D::VariantMap& eventData);
 
 protected:
-    virtual void OnLoaded( const Urho3D::String& name, bool successful, Urho3D::Resource* resource );
-    virtual void OnParcelLoaded( const Urho3D::String& name, bool successful );
+    virtual void
+    OnLoaded(const Urho3D::String& name, bool successful, Urho3D::Resource* resource);
+    virtual void OnParcelLoaded(const Urho3D::String& name, bool successful);
     virtual void OnQueueLoaded();
 
 private:
-    bool StartLoadingParcel( const Urho3D::String& parcelName );
-    bool StartLoadingParcel( Parcel* parcel  );
+    bool StartLoadingParcel(const Urho3D::String& parcelName);
+    bool StartLoadingParcel(Parcel* parcel);
     bool StartLoading();
 
 private:

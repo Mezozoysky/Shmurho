@@ -49,99 +49,103 @@ namespace Shmurho
 namespace Demo
 {
 
-void StartMenu::RegisterObject( Context* context )
+void StartMenu::RegisterObject(Context* context)
 {
     context->RegisterFactory<StartMenu>();
 }
 
-StartMenu::StartMenu( Context* context )
-    : Object( context )
-    , Partaker<StartMenu>()
+StartMenu::StartMenu(Context* context)
+: Object(context)
+, Partaker<StartMenu>()
 {
 }
 
 void StartMenu::OnPhaseLeave(unsigned phase, unsigned phaseNext)
 {
-    if ( phase != GAMEPHASE_START_MENU ) return;
+    if (phase != GAMEPHASE_START_MENU)
+        return;
 
-    assert( window_.NotNull() );
-    window_->SetEnabled( false );
-    window_->SetVisible( false );
+    assert(window_.NotNull());
+    window_->SetEnabled(false);
+    window_->SetVisible(false);
 }
 
 void StartMenu::OnPhaseEnter(unsigned phase, unsigned phasePrev)
 {
-    if ( phase != GAMEPHASE_START_MENU ) return;
+    if (phase != GAMEPHASE_START_MENU)
+        return;
 
     Setup();
-    assert( window_.NotNull() );
-    window_->SetEnabled( true );
-    window_->SetVisible( true );
+    assert(window_.NotNull());
+    window_->SetEnabled(true);
+    window_->SetVisible(true);
 }
 
 bool StartMenu::Setup()
 {
-    if ( window_.Null() )
+    if (window_.Null())
     {
         auto uiRoot = GetSubsystem<UI>()->GetRoot();
-        window_ = uiRoot->CreateChild<Window>( "StartMenuWindow" );
-        window_->SetMinWidth( 300 );
-        window_->SetLayout( Urho3D::LM_VERTICAL, 6, IntRect( 6, 6, 6, 6 ) );
-        window_->SetAlignment( Urho3D::HA_CENTER, Urho3D::VA_CENTER );
+        window_ = uiRoot->CreateChild<Window>("StartMenuWindow");
+        window_->SetMinWidth(300);
+        window_->SetLayout(Urho3D::LM_VERTICAL, 6, IntRect(6, 6, 6, 6));
+        window_->SetAlignment(Urho3D::HA_CENTER, Urho3D::VA_CENTER);
         window_->SetStyleAuto();
 
-        auto buttonNewGame = window_->CreateChild<Button>( "ButtonNewGame" );
-        buttonNewGame->SetMinHeight( 24 );
-        buttonNewGame->SetLayout( Urho3D::LM_HORIZONTAL, 6, IntRect( 6, 6, 6, 6 ) );
+        auto buttonNewGame = window_->CreateChild<Button>("ButtonNewGame");
+        buttonNewGame->SetMinHeight(24);
+        buttonNewGame->SetLayout(Urho3D::LM_HORIZONTAL, 6, IntRect(6, 6, 6, 6));
         buttonNewGame->SetStyleAuto();
-        SubscribeToEvent( buttonNewGame, E_CLICK, URHO3D_HANDLER( StartMenu, HandleNewGameButtonClicked ) );
+        SubscribeToEvent(buttonNewGame,
+                         E_CLICK,
+                         URHO3D_HANDLER(StartMenu, HandleNewGameButtonClicked));
 
-        auto textNewGame = buttonNewGame->CreateChild<Text>( "TextNewGame" );
-        textNewGame->SetText( "Play the new game" );
-        textNewGame->SetTextAlignment( Urho3D::HA_CENTER );
+        auto textNewGame = buttonNewGame->CreateChild<Text>("TextNewGame");
+        textNewGame->SetText("Play the new game");
+        textNewGame->SetTextAlignment(Urho3D::HA_CENTER);
         textNewGame->SetStyleAuto();
 
-        auto buttonExit = window_->CreateChild<Button>( "ButtonExit" );
-        buttonExit->SetMinHeight( 24 );
-        buttonExit->SetLayout( Urho3D::LM_HORIZONTAL, 6, IntRect( 6, 6, 6, 6 ) );
+        auto buttonExit = window_->CreateChild<Button>("ButtonExit");
+        buttonExit->SetMinHeight(24);
+        buttonExit->SetLayout(Urho3D::LM_HORIZONTAL, 6, IntRect(6, 6, 6, 6));
         buttonExit->SetStyleAuto();
-        SubscribeToEvent( buttonExit, E_CLICK, URHO3D_HANDLER( StartMenu, HandleExitButtonClicked ) );
+        SubscribeToEvent(buttonExit,
+                         E_CLICK,
+                         URHO3D_HANDLER(StartMenu, HandleExitButtonClicked));
 
-        auto textExit = buttonExit->CreateChild<Text>( "TextExit" );
-        textExit->SetText( "Exit and live the life" );
-        textExit->SetTextAlignment( Urho3D::HA_CENTER );
+        auto textExit = buttonExit->CreateChild<Text>("TextExit");
+        textExit->SetText("Exit and live the life");
+        textExit->SetTextAlignment(Urho3D::HA_CENTER);
         textExit->SetStyleAuto();
     }
 
-    return ( window_.NotNull() );
+    return (window_.NotNull());
 }
 
-void StartMenu::Cleanup()
-{
-}
+void StartMenu::Cleanup() {}
 
 void StartMenu::OnExitRequested()
 {
     Urho3D::VariantMap& eventData = GetEventDataMap();
-    SendEvent( E_STARTMENUEXITREQUESTED, eventData );
+    SendEvent(E_STARTMENUEXITREQUESTED, eventData);
 }
 
 void StartMenu::OnNewGameRequested()
 {
-//    GetSubsystem<PhaseSwitcher>()->SwitchTo( GAMEPHASE_NONE );
+    //    GetSubsystem<PhaseSwitcher>()->SwitchTo( GAMEPHASE_NONE );
     Urho3D::VariantMap& eventData = GetEventDataMap();
-    SendEvent( E_STARTMENUEXITREQUESTED, eventData );
+    SendEvent(E_STARTMENUEXITREQUESTED, eventData);
 }
 
-void StartMenu::HandleNewGameButtonClicked( StringHash eventType, VariantMap& eventData )
+void StartMenu::HandleNewGameButtonClicked(StringHash eventType, VariantMap& eventData)
 {
-    GetSubsystem<Log>()->Write( LOG_DEBUG, "== NEW GAME CLICKED!!!" );
+    GetSubsystem<Log>()->Write(LOG_DEBUG, "== NEW GAME CLICKED!!!");
     OnNewGameRequested();
 }
 
-void StartMenu::HandleExitButtonClicked( StringHash eventType, VariantMap& eventData )
+void StartMenu::HandleExitButtonClicked(StringHash eventType, VariantMap& eventData)
 {
-    GetSubsystem<Log>()->Write( LOG_DEBUG, "== EXIT AND LIVE CLICKED!!!" );
+    GetSubsystem<Log>()->Write(LOG_DEBUG, "== EXIT AND LIVE CLICKED!!!");
     OnExitRequested();
 }
 

@@ -42,47 +42,46 @@ namespace Demo
 {
 
 
-void DevKbdController::RegisterObject( Context* context )
+void DevKbdController::RegisterObject(Context* context)
 {
     context->RegisterFactory<DevKbdController>();
 }
 
-DevKbdController::DevKbdController( Context* context )
-    : LogicComponent( context )
-    , moveSpeed_( 3.f )
+DevKbdController::DevKbdController(Context* context)
+: LogicComponent(context)
+, moveSpeed_(3.f)
 {
-    SetUpdateEventMask( USE_UPDATE );
+    SetUpdateEventMask(USE_UPDATE);
 }
 
-void DevKbdController::Update( float timeStep )
+void DevKbdController::Update(float timeStep)
 {
     auto input = GetSubsystem<Input>();
 
     Vector3 pos = node_->GetPosition();
 
-    if ( input->GetKeyDown( KEY_UP ) )
+    if (input->GetKeyDown(KEY_UP))
     {
         pos.y_ += moveSpeed_ * timeStep;
     }
 
-    if ( input->GetKeyDown( KEY_LEFT ) )
+    if (input->GetKeyDown(KEY_LEFT))
     {
         pos.x_ -= moveSpeed_ * timeStep;
     }
 
-    if ( input->GetKeyDown( KEY_DOWN ) )
+    if (input->GetKeyDown(KEY_DOWN))
     {
         pos.y_ -= moveSpeed_ * timeStep;
     }
 
-    if ( input->GetKeyDown( KEY_RIGHT ) )
+    if (input->GetKeyDown(KEY_RIGHT))
     {
         pos.x_ += moveSpeed_ * timeStep;
     }
 
-    node_->SetPosition( pos );
+    node_->SetPosition(pos);
 }
 
 } // namespace Demo
 } // namespace Shmurho
-

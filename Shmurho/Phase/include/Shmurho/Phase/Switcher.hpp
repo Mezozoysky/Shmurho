@@ -38,10 +38,9 @@ namespace Shmurho
 namespace Phase
 {
 
-class Switcher
-    : public Urho3D::Object
+class Switcher : public Urho3D::Object
 {
-    URHO3D_OBJECT( Switcher, Urho3D::Object );
+    URHO3D_OBJECT(Switcher, Urho3D::Object);
 
 public:
     Switcher(Urho3D::Context* context);
@@ -62,7 +61,7 @@ protected:
     virtual void OnPhaseEnter();
 
 private:
-    void HandleBeginFrame( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
+    void HandleBeginFrame(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
 
 private:
     Urho3D::PODVector<unsigned> stack_;

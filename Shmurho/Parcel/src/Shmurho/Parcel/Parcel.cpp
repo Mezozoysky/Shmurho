@@ -47,55 +47,56 @@ namespace Parcel
 {
 
 
-void Parcel::RegisterObject( Context* context )
+void Parcel::RegisterObject(Context* context)
 {
     context->RegisterFactory<Parcel>();
 }
 
-Parcel::Parcel( Context* context )
-    : Resource( context )
+Parcel::Parcel(Context* context)
+: Resource(context)
 {
 }
 
-bool Parcel::BeginLoad( Deserializer& source )
+bool Parcel::BeginLoad(Deserializer& source)
 {
-    String extension = GetExtension( source.GetName() );
+    String extension = GetExtension(source.GetName());
 
     bool success = false;
 
-    if ( extension == ".json" )
+    if (extension == ".json")
     {
-        success = BeginLoadJSON( source );
+        success = BeginLoadJSON(source);
     }
     else
     {
-        success = BeginLoadXML( source );
+        success = BeginLoadXML(source);
     }
 
-    if ( !success )
+    if (!success)
     {
-        GetSubsystem<Log>()->Write( LOG_ERROR, "Failed to load parcel file: " + source.GetName() );
+        GetSubsystem<Log>()->Write(LOG_ERROR,
+                                   "Failed to load parcel file: " + source.GetName());
     }
     else
     {
-        if ( GetName().Empty() )
+        if (GetName().Empty())
         {
-            SetName( source.GetName() );
+            SetName(source.GetName());
         }
     }
 
-    return ( success );
+    return (success);
 }
 
 bool Parcel::EndLoad()
 {
-    return ( true );
+    return (true);
 }
 
-bool Parcel::BeginLoadXML( Deserializer& source )
+bool Parcel::BeginLoadXML(Deserializer& source)
 {
-    assert( false && "Parcel loading from XML is NOT IMPLEMENTED" );
-    return ( false );
+    assert(false && "Parcel loading from XML is NOT IMPLEMENTED");
+    return (false);
 }
 
 /// Loading JSON of the following form:
@@ -134,65 +135,69 @@ bool Parcel::BeginLoadXML( Deserializer& source )
 /// }
 ///
 
-bool Parcel::BeginLoadJSON( Deserializer& source )
+bool Parcel::BeginLoadJSON(Deserializer& source)
 {
     auto log = GetSubsystem<Log>();
 
     bool success = false;
 
     // Load JSON itself
-    SharedPtr<JSONFile> jsonFile( new JSONFile( context_ ) );
-    success = jsonFile->Load( source );
+    SharedPtr<JSONFile> jsonFile(new JSONFile(context_));
+    success = jsonFile->Load(source);
 
-    if ( success ) // if JSON loaded, then load the parcel data from JSON
+    if (success) // if JSON loaded, then load the parcel data from JSON
     {
         const JSONValue& rootVal = jsonFile->GetRoot();
 
-        const JSONArray& typeArray = rootVal.Get( "resource-lists" ).GetArray();
+        const JSONArray& typeArray = rootVal.Get("resource-lists").GetArray();
 
-        resRefLists_.Reserve( typeArray.Size() );
-        for ( unsigned i = 0; i < typeArray.Size(); ++i )
+        resRefLists_.Reserve(typeArray.Size());
+        for (unsigned i = 0; i < typeArray.Size(); ++i)
         {
             const JSONValue& typeVal = typeArray[ i ];
-            String typeStr = typeVal.Get( "type" ).GetString();
-            StringHash type( typeStr );
+            String typeStr = typeVal.Get("type").GetString();
+            StringHash type(typeStr);
 
-            if ( context_->GetTypeName( type ) != typeStr )
+            if (context_->GetTypeName(type) != typeStr)
             {
-                log->Write( Urho3D::LOG_ERROR, ToString("Failed to parse parcel file '%s'.", typeStr.CString()));
+                log->Write(Urho3D::LOG_ERROR,
+                           ToString("Failed to parse parcel file '%s'.",
+                                    typeStr.CString()));
                 continue;
             }
 
             auto listsIt = resRefLists_.Begin();
 
-            for ( ; listsIt != resRefLists_.End(); ++listsIt )
+            for (; listsIt != resRefLists_.End(); ++listsIt)
             {
-                if ( listsIt->type_ == type )
+                if (listsIt->type_ == type)
                 {
                     break;
                 }
             }
 
-            if ( listsIt == resRefLists_.End() )
+            if (listsIt == resRefLists_.End())
             {
-                resRefLists_.Insert( listsIt, ResourceRefList( type ) );
+                resRefLists_.Insert(listsIt, ResourceRefList(type));
             }
 
-            const JSONArray& nameArray = typeVal.Get( "names" ).GetArray();
+            const JSONArray& nameArray = typeVal.Get("names").GetArray();
 
-            for ( unsigned i = 0; i < nameArray.Size(); ++i )
+            for (unsigned i = 0; i < nameArray.Size(); ++i)
             {
                 const JSONValue& nameVal = nameArray[ i ];
-                listsIt->names_.Push( nameVal.GetString() );
+                listsIt->names_.Push(nameVal.GetString());
             }
         }
     }
     else
     {
-        log->Write(LOG_ERROR, ToString("Failed to open parcel file '%s'.", source.GetName().CString()));
+        log->Write(LOG_ERROR,
+                   ToString("Failed to open parcel file '%s'.",
+                            source.GetName().CString()));
     }
 
-    return ( success );
+    return (success);
 }
 
 

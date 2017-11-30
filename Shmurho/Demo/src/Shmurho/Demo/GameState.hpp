@@ -46,17 +46,15 @@ namespace Shmurho
 namespace Demo
 {
 
-class GameState
-: public Urho3D::Object
+class GameState : public Urho3D::Object
 {
-    URHO3D_OBJECT( GameState, Urho3D::Object );
+    URHO3D_OBJECT(GameState, Urho3D::Object);
 
 public:
-    GameState( Urho3D::Context* context );
+    GameState(Urho3D::Context* context);
     virtual ~GameState() noexcept = default;
 
 private:
-
 };
 
 } // namespace Demo

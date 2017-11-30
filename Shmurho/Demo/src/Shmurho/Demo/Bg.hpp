@@ -50,15 +50,16 @@ namespace Demo
 {
 
 class Bg
-    : public Urho3D::Object, public Shmurho::Phase::Partaker< Bg >
+: public Urho3D::Object
+, public Shmurho::Phase::Partaker<Bg>
 {
     URHO3D_OBJECT(Bg, Object);
 
 public:
-    static void RegisterObject(Urho3D::Context *context);
+    static void RegisterObject(Urho3D::Context* context);
 
 public:
-    Bg(Urho3D::Context *context);
+    Bg(Urho3D::Context* context);
     virtual ~Bg() noexcept = default;
 
     virtual void OnPhaseLeave(unsigned phase, unsigned phaseNext) override;
@@ -68,11 +69,12 @@ public:
     virtual void Cleanup();
 
 private:
-    void HandleToLocationButtonClicked(Urho3D::StringHash eventType, Urho3D::VariantMap &eventData);
+    void HandleToLocationButtonClicked(Urho3D::StringHash eventType,
+                                       Urho3D::VariantMap& eventData);
 
 private:
-    Urho3D::SharedPtr< Urho3D::Scene > bgScene_;
-    Urho3D::SharedPtr< Urho3D::Viewport > viewport_;
+    Urho3D::SharedPtr<Urho3D::Scene> bgScene_;
+    Urho3D::SharedPtr<Urho3D::Viewport> viewport_;
 };
 
 } // namespace Demo

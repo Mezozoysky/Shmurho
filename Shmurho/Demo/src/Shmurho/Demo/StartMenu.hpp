@@ -47,21 +47,19 @@ namespace Shmurho
 namespace Demo
 {
 
-URHO3D_EVENT( E_STARTMENUEXITREQUESTED, StartMenuExitRequested)
-{
-}
+URHO3D_EVENT(E_STARTMENUEXITREQUESTED, StartMenuExitRequested) {}
 
 class StartMenu
-    : public Urho3D::Object
-    , public Shmurho::Phase::Partaker<StartMenu>
+: public Urho3D::Object
+, public Shmurho::Phase::Partaker<StartMenu>
 {
-    URHO3D_OBJECT( StartMenu, Urho3D::Object );
+    URHO3D_OBJECT(StartMenu, Urho3D::Object);
 
 public:
-    static void RegisterObject( Urho3D::Context* context );
+    static void RegisterObject(Urho3D::Context* context);
 
 public:
-    StartMenu( Urho3D::Context* context );
+    StartMenu(Urho3D::Context* context);
     virtual ~StartMenu() noexcept = default;
 
     virtual void OnPhaseLeave(unsigned phase, unsigned phaseNext) override;
@@ -74,8 +72,10 @@ public:
     virtual void OnNewGameRequested();
 
 private:
-    void HandleNewGameButtonClicked( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
-    void HandleExitButtonClicked( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
+    void HandleNewGameButtonClicked(Urho3D::StringHash eventType,
+                                    Urho3D::VariantMap& eventData);
+    void HandleExitButtonClicked(Urho3D::StringHash eventType,
+                                 Urho3D::VariantMap& eventData);
 
 private:
     Urho3D::SharedPtr<Urho3D::Window> window_;

@@ -38,29 +38,13 @@ namespace Shmurho
 namespace Parcel
 {
 
-// URHO3D_EVENT( E_PARCEL_RESOURCE_LOADED, ParcelResourceLoaded )
-// {
-//     URHO3D_PARAM( P_RESOURCE_NAME, ResourceName );                          // String
-//     URHO3D_PARAM( P_SUCCESS, Success );                                     // bool
-//     URHO3D_PARAM( P_RESOURCE, Resource );                                   // Resource ptr
-// }
-
-// URHO3D_EVENT( E_PARCEL_RESOURCE_LOAD_ERROR, ParcelResourceLoadError )
-// {
-//     URHO3D_PARAM( P_RESOURCE_NAME, ResourceName );                      // String
-// }
-
-URHO3D_EVENT( E_PARCEL_LOADED, ParcelLoaded )
+URHO3D_EVENT(E_PARCEL_LOADED, ParcelLoaded)
 {
-    URHO3D_PARAM( P_PARCEL_NAME, ParcelName );                          // String
-    URHO3D_PARAM( P_SUCCESS, Success );                                 // bool
+    URHO3D_PARAM(P_PARCEL_NAME, ParcelName); // String
+    URHO3D_PARAM(P_SUCCESS, Success); // bool
 }
 
-URHO3D_EVENT( E_PARCEL_QUEUE_LOADED, ParcelQueueLoaded )
-{
-}
+URHO3D_EVENT(E_PARCEL_QUEUE_LOADED, ParcelQueueLoaded) {}
 
 } // namespace Phase
 } // namespace Shmurho
-
-

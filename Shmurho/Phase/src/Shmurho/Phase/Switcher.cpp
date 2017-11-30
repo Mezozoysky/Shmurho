@@ -45,35 +45,35 @@ namespace Phase
 {
 
 Switcher::Switcher(Urho3D::Context* context)
-    : Object(context)
-    , phaseCurrent_(0)
-    , phasePrevious_(0)
-    , isSwitchRequested_(false)
+: Object(context)
+, phaseCurrent_(0)
+, phasePrevious_(0)
+, isSwitchRequested_(false)
 {
-    SubscribeToEvent( Urho3D::E_BEGINFRAME, URHO3D_HANDLER( Switcher, HandleBeginFrame ) );
+    SubscribeToEvent(Urho3D::E_BEGINFRAME, URHO3D_HANDLER(Switcher, HandleBeginFrame));
 }
 
 void Switcher::OnPhaseLeave()
 {
     Urho3D::VariantMap& eventData = GetEventDataMap();
-	eventData[ Phase::PhaseLeave::P_PHASE ] = phaseCurrent_; // unsigned
-    eventData[ Phase::PhaseLeave::P_PHASE_NEXT ] = GetTopPhase(); //unsigned
-    SendEvent( Phase::E_PHASELEAVE, eventData ); //bool
+    eventData[ Phase::PhaseLeave::P_PHASE ] = phaseCurrent_; // unsigned
+    eventData[ Phase::PhaseLeave::P_PHASE_NEXT ] = GetTopPhase(); // unsigned
+    SendEvent(Phase::E_PHASELEAVE, eventData); // bool
 }
 
 void Switcher::OnPhaseEnter()
 {
     Urho3D::VariantMap& eventData = GetEventDataMap();
     eventData[ Phase::PhaseEnter::P_PHASE ] = phaseCurrent_; // unsigned
-    eventData[ Phase::PhaseEnter::P_PHASE_PREV ] = phasePrevious_; //unsigned
-    SendEvent( Phase::E_PHASEENTER, eventData );
+    eventData[ Phase::PhaseEnter::P_PHASE_PREV ] = phasePrevious_; // unsigned
+    SendEvent(Phase::E_PHASEENTER, eventData);
 }
 
-void Switcher::HandleBeginFrame( StringHash eventType, VariantMap& eventData )
+void Switcher::HandleBeginFrame(StringHash eventType, VariantMap& eventData)
 {
-	if (isSwitchRequested_)
-	{
-        if ( phaseCurrent_ != GetTopPhase() )
+    if (isSwitchRequested_)
+    {
+        if (phaseCurrent_ != GetTopPhase())
         {
             OnPhaseLeave();
             phasePrevious_ = phaseCurrent_;

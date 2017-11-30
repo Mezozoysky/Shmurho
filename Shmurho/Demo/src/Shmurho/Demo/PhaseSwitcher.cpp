@@ -40,8 +40,8 @@ namespace Shmurho
 namespace Demo
 {
 
-PhaseSwitcher::PhaseSwitcher( Urho3D::Context* context )
-    : Phase::Switcher( context )
+PhaseSwitcher::PhaseSwitcher(Urho3D::Context* context)
+: Phase::Switcher(context)
 {
 }
 

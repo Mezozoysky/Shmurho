@@ -41,18 +41,17 @@ namespace Shmurho
 namespace Demo
 {
 
-class DevKbdController
-    : public Urho3D::LogicComponent
+class DevKbdController : public Urho3D::LogicComponent
 {
-    URHO3D_OBJECT( DevKbdController, Urho3D::LogicComponent );
+    URHO3D_OBJECT(DevKbdController, Urho3D::LogicComponent);
 
 public:
-    static void RegisterObject( Urho3D::Context* context );
+    static void RegisterObject(Urho3D::Context* context);
 
-    DevKbdController( Urho3D::Context* context );
+    DevKbdController(Urho3D::Context* context);
     virtual ~DevKbdController() noexcept = default;
 
-    virtual void Update( float timeStep ) override;
+    virtual void Update(float timeStep) override;
 
 private:
     float moveSpeed_;

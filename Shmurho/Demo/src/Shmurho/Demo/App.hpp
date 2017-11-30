@@ -48,13 +48,12 @@ class LoaderPhase;
 class StartMenu;
 class Bg;
 
-class App
-    : public Urho3D::Application
+class App : public Urho3D::Application
 {
-    URHO3D_OBJECT( App, Urho3D::Application );
+    URHO3D_OBJECT(App, Urho3D::Application);
 
 public:
-    App( Urho3D::Context* context );
+    App(Urho3D::Context* context);
     virtual ~App() noexcept = default;
 
     virtual void Setup() override;
@@ -64,10 +63,11 @@ public:
     virtual bool RequestQuit();
 
 protected:
-    void HandlePhaseLeave( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
-    void HandlePhaseEnter( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
+    void HandlePhaseLeave(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
+    void HandlePhaseEnter(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
 
-    void HandleStartMenuExitRequested( Urho3D::StringHash eventType, Urho3D::VariantMap& eventData );
+    void HandleStartMenuExitRequested(Urho3D::StringHash eventType,
+                                      Urho3D::VariantMap& eventData);
 
 private:
     Urho3D::UniquePtr<LoaderPhase> loaderPhase_;
@@ -77,5 +77,3 @@ private:
 
 } // namespace Demo
 } // namespace Shmurho
-
-

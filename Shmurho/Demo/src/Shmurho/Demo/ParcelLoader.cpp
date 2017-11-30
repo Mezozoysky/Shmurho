@@ -46,14 +46,13 @@ using namespace Urho3D;
 using Shmurho::Parcel::Parcel;
 
 
-
 namespace Shmurho
 {
 namespace Demo
 {
 
-ParcelLoader::ParcelLoader( Urho3D::Context* context )
-    : Shmurho::Parcel::ParcelLoader( context )
+ParcelLoader::ParcelLoader(Urho3D::Context* context)
+: Shmurho::Parcel::ParcelLoader(context)
 {
 }
 

@@ -69,21 +69,22 @@ void Bg::RegisterObject(Context* context)
 }
 
 Bg::Bg(Context* context)
-    : Object(context)
-    , Phase::Partaker<Bg>()
+: Object(context)
+, Phase::Partaker<Bg>()
 {
 }
 
 void Bg::OnPhaseLeave(unsigned phase, unsigned phaseNext)
 {
-//     if (phase != GAMEPHASE_START_MENU) return;
-//     assert(bgScene_.NotNull());
-//     bgScene_->SetUpdateEnabled(false);
+    //     if (phase != GAMEPHASE_START_MENU) return;
+    //     assert(bgScene_.NotNull());
+    //     bgScene_->SetUpdateEnabled(false);
 }
 
 void Bg::OnPhaseEnter(unsigned phase, unsigned phasePrev)
 {
-    if (phase != GAMEPHASE_START_MENU) return;
+    if (phase != GAMEPHASE_START_MENU)
+        return;
 
     Setup();
     assert(bgScene_.NotNull());
@@ -98,7 +99,8 @@ void Bg::OnPhaseEnter(unsigned phase, unsigned phasePrev)
 
 bool Bg::Setup()
 {
-    if (bgScene_.Null()) {
+    if (bgScene_.Null())
+    {
         auto cache = GetSubsystem<ResourceCache>();
 
         bgScene_ = new Scene(context_);
@@ -106,34 +108,35 @@ bool Bg::Setup()
         bgScene_->LoadXML(xmlfile->GetRoot());
         xmlfile = cache->GetResource<XMLFile>("Objects/BoxGuy.xml");
         auto shipNode = bgScene_->InstantiateXML(xmlfile->GetRoot(),
-                                                 Vector3(-10.0f, 0.0f, 1.0f ),
+                                                 Vector3(-10.0f, 0.0f, 1.0f),
                                                  Quaternion(0.0f, 0.0f, 0.0f));
         shipNode->SetScale(10);
         shipNode->CreateComponent<DevKbdController>();
         auto camera = bgScene_->GetChild("CameraMain")->GetComponent<Camera>();
 
-//         bgScene_ = new Scene(context_);
-//         assert(bgScene_.NotNull());
-//         bgScene_->CreateComponent<Octree>();
-//
-//         auto cameraNode = bgScene_->CreateChild("MainCamera");
-//         cameraNode->SetPosition(Vector3(0.f, 0.f, -10.f));
-//         auto camera = cameraNode->CreateComponent<Camera>();
-//         camera->SetOrthographic(true);
-//         auto ctrl = cameraNode->CreateComponent<DevKbdController>();
-//
-//         auto graphics = GetSubsystem<Graphics>();
-//         camera->SetOrthoSize((float) graphics->GetHeight() /*1080.f*/ * PIXEL_SIZE);
-//         camera->SetZoom((float) graphics->GetHeight() / 1080.f);
-//
-//         auto cache = GetSubsystem<ResourceCache>();
-//
-//         auto backNode = bgScene_->CreateChild("Back");
-//         auto back = backNode->CreateComponent<StaticSprite2D>();
-//         auto sprite = cache->GetExistingResource<Sprite2D>("Textures/DesertTile.png");
-//         assert(sprite != 0);
-//         back->SetSprite(sprite);
-//         backNode->SetPosition(Vector2(0.0f, 0.0f));
+        //         bgScene_ = new Scene(context_);
+        //         assert(bgScene_.NotNull());
+        //         bgScene_->CreateComponent<Octree>();
+        //
+        //         auto cameraNode = bgScene_->CreateChild("MainCamera");
+        //         cameraNode->SetPosition(Vector3(0.f, 0.f, -10.f));
+        //         auto camera = cameraNode->CreateComponent<Camera>();
+        //         camera->SetOrthographic(true);
+        //         auto ctrl = cameraNode->CreateComponent<DevKbdController>();
+        //
+        //         auto graphics = GetSubsystem<Graphics>();
+        //         camera->SetOrthoSize((float) graphics->GetHeight() /*1080.f*/ *
+        //         PIXEL_SIZE); camera->SetZoom((float) graphics->GetHeight() / 1080.f);
+        //
+        //         auto cache = GetSubsystem<ResourceCache>();
+        //
+        //         auto backNode = bgScene_->CreateChild("Back");
+        //         auto back = backNode->CreateComponent<StaticSprite2D>();
+        //         auto sprite =
+        //         cache->GetExistingResource<Sprite2D>("Textures/DesertTile.png");
+        //         assert(sprite != 0);
+        //         back->SetSprite(sprite);
+        //         backNode->SetPosition(Vector2(0.0f, 0.0f));
 
         viewport_ = new Viewport(context_, bgScene_.Get(), camera);
     }
@@ -141,9 +144,7 @@ bool Bg::Setup()
     return (bgScene_.NotNull());
 }
 
-void Bg::Cleanup()
-{
-}
+void Bg::Cleanup() {}
 
 } // namespace Demo
 } // namespace Shmurho

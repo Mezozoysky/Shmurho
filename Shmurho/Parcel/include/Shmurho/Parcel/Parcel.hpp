@@ -47,30 +47,34 @@ namespace Shmurho
 namespace Parcel
 {
 
-class URHO3D_API Parcel
-    : public Urho3D::Resource
+class URHO3D_API Parcel : public Urho3D::Resource
 {
-    URHO3D_OBJECT( Parcel, Urho3D::Resource )
+    URHO3D_OBJECT(Parcel, Urho3D::Resource)
 
 public:
-    static void RegisterObject( Urho3D::Context* context );
+    static void RegisterObject(Urho3D::Context* context);
 
-    Parcel( Urho3D::Context* context );
+    Parcel(Urho3D::Context* context);
     virtual ~Parcel() noexcept = default;
 
-    /// Load resource from stream. May be called from a worker thread. Return true if successful.
-    virtual bool BeginLoad( Urho3D::Deserializer& source ) override;
-    /// Finish resource loading. Always called from the main thread. Return true if successful.
+    /// Load resource from stream. May be called from a worker thread. Return true if
+    /// successful.
+    virtual bool BeginLoad(Urho3D::Deserializer& source) override;
+    /// Finish resource loading. Always called from the main thread. Return true if
+    /// successful.
     virtual bool EndLoad() override;
 
     /// Return the parcel's ResourceRefLists
-    inline const Urho3D::Vector<Urho3D::ResourceRefList>& GetLists() const noexcept { return ( resRefLists_ ); };
+    inline const Urho3D::Vector<Urho3D::ResourceRefList>& GetLists() const noexcept
+    {
+        return (resRefLists_);
+    };
 
 private:
     /// Helper function for loading from XML files.
-    bool BeginLoadXML( Urho3D::Deserializer& source );
+    bool BeginLoadXML(Urho3D::Deserializer& source);
     /// Helper function for loading from JSON files.
-    bool BeginLoadJSON( Urho3D::Deserializer& source );
+    bool BeginLoadJSON(Urho3D::Deserializer& source);
 
 private:
     Urho3D::Vector<Urho3D::ResourceRefList> resRefLists_;

@@ -1,0 +1,68 @@
+BasedOnStyle:  WebKit
+IndentWidth:     4
+TabWidth:        8
+---
+Language:        Cpp
+AccessModifierOffset: -4
+ConstructorInitializerIndentWidth: 0
+AlignEscapedNewlinesLeft: false
+AlignTrailingComments: false
+AlignAfterOpenBracket: Align
+AllowAllParametersOfDeclarationOnNextLine: true
+AllowShortBlocksOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Empty
+AlwaysBreakTemplateDeclarations: true
+AlwaysBreakBeforeMultilineStrings: true
+BreakBeforeBinaryOperators: false
+BreakBeforeTernaryOperators: false
+BreakConstructorInitializers: BeforeComma
+BreakBeforeInheritanceComma: true
+BinPackParameters: false
+BinPackArguments: false
+ColumnLimit:     90
+ConstructorInitializerAllOnOneLineOrOnePerLine: false
+DerivePointerAlignment: false
+ExperimentalAutoDetectBinPacking: false
+IndentCaseLabels: false
+IndentWrappedFunctionNames: false
+IndentFunctionDeclarationAfterType: false
+MaxEmptyLinesToKeep: 2
+KeepEmptyLinesAtTheStartOfBlocks: true
+NamespaceIndentation: None
+ObjCSpaceAfterProperty: true
+ObjCSpaceBeforeProtocolList: true
+PenaltyBreakBeforeFirstCallParameter: 90
+PenaltyBreakComment: 90
+PenaltyBreakString: 1000
+PenaltyBreakFirstLessLess: 110
+PenaltyExcessCharacter: 1000000
+PenaltyReturnTypeOnItsOwnLine: 55
+PointerAlignment: Left
+SpacesBeforeTrailingComments: 1
+Cpp11BracedListStyle: false
+Standard:        Cpp11
+UseTab:          Never
+BreakBeforeBraces: Allman
+SpacesInParentheses: false
+SpacesInAngles:  false
+SpaceInEmptyParentheses: false
+SpacesInCStyleCastParentheses: false
+SpacesInContainerLiterals: true
+SpaceBeforeAssignmentOperators: true
+SpacesInSquareBrackets: true
+ContinuationIndentWidth: 0
+CommentPragmas:  '^ IWYU pragma:'
+ForEachMacros:   [ foreach, Q_FOREACH, BOOST_FOREACH ]
+SpaceBeforeParens: ControlStatements
+FixNamespaceComments: true
+SortIncludes: false
+DisableFormat:   false
+---
+Language: JavaScript
+DisableFormat: true
+---
+Language: Proto
+DisableFormat: true
+

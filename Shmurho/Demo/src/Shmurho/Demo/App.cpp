@@ -74,11 +74,11 @@ namespace Shmurho
 namespace Demo
 {
 
-App::App( Context* context )
-    : Application( context )
-    , loaderPhase_( new LoaderPhase( context ) )
-    , startMenu_( new StartMenu( context ) )
-    , bg_( new Bg( context ) )
+App::App(Context* context)
+: Application(context)
+, loaderPhase_(new LoaderPhase(context))
+, startMenu_(new StartMenu(context))
+, bg_(new Bg(context))
 {
 }
 
@@ -86,43 +86,50 @@ void App::Setup()
 {
     engineParameters_[ "LogName" ] = "../shmurho-demo.log";
     engineParameters_[ "LogLevel" ] = Urho3D::LOG_DEBUG;
-    engineParameters_[ "ResourcePaths" ] = "../share/Shmurho/Demo/Data;../share/Shmurho/Demo/CoreData;";
+    engineParameters_[ "ResourcePaths" ] =
+    "../share/Shmurho/Demo/Data;../share/Shmurho/Demo/CoreData;";
     engineParameters_[ "Fullscreen" ] = false;
     engineParameters_[ "WindowWidth" ] = 1280;
     engineParameters_[ "WindowHeight" ] = 720;
     engineParameters_[ "WindowResizable" ] = true;
 
-    context_->RegisterSubsystem( new PhaseSwitcher( context_ ) );
-    context_->RegisterSubsystem( new ParcelLoader( context_ ) );
+    context_->RegisterSubsystem(new PhaseSwitcher(context_));
+    context_->RegisterSubsystem(new ParcelLoader(context_));
     context_->RegisterSubsystem(new Script(context_));
 
-    DevKbdController::RegisterObject( context_ );
-    Shmurho::Parcel::Parcel::RegisterObject( context_ );
+    DevKbdController::RegisterObject(context_);
+    Shmurho::Parcel::Parcel::RegisterObject(context_);
 }
 
 void App::Start()
 {
     auto log = GetSubsystem<Log>();
-    log->SetLevel( LOG_DEBUG );
-    log->Write( LOG_DEBUG, "== App start" );
+    log->SetLevel(LOG_DEBUG);
+    log->Write(LOG_DEBUG, "== App start");
 
-    SetRandomSeed( Time::GetSystemTime() );
-    GetSubsystem<Input>()->SetTouchEmulation( true );
+    SetRandomSeed(Time::GetSystemTime());
+    GetSubsystem<Input>()->SetTouchEmulation(true);
 
     auto switcher = GetSubsystem<PhaseSwitcher>();
-    loaderPhase_->SetPhaseSwitcher( switcher );
-    startMenu_->SetPhaseSwitcher( switcher );
-    bg_->SetPhaseSwitcher( switcher );
+    loaderPhase_->SetPhaseSwitcher(switcher);
+    startMenu_->SetPhaseSwitcher(switcher);
+    bg_->SetPhaseSwitcher(switcher);
 
     auto loader = GetSubsystem<ParcelLoader>();
     loader->AddToQueue("Parcels/Base.json");
     loader->AddToQueue("Parcels/Big.json");
-    switcher->Push({GAMEPHASE_START_MENU, GAMEPHASE_LOADER});
+    switcher->Push({ GAMEPHASE_START_MENU, GAMEPHASE_LOADER });
     switcher->Switch();
 
-    SubscribeToEvent( switcher, Shmurho::Phase::E_PHASELEAVE, URHO3D_HANDLER( App, HandlePhaseLeave ) );
-    SubscribeToEvent( switcher, Shmurho::Phase::E_PHASEENTER, URHO3D_HANDLER( App, HandlePhaseEnter ) );
-    SubscribeToEvent( startMenu_.Get(), E_STARTMENUEXITREQUESTED, URHO3D_HANDLER( App, HandleStartMenuExitRequested ) );
+    SubscribeToEvent(switcher,
+                     Shmurho::Phase::E_PHASELEAVE,
+                     URHO3D_HANDLER(App, HandlePhaseLeave));
+    SubscribeToEvent(switcher,
+                     Shmurho::Phase::E_PHASEENTER,
+                     URHO3D_HANDLER(App, HandlePhaseEnter));
+    SubscribeToEvent(startMenu_.Get(),
+                     E_STARTMENUEXITREQUESTED,
+                     URHO3D_HANDLER(App, HandleStartMenuExitRequested));
 }
 
 void App::Stop()
@@ -137,52 +144,48 @@ bool App::RequestQuit()
     return (accepted);
 }
 
-void App::HandlePhaseLeave( StringHash eventType, VariantMap& eventData )
+void App::HandlePhaseLeave(StringHash eventType, VariantMap& eventData)
 {
     auto phase = eventData[ Shmurho::Phase::PhaseLeave::P_PHASE ].GetUInt();
     auto phaseNext = eventData[ Shmurho::Phase::PhaseLeave::P_PHASE_NEXT ].GetUInt();
-    GetSubsystem<Log>()->Write(LOG_INFO,
-                               ToString("-- Leaving '%u' phase; next phase: '%u'",
-                                        phase,
-                                        phaseNext));
+    GetSubsystem<Log>()->Write(
+    LOG_INFO, ToString("-- Leaving '%u' phase; next phase: '%u'", phase, phaseNext));
 
     if (phase == GAMEPHASE_NONE)
     {
         auto cache = GetSubsystem<ResourceCache>();
 
         // setup ui root with default ui style
-        auto style = cache->GetResource<XMLFile>( "UI/DefaultStyle.xml" );
-        assert( style != 0 );
-        if ( style != 0 )
+        auto style = cache->GetResource<XMLFile>("UI/DefaultStyle.xml");
+        assert(style != 0);
+        if (style != 0)
         {
             auto uiRoot = GetSubsystem<UI>()->GetRoot();
-            uiRoot->SetDefaultStyle( style );
+            uiRoot->SetDefaultStyle(style);
             uiRoot->SetOpacity(0.6f);
         }
 
         // preload ui markup image
-        auto uiTexture = cache->GetResource<Texture2D>( "Textures/UI.png" );
-        assert( uiTexture != 0 );
+        auto uiTexture = cache->GetResource<Texture2D>("Textures/UI.png");
+        assert(uiTexture != 0);
     }
 }
 
-void App::HandlePhaseEnter( StringHash eventType, VariantMap& eventData )
+void App::HandlePhaseEnter(StringHash eventType, VariantMap& eventData)
 {
     auto phase = eventData[ Shmurho::Phase::PhaseEnter::P_PHASE ].GetUInt();
     auto phasePrev = eventData[ Shmurho::Phase::PhaseEnter::P_PHASE_PREV ].GetUInt();
-    GetSubsystem<Log>()->Write(LOG_INFO,
-                               ToString("-- Entering '%u' phase; prev phase: '%u'",
-                                        phase,
-                                        phasePrev));
+    GetSubsystem<Log>()->Write(
+    LOG_INFO, ToString("-- Entering '%u' phase; prev phase: '%u'", phase, phasePrev));
     if (phase == GAMEPHASE_NONE)
     {
         RequestQuit();
     }
 }
 
-void App::HandleStartMenuExitRequested( StringHash eventType, VariantMap& eventData )
+void App::HandleStartMenuExitRequested(StringHash eventType, VariantMap& eventData)
 {
-    GetSubsystem<Log>()->Write( LOG_DEBUG, "== EXIT REQUEST DONE!!!" );
+    GetSubsystem<Log>()->Write(LOG_DEBUG, "== EXIT REQUEST DONE!!!");
     RequestQuit();
 }
 

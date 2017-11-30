@@ -47,13 +47,12 @@ enum GamePhase
 };
 
 
-class PhaseSwitcher
-    : public Shmurho::Phase::Switcher
+class PhaseSwitcher : public Shmurho::Phase::Switcher
 {
-    URHO3D_OBJECT( PhaseSwitcher, Shmurho::Phase::Switcher );
+    URHO3D_OBJECT(PhaseSwitcher, Shmurho::Phase::Switcher);
 
 public:
-    PhaseSwitcher( Urho3D::Context* context );
+    PhaseSwitcher(Urho3D::Context* context);
     virtual ~PhaseSwitcher() noexcept = default;
 };
 

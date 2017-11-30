@@ -46,13 +46,12 @@ namespace Shmurho
 namespace Demo
 {
 
-class ParcelLoader
-: public Shmurho::Parcel::ParcelLoader
+class ParcelLoader : public Shmurho::Parcel::ParcelLoader
 {
-    URHO3D_OBJECT( ParcelLoader, Shmurho::Parcel::ParcelLoader );
+    URHO3D_OBJECT(ParcelLoader, Shmurho::Parcel::ParcelLoader);
 
 public:
-    ParcelLoader ( Urho3D::Context* context );
+    ParcelLoader(Urho3D::Context* context);
     virtual ~ParcelLoader() noexcept = default;
 };
 

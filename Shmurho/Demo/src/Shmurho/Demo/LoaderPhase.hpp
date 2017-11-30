@@ -49,13 +49,13 @@ class LoaderPhase
 : public Urho3D::Object
 , public Shmurho::Phase::Partaker<LoaderPhase>
 {
-    URHO3D_OBJECT( LoaderPhase, Urho3D::Object );
+    URHO3D_OBJECT(LoaderPhase, Urho3D::Object);
 
 public:
-    static void RegisterObject( Urho3D::Context* context );
+    static void RegisterObject(Urho3D::Context* context);
 
 public:
-    LoaderPhase( Urho3D::Context* context ) noexcept;
+    LoaderPhase(Urho3D::Context* context) noexcept;
     virtual ~LoaderPhase() noexcept = default;
 
     virtual void OnPhaseLeave(unsigned phase, unsigned phaseNext) override;
@@ -65,9 +65,11 @@ public:
     virtual void Cleanup();
 
 private:
-//     void HandleBeginFrame(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
+    //     void HandleBeginFrame(Urho3D::StringHash eventType, Urho3D::VariantMap&
+    //     eventData);
     void HandleParcelLoaded(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
-    void HandleParcelQueueLoaded(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
+    void HandleParcelQueueLoaded(Urho3D::StringHash eventType,
+                                 Urho3D::VariantMap& eventData);
 
 private:
     Urho3D::SharedPtr<Urho3D::Sprite> sprite_;

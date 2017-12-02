@@ -32,14 +32,14 @@
 
 #include "App.hpp"
 #include "PhaseSwitcher.hpp"
-#include "ParcelLoader.hpp"
-#include "LoaderPhase.hpp"
+#include "Loader.hpp"
 #include "DevKbdController.hpp"
 #include "StartMenu.hpp"
 #include "Bg.hpp"
 
 #include <Shmurho/Phase/PhaseEvents.hpp>
 #include <Shmurho/Parcel/Parcel.hpp>
+#include <Shmurho/Parcel/ParcelLoader.hpp>
 
 #include <Urho3D/IO/Log.h>
 #include <Urho3D/Input/Input.h>
@@ -76,7 +76,7 @@ namespace Demo
 
 App::App(Context* context)
 : Application(context)
-, loaderPhase_(new LoaderPhase(context))
+, loader_(new Loader(context))
 , startMenu_(new StartMenu(context))
 , bg_(new Bg(context))
 {
@@ -94,11 +94,11 @@ void App::Setup()
     engineParameters_[ "WindowResizable" ] = true;
 
     context_->RegisterSubsystem(new PhaseSwitcher(context_));
-    context_->RegisterSubsystem(new ParcelLoader(context_));
     context_->RegisterSubsystem(new Script(context_));
 
     DevKbdController::RegisterObject(context_);
     Shmurho::Parcel::Parcel::RegisterObject(context_);
+    Shmurho::Parcel::ParcelLoader::RegisterObject(context_);
 }
 
 void App::Start()
@@ -111,13 +111,12 @@ void App::Start()
     GetSubsystem<Input>()->SetTouchEmulation(true);
 
     auto switcher = GetSubsystem<PhaseSwitcher>();
-    loaderPhase_->SetPhaseSwitcher(switcher);
+    loader_->SetPhaseSwitcher(switcher);
     startMenu_->SetPhaseSwitcher(switcher);
     bg_->SetPhaseSwitcher(switcher);
 
-    auto loader = GetSubsystem<ParcelLoader>();
-    loader->AddToQueue("Parcels/Base.json");
-    loader->AddToQueue("Parcels/Big.json");
+    loader_->AddParcelToQueue("Parcels/Base.json");
+    loader_->AddParcelToQueue("Parcels/Big.json");
     switcher->Push({ GAMEPHASE_START_MENU, GAMEPHASE_LOADER });
     switcher->Switch();
 

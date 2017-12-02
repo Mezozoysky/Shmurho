@@ -44,7 +44,7 @@ namespace Shmurho
 namespace Demo
 {
 
-class LoaderPhase;
+class Loader;
 class StartMenu;
 class Bg;
 
@@ -70,7 +70,7 @@ protected:
                                       Urho3D::VariantMap& eventData);
 
 private:
-    Urho3D::UniquePtr<LoaderPhase> loaderPhase_;
+    Urho3D::UniquePtr<Loader> loader_;
     Urho3D::UniquePtr<StartMenu> startMenu_;
     Urho3D::UniquePtr<Bg> bg_;
 };

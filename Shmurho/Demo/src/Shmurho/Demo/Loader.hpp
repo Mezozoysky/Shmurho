@@ -34,45 +34,69 @@
 
 #include <Shmurho/Phase/Partaker.hpp>
 #include <Urho3D/Core/Object.h>
+#include <Urho3D/Container/List.h>
 
 namespace Urho3D
 {
 class Sprite;
-} // namespace Urho3D
+class Scene;
+}
+
+namespace Shmurho
+{
+namespace Parcel
+{
+class ParcelLoader;
+}
+}
 
 namespace Shmurho
 {
 namespace Demo
 {
 
-class LoaderPhase
+class Loader
 : public Urho3D::Object
-, public Shmurho::Phase::Partaker<LoaderPhase>
+, public Shmurho::Phase::Partaker<Loader>
 {
-    URHO3D_OBJECT(LoaderPhase, Urho3D::Object);
+    URHO3D_OBJECT(Loader, Urho3D::Object);
 
 public:
     static void RegisterObject(Urho3D::Context* context);
 
 public:
-    LoaderPhase(Urho3D::Context* context) noexcept;
-    virtual ~LoaderPhase() noexcept = default;
-
-    virtual void OnPhaseLeave(unsigned phase, unsigned phaseNext) override;
-    virtual void OnPhaseEnter(unsigned phase, unsigned phasePrev) override;
+    Loader(Urho3D::Context* context) noexcept;
+    virtual ~Loader() noexcept = default;
 
     virtual bool Setup();
     virtual void Cleanup();
 
+    void AddParcelToQueue(const Urho3D::String& parcelName) noexcept;
+    void AddSceneToQueue(const Urho3D::String& sceneName) noexcept;
+    void ClearQueue() noexcept;
+
+    virtual void OnPhaseLeave(unsigned phase, unsigned phaseNext) override;
+    virtual void OnPhaseEnter(unsigned phase, unsigned phasePrev) override;
+
+    virtual void OnSceneLoaded(const Urho3D::String& sceneName, Urho3D::Scene* scenePtr);
+    virtual void OnLoadingFinished();
 private:
     //     void HandleBeginFrame(Urho3D::StringHash eventType, Urho3D::VariantMap&
     //     eventData);
     void HandleParcelLoaded(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
     void HandleParcelQueueLoaded(Urho3D::StringHash eventType,
                                  Urho3D::VariantMap& eventData);
+    void HandleAsyncLoadFinished(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
+
+    bool StartLoadingScenes();
+    bool StartLoadingScene(const Urho3D::String& sceneName);
 
 private:
     Urho3D::SharedPtr<Urho3D::Sprite> sprite_;
+    Urho3D::UniquePtr<Shmurho::Parcel::ParcelLoader> parcelLoader_;
+    Urho3D::List<Urho3D::String> sceneQueue_;
+    Urho3D::String currSceneName_;
+    Urho3D::Scene* currScenePtr_;
 };
 
 } // namespace Demo

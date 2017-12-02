@@ -34,6 +34,7 @@
 #include <Shmurho/Parcel/Parcel.hpp>
 #include <Shmurho/Parcel/ParcelEvents.hpp>
 
+#include <Urho3D/Core/Context.h>
 #include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/Resource/ResourceEvents.h>
 #include <Urho3D/IO/Log.h>
@@ -47,6 +48,11 @@ namespace Shmurho
 namespace Parcel
 {
 
+
+void ParcelLoader::RegisterObject(Context* context)
+{
+    context->RegisterFactory<Parcel>();
+}
 
 ParcelLoader::ParcelLoader(Urho3D::Context* context)
 : Urho3D::Object(context)

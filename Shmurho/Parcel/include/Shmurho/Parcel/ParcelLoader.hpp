@@ -49,6 +49,8 @@ class ParcelLoader : public Urho3D::Object
     URHO3D_OBJECT(ParcelLoader, Urho3D::Object);
 
 public:
+    static void RegisterObject(Urho3D::Context* context);
+
     ParcelLoader(Urho3D::Context* context);
     virtual ~ParcelLoader() noexcept = default;
 

@@ -23,59 +23,29 @@
 // source distribution.
 
 /// \file
-/// \brief Background container
+/// \brief Loader events
 /// \author Stanislav Demyanovich <mezozoysky@gmail.com>
 /// \date 2017
 /// \copyright Shmurho is released under the terms of zlib/libpng license
 /// \details --
 
-
 #pragma once
 
-#include <Shmurho/Phase/Partaker.hpp>
 #include <Urho3D/Core/Object.h>
-#include <Urho3D/Container/Ptr.h>
-
-namespace Urho3D
-{
-class Scene;
-class Viewport;
-class Window;
-} // namespace Urho3D
-
 
 namespace Shmurho
 {
 namespace Demo
 {
 
-class Bg
-: public Urho3D::Object
-, public Shmurho::Phase::Partaker<Bg>
+URHO3D_EVENT(E_LOADER_SCENELOADFINISHED, SceneLoadFinished)
 {
-    URHO3D_OBJECT(Bg, Object);
+    URHO3D_PARAM(P_SCENE_NAME, SceneName); // String
+    URHO3D_PARAM(P_SCENE, Scene); // Scene ptr
+}
 
-public:
-    static void RegisterObject(Urho3D::Context* context);
-
-public:
-    Bg(Urho3D::Context* context);
-    virtual ~Bg() noexcept = default;
-
-    virtual void OnPhaseLeave(unsigned phase, unsigned phaseNext) override;
-    virtual void OnPhaseEnter(unsigned phase, unsigned phasePrev) override;
-
-    virtual bool Setup();
-    virtual void Cleanup();
-
-private:
-    void HandleToLocationButtonClicked(Urho3D::StringHash eventType,
-                                       Urho3D::VariantMap& eventData);
-
-private:
-    Urho3D::SharedPtr<Urho3D::Scene> bgScene_;
-    Urho3D::SharedPtr<Urho3D::Viewport> viewport_;
-};
+URHO3D_EVENT(E_LOADER_LOADINGFINISHED, LoadingFinished) {}
 
 } // namespace Demo
 } // namespace Shmurho
+

@@ -243,8 +243,8 @@ void ParcelLoader::OnParcelLoaded(const Urho3D::String& name, bool successful)
     assert(name == GetCurrParcel());
 
     Urho3D::VariantMap& eventData = GetEventDataMap();
-    eventData[ Shmurho::Parcel::ParcelLoaded::P_PARCEL_NAME ] = name; // String
-    eventData[ Shmurho::Parcel::ParcelLoaded::P_SUCCESS ] = successful; // bool
+    eventData[ Shmurho::Parcel::ParcelLoaded::P_PARCEL_NAME ] = name;
+    eventData[ Shmurho::Parcel::ParcelLoaded::P_SUCCESS ] = successful;
 
     SendEvent(Shmurho::Parcel::E_PARCEL_LOADED, eventData);
 }
@@ -283,10 +283,6 @@ bool ParcelLoader::StartLoading()
         {
             const auto& resName = (*it);
 
-            //             if ( resType == Urho3D::Scene::Scene::GetTypeNameStatic() )
-            //             {
-            //
-            //             }
             if (cache->BackgroundLoadResource(resType, resName))
             {
                 resourceQueue_.Push(resName);

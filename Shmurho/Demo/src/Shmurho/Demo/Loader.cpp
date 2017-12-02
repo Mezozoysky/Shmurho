@@ -31,6 +31,7 @@
 
 
 #include "Loader.hpp"
+#include "LoaderEvents.hpp"
 #include "PhaseSwitcher.hpp"
 #include <Shmurho/Parcel/ParcelLoader.hpp>
 #include <Shmurho/Parcel/ParcelEvents.hpp>
@@ -69,41 +70,24 @@ Loader::Loader(Context* context) noexcept
 {
 }
 
-void Loader::OnPhaseLeave(unsigned phase, unsigned phaseNext)
+void Loader::AddParcelToQueue(const Urho3D::String& parcelName) noexcept
 {
-    if (phase != GAMEPHASE_LOADER)
-    {
-        return;
-    }
-
-    assert(sprite_.NotNull());
-    sprite_->SetVisible(false);
-    sprite_->SetEnabled(false);
-
-    UnsubscribeFromEvent(parcelLoader_.Get(), Shmurho::Parcel::E_PARCEL_LOADED);
-    UnsubscribeFromEvent(parcelLoader_.Get(), Shmurho::Parcel::E_PARCEL_QUEUE_LOADED);
+    parcelLoader_->AddToQueue(parcelName);
 }
 
-void Loader::OnPhaseEnter(unsigned phase, unsigned phasePrev)
+void Loader::AddSceneToQueue(const Urho3D::String& sceneName) noexcept
 {
-    if (phase != GAMEPHASE_LOADER)
-    {
-        return;
-    }
+    sceneQueue_.Push(sceneName);
+}
 
-    Setup();
-    assert(sprite_.NotNull());
-    sprite_->SetEnabled(true);
-    sprite_->SetVisible(true);
+void Loader::ClearQueue() noexcept
+{
+    parcelLoader_->ClearQueue();
+    sceneQueue_.Clear();
+}
 
-//     if (!parcelLoader_.Get()->StartLoadingQueue())
-//     {
-//         // TODO: do something
-//         GetSubsystem<Log>()->Write(LOG_ERROR, "Can't start loading parcel queue!");
-//         PartakerBaseT::GetPhaseSwitcher()->Pop();
-//         PartakerBaseT::GetPhaseSwitcher()->Switch();
-//     }
-
+void Loader::StartLoading() noexcept
+{
     if (parcelLoader_.Get()->StartLoadingQueue())
     {
         SubscribeToEvent(parcelLoader_.Get(),
@@ -124,89 +108,20 @@ void Loader::OnPhaseEnter(unsigned phase, unsigned phasePrev)
 
 void Loader::OnSceneLoaded(const String& sceneName, Scene* scenePtr)
 {
-    //TODO: Send event or something
-    GetSubsystem<Log>()->Write(LOG_DEBUG, ToString("** OnSceneLoaded: %s", sceneName.CString()));
+    Urho3D::VariantMap& eventData = GetEventDataMap();
+    eventData[ SceneLoadFinished::P_SCENE_NAME ] = sceneName;
+    eventData[ SceneLoadFinished::P_SCENE ] = scenePtr;
+    SendEvent(E_LOADER_SCENELOADFINISHED, eventData);
 }
 
 void Loader::OnLoadingFinished()
 {
+    Urho3D::VariantMap& eventData = GetEventDataMap();
+    SendEvent(E_LOADER_LOADINGFINISHED, eventData);
+
     auto switcher = GetSubsystem<PhaseSwitcher>();
     switcher->Pop();
     switcher->Switch();
-}
-
-bool Loader::Setup()
-{
-    if (sprite_.Null())
-    {
-        auto cache = GetSubsystem<ResourceCache>();
-
-        sprite_ = GetSubsystem<UI>()->GetRoot()->CreateChild<Sprite>();
-        if (sprite_.NotNull())
-        {
-            auto texture = cache->GetResource<Texture2D>("Textures/Shmurho.png");
-            if (texture != 0)
-            {
-                sprite_->SetTexture(texture);
-
-                unsigned texWidth = texture->GetWidth();
-                unsigned texHeight = texture->GetHeight();
-
-                sprite_->SetAlignment(Urho3D::HA_CENTER, Urho3D::VA_CENTER);
-                sprite_->SetSize(texWidth, texHeight);
-                sprite_->SetHotSpot(texWidth / 2.f, texHeight / 2.f);
-
-                auto graphics = GetSubsystem<Graphics>();
-                unsigned winWidth = graphics->GetWidth();
-                unsigned winHeight = graphics->GetHeight();
-                float xScale = (float)winWidth / (float)texWidth;
-                float yScale = (float)winHeight / (float)texHeight;
-                if (xScale < 1.f || yScale < 1.f)
-                {
-                    sprite_->SetScale((xScale < yScale) ? xScale : yScale);
-                }
-            }
-        }
-    }
-
-    return (sprite_.NotNull());
-}
-
-void Loader::Cleanup() {}
-
-// void Loader::HandleBeginFrame( Urho3D::StringHash eventType, Urho3D::VariantMap&
-// eventData )
-// {
-//     auto loader = context_->GetSubsystem<ParcelLoader>();
-//     if ( loader->IsLoading() )
-//     {
-//         //TODO: update data of loading progress here
-//     }
-//     else // Loading just finished
-//     {
-//         auto switcher = PartakerBaseT::GetPhaseSwitcher().Get();
-//         if (switcher != nullptr)
-//         {
-//             switcher->Pop();
-//             switcher->Switch();
-//         }
-//     }
-// }
-
-void Loader::AddParcelToQueue(const Urho3D::String& parcelName) noexcept
-{
-    parcelLoader_->AddToQueue(parcelName);
-}
-
-void Loader::AddSceneToQueue(const Urho3D::String& sceneName) noexcept
-{
-    sceneQueue_.Push(sceneName);
-}
-
-void Loader::ClearQueue() noexcept
-{
-    parcelLoader_->ClearQueue();
-    sceneQueue_.Clear();
 }
 
 void Loader::HandleParcelLoaded(Urho3D::StringHash eventType,
@@ -220,10 +135,15 @@ void Loader::HandleParcelLoaded(Urho3D::StringHash eventType,
 void Loader::HandleParcelQueueLoaded(Urho3D::StringHash eventType,
                                      Urho3D::VariantMap& eventData)
 {
+    UnsubscribeFromEvent(parcelLoader_.Get(), Shmurho::Parcel::E_PARCEL_LOADED);
+    UnsubscribeFromEvent(parcelLoader_.Get(), Shmurho::Parcel::E_PARCEL_QUEUE_LOADED);
+
     if (!StartLoadingScenes())
     {
+        GetSubsystem<Log>()->Write(LOG_DEBUG, "Parcel queue loaded and scene queue NOT started");
         OnLoadingFinished();
     }
+    GetSubsystem<Log>()->Write(LOG_DEBUG, "Parcel queue loaded and scene queue started");
 }
 
 void Loader::HandleAsyncLoadFinished(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData)
@@ -263,10 +183,17 @@ bool Loader::StartLoadingScenes()
 
 bool Loader::StartLoadingScene(const Urho3D::String& sceneName)
 {
-    currScenePtr_ = MakeShared<Scene>(context_);
+    currScenePtr_ = new Scene(context_);
     assert(currScenePtr_);
 
-    bool success = currScenePtr_->LoadAsyncXML(new File(context_, sceneName, FILE_READ), LOAD_SCENE_AND_RESOURCES);
+    SharedPtr<File> file = nullptr;
+    file = GetSubsystem<ResourceCache>()->GetFile(sceneName);
+    assert(file.NotNull());
+    if (file.Null())
+    {
+        return (false);
+    }
+    bool success = currScenePtr_->LoadAsyncXML(file.Get(), LOAD_SCENE_AND_RESOURCES);
     if (success)
     {
         currSceneName_ = sceneName;

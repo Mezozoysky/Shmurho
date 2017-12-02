@@ -66,13 +66,18 @@ protected:
     void HandlePhaseLeave(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
     void HandlePhaseEnter(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
 
+    void HandleSceneLoadFinished(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
+    void HandleLoadingFinished(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
+
     void HandleStartMenuExitRequested(Urho3D::StringHash eventType,
                                       Urho3D::VariantMap& eventData);
 
 private:
     Urho3D::UniquePtr<Loader> loader_;
+    Urho3D::SharedPtr<Urho3D::Sprite> loaderSprite_;
     Urho3D::UniquePtr<StartMenu> startMenu_;
-    Urho3D::UniquePtr<Bg> bg_;
+
+    Urho3D::SharedPtr<Urho3D::Scene> bgScene_;
 };
 
 } // namespace Demo

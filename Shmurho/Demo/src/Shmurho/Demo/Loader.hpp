@@ -32,7 +32,6 @@
 
 #pragma once
 
-#include <Shmurho/Phase/Partaker.hpp>
 #include <Urho3D/Core/Object.h>
 #include <Urho3D/Container/List.h>
 
@@ -57,7 +56,6 @@ namespace Demo
 
 class Loader
 : public Urho3D::Object
-, public Shmurho::Phase::Partaker<Loader>
 {
     URHO3D_OBJECT(Loader, Urho3D::Object);
 
@@ -68,21 +66,16 @@ public:
     Loader(Urho3D::Context* context) noexcept;
     virtual ~Loader() noexcept = default;
 
-    virtual bool Setup();
-    virtual void Cleanup();
-
     void AddParcelToQueue(const Urho3D::String& parcelName) noexcept;
     void AddSceneToQueue(const Urho3D::String& sceneName) noexcept;
     void ClearQueue() noexcept;
 
-    virtual void OnPhaseLeave(unsigned phase, unsigned phaseNext) override;
-    virtual void OnPhaseEnter(unsigned phase, unsigned phasePrev) override;
+    void StartLoading() noexcept;
 
     virtual void OnSceneLoaded(const Urho3D::String& sceneName, Urho3D::Scene* scenePtr);
     virtual void OnLoadingFinished();
+
 private:
-    //     void HandleBeginFrame(Urho3D::StringHash eventType, Urho3D::VariantMap&
-    //     eventData);
     void HandleParcelLoaded(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
     void HandleParcelQueueLoaded(Urho3D::StringHash eventType,
                                  Urho3D::VariantMap& eventData);

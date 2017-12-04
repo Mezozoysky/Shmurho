@@ -119,8 +119,53 @@ void App::Start()
     auto switcher = GetSubsystem<PhaseSwitcher>();
     startMenu_->SetPhaseSwitcher(switcher);
 
-    loader_->AddParcelToQueue("Parcels/Base.json");
-    loader_->AddParcelToQueue("Parcels/Big.json");
+    auto cache = GetSubsystem<ResourceCache>();
+
+    // setup ui root with default ui style
+    auto style = cache->GetResource<XMLFile>("UI/DefaultStyle.xml");
+    assert(style != 0);
+    if (style != 0)
+    {
+        auto uiRoot = GetSubsystem<UI>()->GetRoot();
+        uiRoot->SetDefaultStyle(style);
+        uiRoot->SetOpacity(0.6f);
+    }
+
+    // preload ui markup image
+    auto uiTexture = cache->GetResource<Texture2D>("Textures/UI.png");
+    assert(uiTexture != 0);
+
+    // preload and place loader sprite
+    loaderSprite_ = GetSubsystem<UI>()->GetRoot()->CreateChild<Sprite>();
+    assert(loaderSprite_.NotNull());
+    if (loaderSprite_.NotNull())
+    {
+        auto texture = cache->GetResource<Texture2D>("Textures/Shmurho.png");
+        if (texture != 0)
+        {
+            loaderSprite_->SetTexture(texture);
+
+            unsigned texWidth = texture->GetWidth();
+            unsigned texHeight = texture->GetHeight();
+
+            loaderSprite_->SetAlignment(Urho3D::HA_CENTER, Urho3D::VA_CENTER);
+            loaderSprite_->SetSize(texWidth, texHeight);
+            loaderSprite_->SetHotSpot(texWidth / 2.f, texHeight / 2.f);
+
+            auto graphics = GetSubsystem<Graphics>();
+            unsigned winWidth = graphics->GetWidth();
+            unsigned winHeight = graphics->GetHeight();
+            float xScale = (float)winWidth / (float)texWidth;
+            float yScale = (float)winHeight / (float)texHeight;
+            if (xScale < 1.f || yScale < 1.f)
+            {
+                loaderSprite_->SetScale((xScale < yScale) ? xScale : yScale);
+            }
+        }
+    }
+
+    loader_->AddParcelToQueue("Parcels/Common.json");
+    loader_->AddParcelToQueue("Parcels/StartMenu.json");
     loader_->AddSceneToQueue("Scenes/Bg.xml");
     switcher->Push({ GAMEPHASE_START_MENU, GAMEPHASE_LOADER });
     switcher->Switch();
@@ -133,21 +178,11 @@ void App::Start()
                      URHO3D_HANDLER(App, HandlePhaseEnter));
     SubscribeToEvent(loader_.Get(), E_LOADER_SCENELOADFINISHED, URHO3D_HANDLER(App, HandleSceneLoadFinished));
     SubscribeToEvent(loader_.Get(), E_LOADER_LOADINGFINISHED, URHO3D_HANDLER(App, HandleLoadingFinished));
-    SubscribeToEvent(startMenu_.Get(),
-                     E_STARTMENUEXITREQUESTED,
-                     URHO3D_HANDLER(App, HandleStartMenuExitRequested));
 }
 
 void App::Stop()
 {
     UnsubscribeFromAllEvents();
-}
-
-bool App::RequestQuit()
-{
-    bool accepted = true;
-    GetSubsystem<Engine>()->Exit();
-    return (accepted);
 }
 
 void App::HandlePhaseLeave(StringHash eventType, VariantMap& eventData)
@@ -161,50 +196,6 @@ void App::HandlePhaseLeave(StringHash eventType, VariantMap& eventData)
     {
         case GAMEPHASE_NONE :
         {
-            auto cache = GetSubsystem<ResourceCache>();
-
-            // setup ui root with default ui style
-            auto style = cache->GetResource<XMLFile>("UI/DefaultStyle.xml");
-            assert(style != 0);
-            if (style != 0)
-            {
-                auto uiRoot = GetSubsystem<UI>()->GetRoot();
-                uiRoot->SetDefaultStyle(style);
-                uiRoot->SetOpacity(0.6f);
-            }
-
-            // preload ui markup image
-            auto uiTexture = cache->GetResource<Texture2D>("Textures/UI.png");
-            assert(uiTexture != 0);
-
-            // preload and place loader sprite
-            loaderSprite_ = GetSubsystem<UI>()->GetRoot()->CreateChild<Sprite>();
-            assert(loaderSprite_.NotNull());
-            if (loaderSprite_.NotNull())
-            {
-                auto texture = cache->GetResource<Texture2D>("Textures/Shmurho.png");
-                if (texture != 0)
-                {
-                    loaderSprite_->SetTexture(texture);
-
-                    unsigned texWidth = texture->GetWidth();
-                    unsigned texHeight = texture->GetHeight();
-
-                    loaderSprite_->SetAlignment(Urho3D::HA_CENTER, Urho3D::VA_CENTER);
-                    loaderSprite_->SetSize(texWidth, texHeight);
-                    loaderSprite_->SetHotSpot(texWidth / 2.f, texHeight / 2.f);
-
-                    auto graphics = GetSubsystem<Graphics>();
-                    unsigned winWidth = graphics->GetWidth();
-                    unsigned winHeight = graphics->GetHeight();
-                    float xScale = (float)winWidth / (float)texWidth;
-                    float yScale = (float)winHeight / (float)texHeight;
-                    if (xScale < 1.f || yScale < 1.f)
-                    {
-                        loaderSprite_->SetScale((xScale < yScale) ? xScale : yScale);
-                    }
-                }
-            }
         }
         break;
 
@@ -242,7 +233,7 @@ void App::HandlePhaseEnter(StringHash eventType, VariantMap& eventData)
     {
         case GAMEPHASE_NONE :
         {
-            RequestQuit();
+            GetSubsystem<Engine>()->Exit();
         }
         break;
 
@@ -298,13 +289,6 @@ void App::HandleSceneLoadFinished(Urho3D::StringHash eventType, Urho3D::VariantM
 void App::HandleLoadingFinished(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData)
 {
     GetSubsystem<Log>()->Write(LOG_DEBUG, "** Loading finished");
-}
-
-
-void App::HandleStartMenuExitRequested(StringHash eventType, VariantMap& eventData)
-{
-    GetSubsystem<Log>()->Write(LOG_DEBUG, "== EXIT REQUEST DONE!!!");
-    RequestQuit();
 }
 
 

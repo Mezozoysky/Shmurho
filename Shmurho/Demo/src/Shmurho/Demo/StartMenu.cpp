@@ -34,6 +34,7 @@
 #include "PhaseSwitcher.hpp"
 
 #include <Urho3D/Core/Context.h>
+#include <Urho3D/Resource/ResourceCache.h>
 #include <Urho3D/IO/Log.h>
 #include <Urho3D/UI/UI.h>
 #include <Urho3D/UI/UIEvents.h>
@@ -85,38 +86,22 @@ bool StartMenu::Setup()
 {
     if (window_.Null())
     {
-        auto uiRoot = GetSubsystem<UI>()->GetRoot();
-        window_ = uiRoot->CreateChild<Window>("StartMenuWindow");
-        window_->SetMinWidth(300);
-        window_->SetLayout(Urho3D::LM_VERTICAL, 6, IntRect(6, 6, 6, 6));
-        window_->SetAlignment(Urho3D::HA_CENTER, Urho3D::VA_CENTER);
-        window_->SetStyleAuto();
+        auto xmlfile = GetSubsystem<ResourceCache>()->GetExistingResource<XMLFile>("UI/StartMenuWindow.xml");
+        assert(xmlfile);
+        auto ui = GetSubsystem<UI>();
+        window_ = StaticCast<Window>(ui->LoadLayout(xmlfile));
+        assert(window_);
+        ui->GetRoot()->AddChild(window_);
 
-        auto buttonNewGame = window_->CreateChild<Button>("ButtonNewGame");
-        buttonNewGame->SetMinHeight(24);
-        buttonNewGame->SetLayout(Urho3D::LM_HORIZONTAL, 6, IntRect(6, 6, 6, 6));
-        buttonNewGame->SetStyleAuto();
+        auto buttonNewGame = static_cast<Button*>(window_->GetChild("NewGameButton", false));
         SubscribeToEvent(buttonNewGame,
                          E_CLICK,
                          URHO3D_HANDLER(StartMenu, HandleNewGameButtonClicked));
 
-        auto textNewGame = buttonNewGame->CreateChild<Text>("TextNewGame");
-        textNewGame->SetText("Play the new game");
-        textNewGame->SetTextAlignment(Urho3D::HA_CENTER);
-        textNewGame->SetStyleAuto();
-
-        auto buttonExit = window_->CreateChild<Button>("ButtonExit");
-        buttonExit->SetMinHeight(24);
-        buttonExit->SetLayout(Urho3D::LM_HORIZONTAL, 6, IntRect(6, 6, 6, 6));
-        buttonExit->SetStyleAuto();
+        auto buttonExit = static_cast<Button*>(window_->GetChild("ExitButton", false));
         SubscribeToEvent(buttonExit,
                          E_CLICK,
                          URHO3D_HANDLER(StartMenu, HandleExitButtonClicked));
-
-        auto textExit = buttonExit->CreateChild<Text>("TextExit");
-        textExit->SetText("Exit and live the life");
-        textExit->SetTextAlignment(Urho3D::HA_CENTER);
-        textExit->SetStyleAuto();
     }
 
     return (window_.NotNull());
@@ -124,29 +109,19 @@ bool StartMenu::Setup()
 
 void StartMenu::Cleanup() {}
 
-void StartMenu::OnExitRequested()
-{
-    Urho3D::VariantMap& eventData = GetEventDataMap();
-    SendEvent(E_STARTMENUEXITREQUESTED, eventData);
-}
-
-void StartMenu::OnNewGameRequested()
-{
-    //    GetSubsystem<PhaseSwitcher>()->SwitchTo( GAMEPHASE_NONE );
-    Urho3D::VariantMap& eventData = GetEventDataMap();
-    SendEvent(E_STARTMENUEXITREQUESTED, eventData);
-}
-
 void StartMenu::HandleNewGameButtonClicked(StringHash eventType, VariantMap& eventData)
 {
     GetSubsystem<Log>()->Write(LOG_DEBUG, "== NEW GAME CLICKED!!!");
-    OnNewGameRequested();
+    GetPhaseSwitcher()->Push(GAMEPHASE_LEVEL);
+    GetPhaseSwitcher()->Switch();
+
 }
 
 void StartMenu::HandleExitButtonClicked(StringHash eventType, VariantMap& eventData)
 {
     GetSubsystem<Log>()->Write(LOG_DEBUG, "== EXIT AND LIVE CLICKED!!!");
-    OnExitRequested();
+    GetPhaseSwitcher()->Pop();
+    GetPhaseSwitcher()->Switch();
 }
 
 

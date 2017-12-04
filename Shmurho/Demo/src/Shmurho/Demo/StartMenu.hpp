@@ -68,9 +68,6 @@ public:
     virtual bool Setup();
     virtual void Cleanup();
 
-    virtual void OnExitRequested();
-    virtual void OnNewGameRequested();
-
 private:
     void HandleNewGameButtonClicked(Urho3D::StringHash eventType,
                                     Urho3D::VariantMap& eventData);

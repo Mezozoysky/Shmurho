@@ -1,9 +1,9 @@
 {
 	"resource-lists" : [
 		{
-			"type" : "Font",
+			"type" : "XMLFile",
 			"names" : [
-				"Fonts/Anonymous Pro.ttf"
+				"UI/StartMenuWindow.xml"
 			]
 		}
 	]

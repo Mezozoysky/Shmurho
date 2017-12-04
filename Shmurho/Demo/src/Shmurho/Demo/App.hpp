@@ -46,7 +46,6 @@ namespace Demo
 
 class Loader;
 class StartMenu;
-class Bg;
 
 class App : public Urho3D::Application
 {
@@ -60,17 +59,12 @@ public:
     virtual void Start() override;
     virtual void Stop() override;
 
-    virtual bool RequestQuit();
-
 protected:
     void HandlePhaseLeave(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
     void HandlePhaseEnter(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
 
     void HandleSceneLoadFinished(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
     void HandleLoadingFinished(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
-
-    void HandleStartMenuExitRequested(Urho3D::StringHash eventType,
-                                      Urho3D::VariantMap& eventData);
 
 private:
     Urho3D::UniquePtr<Loader> loader_;

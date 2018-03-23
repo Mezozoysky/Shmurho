@@ -48,4 +48,3 @@ URHO3D_EVENT(E_LOADER_LOADINGFINISHED, LoadingFinished) {}
 
 } // namespace Demo
 } // namespace Shmurho
-

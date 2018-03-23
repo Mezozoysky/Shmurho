@@ -54,8 +54,7 @@ namespace Shmurho
 namespace Demo
 {
 
-class Loader
-: public Urho3D::Object
+class Loader : public Urho3D::Object
 {
     URHO3D_OBJECT(Loader, Urho3D::Object);
 
@@ -77,8 +76,7 @@ public:
 
 private:
     void HandleParcelLoaded(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
-    void HandleParcelQueueLoaded(Urho3D::StringHash eventType,
-                                 Urho3D::VariantMap& eventData);
+    void HandleParcelQueueLoaded(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
     void HandleAsyncLoadFinished(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
 
     bool StartLoadingScenes();

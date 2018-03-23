@@ -80,6 +80,7 @@ App::App(Context* context)
 , loader_(new Loader(context))
 , startMenu_(new StartMenu(context))
 , bgScene_(nullptr)
+, levelScene_(nullptr)
 {
 }
 
@@ -87,12 +88,13 @@ void App::Setup()
 {
     engineParameters_[ "LogName" ] = "../shmurho-demo.log";
     engineParameters_[ "LogLevel" ] = Urho3D::LOG_DEBUG;
-    engineParameters_[ "ResourcePaths" ] =
-    "../share/Shmurho/Demo/Data;../share/Shmurho/Demo/CoreData;";
+    engineParameters_[ "ResourcePaths" ] = "../share/Shmurho/Demo/Data;../share/Shmurho/Demo/CoreData;";
     engineParameters_[ "Fullscreen" ] = false;
-    engineParameters_[ "WindowWidth" ] = 1280;
-    engineParameters_[ "WindowHeight" ] = 720;
+    engineParameters_[ "WindowWidth" ] = 1440;
+    engineParameters_[ "WindowHeight" ] = 900;
     engineParameters_[ "WindowResizable" ] = true;
+
+    SetRandomSeed(Random(1, M_MAX_INT));
 
     context_->RegisterSubsystem(new PhaseSwitcher(context_));
     context_->RegisterSubsystem(new Script(context_));
@@ -167,15 +169,12 @@ void App::Start()
     loader_->AddParcelToQueue("Parcels/Common.json");
     loader_->AddParcelToQueue("Parcels/StartMenu.json");
     loader_->AddSceneToQueue("Scenes/Bg.xml");
+    loader_->AddSceneToQueue("Scenes/Level.xml");
     switcher->Push({ GAMEPHASE_START_MENU, GAMEPHASE_LOADER });
     switcher->Switch();
 
-    SubscribeToEvent(switcher,
-                     Shmurho::Phase::E_PHASELEAVE,
-                     URHO3D_HANDLER(App, HandlePhaseLeave));
-    SubscribeToEvent(switcher,
-                     Shmurho::Phase::E_PHASEENTER,
-                     URHO3D_HANDLER(App, HandlePhaseEnter));
+    SubscribeToEvent(switcher, Shmurho::Phase::E_PHASELEAVE, URHO3D_HANDLER(App, HandlePhaseLeave));
+    SubscribeToEvent(switcher, Shmurho::Phase::E_PHASEENTER, URHO3D_HANDLER(App, HandlePhaseEnter));
     SubscribeToEvent(loader_.Get(), E_LOADER_SCENELOADFINISHED, URHO3D_HANDLER(App, HandleSceneLoadFinished));
     SubscribeToEvent(loader_.Get(), E_LOADER_LOADINGFINISHED, URHO3D_HANDLER(App, HandleLoadingFinished));
 }
@@ -185,41 +184,72 @@ void App::Stop()
     UnsubscribeFromAllEvents();
 }
 
+void App::SetupLevelView() noexcept
+{
+    assert(levelScene_.NotNull());
+    if (levelScene_.NotNull())
+    {
+        auto renderer = GetSubsystem<Renderer>();
+        auto viewport = renderer->GetViewport(1);
+        auto camera = levelScene_->GetChild("MainCamera", false)->GetComponent<Camera>();
+        viewport->SetScene(levelScene_.Get());
+        viewport->SetCamera(camera);
+    }
+}
+
 void App::HandlePhaseLeave(StringHash eventType, VariantMap& eventData)
 {
     auto phase = eventData[ Shmurho::Phase::PhaseLeave::P_PHASE ].GetUInt();
     auto phaseNext = eventData[ Shmurho::Phase::PhaseLeave::P_PHASE_NEXT ].GetUInt();
-    GetSubsystem<Log>()->Write(
-    LOG_INFO, ToString("-- Leaving '%u' phase; next phase: '%u'", phase, phaseNext));
+    GetSubsystem<Log>()->Write(LOG_INFO,
+                               ToString("-- Leaving '%u' phase; next phase: '%u'", phase, phaseNext));
 
     switch (phase)
     {
-        case GAMEPHASE_NONE :
-        {
-        }
-        break;
+    case GAMEPHASE_NONE:
+    {
+    }
+    break;
 
-        case GAMEPHASE_LOADER :
+    case GAMEPHASE_LOADER:
+    {
+        assert(loaderSprite_.NotNull());
+        if (loaderSprite_.NotNull())
         {
-            assert(loaderSprite_.NotNull());
-            if (loaderSprite_.NotNull())
-            {
-                loaderSprite_->SetVisible(false);
-                loaderSprite_->SetEnabled(false);
-            }
+            loaderSprite_->SetVisible(false);
+            loaderSprite_->SetEnabled(false);
         }
-        break;
+    }
+    break;
 
-        case GAMEPHASE_START_MENU :
-        {
-        }
-        break;
+    case GAMEPHASE_START_MENU:
+    {
+    }
+    break;
 
-        default :
+    case GAMEPHASE_LEVEL:
+    {
+        assert(levelScene_.NotNull());
+        if (levelScene_.NotNull())
         {
-            GetSubsystem<Log>()->Write(LOG_ERROR, ToString("Trying to leave unknown phase: %u", phase));
+            levelScene_->SetUpdateEnabled(false);
         }
-        break;
+
+        if (phaseNext == GAMEPHASE_START_MENU)
+        {
+            auto renderer = GetSubsystem<Renderer>();
+            auto viewport = renderer->GetViewport(1);
+            viewport->SetScene(nullptr);
+            viewport->SetCamera(nullptr);
+        }
+    }
+    break;
+
+    default:
+    {
+        GetSubsystem<Log>()->Write(LOG_ERROR, ToString("Trying to leave unknown phase: %u", phase));
+    }
+    break;
     }
 }
 
@@ -227,38 +257,59 @@ void App::HandlePhaseEnter(StringHash eventType, VariantMap& eventData)
 {
     auto phase = eventData[ Shmurho::Phase::PhaseEnter::P_PHASE ].GetUInt();
     auto phasePrev = eventData[ Shmurho::Phase::PhaseEnter::P_PHASE_PREV ].GetUInt();
-    GetSubsystem<Log>()->Write(
-    LOG_INFO, ToString("-- Entering '%u' phase; prev phase: '%u'", phase, phasePrev));
+    auto log = GetSubsystem<Log>();
+    log->Write(LOG_INFO, ToString("-- Entering '%u' phase; prev phase: '%u'", phase, phasePrev));
+
     switch (phase)
     {
-        case GAMEPHASE_NONE :
-        {
-            GetSubsystem<Engine>()->Exit();
-        }
-        break;
+    case GAMEPHASE_NONE:
+    {
+        GetSubsystem<Engine>()->Exit();
+    }
+    break;
 
-        case GAMEPHASE_LOADER :
+    case GAMEPHASE_LOADER:
+    {
+        assert(loaderSprite_.NotNull());
+        if (loaderSprite_.NotNull())
         {
-            assert(loaderSprite_.NotNull());
-            if (loaderSprite_.NotNull())
+            loaderSprite_->SetEnabled(true);
+            loaderSprite_->SetVisible(true);
+        }
+        loader_->StartLoading();
+    }
+    break;
+
+    case GAMEPHASE_START_MENU:
+    {
+    }
+    break;
+
+    case GAMEPHASE_LEVEL:
+    {
+        assert(levelScene_.NotNull());
+        if (levelScene_.NotNull())
+        {
+            if (phasePrev == GAMEPHASE_START_MENU)
             {
-                loaderSprite_->SetEnabled(true);
-                loaderSprite_->SetVisible(true);
+                auto renderer = GetSubsystem<Renderer>();
+                auto viewport = renderer->GetViewport(1);
+                auto camera = levelScene_->GetChild("CameraMain", false)->GetComponent<Camera>();
+                assert(camera);
+                viewport->SetScene(levelScene_.Get());
+                viewport->SetCamera(camera);
             }
-            loader_->StartLoading();
-        }
-        break;
 
-        case GAMEPHASE_START_MENU :
-        {
+            levelScene_->SetUpdateEnabled(true);
         }
-        break;
+    }
+    break;
 
-        default :
-        {
-            GetSubsystem<Log>()->Write(LOG_ERROR, ToString("Trying to enter unknown phase: %u", phase));
-        }
-        break;
+    default:
+    {
+        GetSubsystem<Log>()->Write(LOG_ERROR, ToString("Trying to enter unknown phase: %u", phase));
+    }
+    break;
     }
 }
 
@@ -278,6 +329,10 @@ void App::HandleSceneLoadFinished(Urho3D::StringHash eventType, Urho3D::VariantM
         viewport->SetScene(scene);
         viewport->SetCamera(camera);
         scene->SetUpdateEnabled(true);
+    }
+    else if (sceneName == "Scenes/Level.xml")
+    {
+        levelScene_ = scene;
     }
     else
     {

@@ -114,7 +114,6 @@ void StartMenu::HandleNewGameButtonClicked(StringHash eventType, VariantMap& eve
     GetSubsystem<Log>()->Write(LOG_DEBUG, "== NEW GAME CLICKED!!!");
     GetPhaseSwitcher()->Push(GAMEPHASE_LEVEL);
     GetPhaseSwitcher()->Switch();
-
 }
 
 void StartMenu::HandleExitButtonClicked(StringHash eventType, VariantMap& eventData)

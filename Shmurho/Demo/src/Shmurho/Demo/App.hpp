@@ -60,6 +60,9 @@ public:
     virtual void Stop() override;
 
 protected:
+    void SetupLevelView() noexcept;
+
+protected:
     void HandlePhaseLeave(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
     void HandlePhaseEnter(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
 
@@ -69,9 +72,11 @@ protected:
 private:
     Urho3D::UniquePtr<Loader> loader_;
     Urho3D::SharedPtr<Urho3D::Sprite> loaderSprite_;
+
     Urho3D::UniquePtr<StartMenu> startMenu_;
 
     Urho3D::SharedPtr<Urho3D::Scene> bgScene_;
+    Urho3D::SharedPtr<Urho3D::Scene> levelScene_;
 };
 
 } // namespace Demo

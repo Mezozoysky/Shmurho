@@ -85,9 +85,6 @@ void Loader::ClearQueue() noexcept
 
 void Loader::OnSceneLoaded(const String& name, Scene* scenePtr)
 {
-    assert(!queue_.Empty());
-    assert(!IsLoading());
-
     VariantMap& eventData = GetEventDataMap();
     eventData[ Shmurho::Loader::SceneLoadFinished::P_SCENE_NAME ] = name;
     eventData[ Shmurho::Loader::SceneLoadFinished::P_SCENE ] = scenePtr;
@@ -141,10 +138,9 @@ void Loader::HandleAsyncLoadFinished(StringHash eventType, VariantMap& eventData
     {
         UnsubscribeFromEvent(currScenePtr_, E_ASYNCLOADFINISHED);
         String currSceneName{queue_.Front()};
+        OnSceneLoaded(currSceneName, currScenePtr_);
         queue_.PopFront();
         currScenePtr_ = nullptr;
-        OnSceneLoaded(currSceneName, currScenePtr_);
-        StartLoading();
         if (!StartLoading())
         {
             OnLoadingFinished();

@@ -35,6 +35,7 @@
 #include <Shmurho/Phase/Partaker.hpp>
 #include <Urho3D/Core/Object.h>
 #include <Urho3D/Container/Ptr.h>
+#include "PhaseSwitcher.hpp"
 
 namespace Urho3D
 {
@@ -51,7 +52,7 @@ URHO3D_EVENT(E_STARTMENUEXITREQUESTED, StartMenuExitRequested) {}
 
 class StartMenu
 : public Urho3D::Object
-, public Shmurho::Phase::Partaker<StartMenu>
+, public Shmurho::Phase::Partaker<StartMenu, GAMEPHASE_START_MENU>
 {
     URHO3D_OBJECT(StartMenu, Urho3D::Object);
 
@@ -62,8 +63,8 @@ public:
     StartMenu(Urho3D::Context* context);
     virtual ~StartMenu() noexcept = default;
 
-    virtual void OnPhaseLeave(unsigned phase, unsigned phaseNext) override;
-    virtual void OnPhaseEnter(unsigned phase, unsigned phasePrev) override;
+    virtual void OnPhaseLeave(unsigned phaseNext) override;
+    virtual void OnPhaseEnter(unsigned phasePrev) override;
 
     virtual bool Setup();
     virtual void Cleanup();

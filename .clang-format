@@ -21,7 +21,7 @@ BreakConstructorInitializers: BeforeComma
 BreakBeforeInheritanceComma: true
 BinPackParameters: false
 BinPackArguments: false
-ColumnLimit:     90
+ColumnLimit:     110
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
 DerivePointerAlignment: false
 ExperimentalAutoDetectBinPacking: false
@@ -33,8 +33,8 @@ KeepEmptyLinesAtTheStartOfBlocks: true
 NamespaceIndentation: None
 ObjCSpaceAfterProperty: true
 ObjCSpaceBeforeProtocolList: true
-PenaltyBreakBeforeFirstCallParameter: 90
-PenaltyBreakComment: 90
+PenaltyBreakBeforeFirstCallParameter: 110
+PenaltyBreakComment: 110
 PenaltyBreakString: 1000
 PenaltyBreakFirstLessLess: 110
 PenaltyExcessCharacter: 1000000
@@ -65,4 +65,3 @@ DisableFormat: true
 ---
 Language: Proto
 DisableFormat: true
-

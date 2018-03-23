@@ -47,6 +47,7 @@ find_package( Urho3D REQUIRED )
 #
 add_subdirectory( Shmurho/Phase )
 add_subdirectory( Shmurho/Parcel )
+add_subdirectory( Shmurho/Loader )
 if( SHMURHO_BUILD_DEMO )
 	add_subdirectory( Shmurho/Demo )
 endif()

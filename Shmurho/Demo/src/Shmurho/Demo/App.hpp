@@ -44,7 +44,7 @@ namespace Shmurho
 namespace Demo
 {
 
-class Loader;
+// class Loader;
 class StartMenu;
 
 class App : public Urho3D::Application
@@ -70,7 +70,7 @@ protected:
     void HandleLoadingFinished(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
 
 private:
-    Urho3D::UniquePtr<Loader> loader_;
+    // Urho3D::UniquePtr<Loader> loader_;
     Urho3D::SharedPtr<Urho3D::Sprite> loaderSprite_;
 
     Urho3D::UniquePtr<StartMenu> startMenu_;

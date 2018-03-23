@@ -32,15 +32,12 @@
 
 #include "App.hpp"
 #include "PhaseSwitcher.hpp"
-#include "Loader.hpp"
-#include "LoaderEvents.hpp"
 #include "DevKbdController.hpp"
 #include "StartMenu.hpp"
 
 #include <Shmurho/Phase/PhaseEvents.hpp>
-#include <Shmurho/Parcel/Parcel.hpp>
-#include <Shmurho/Parcel/ParcelLoader.hpp>
-#include <Shmurho/Parcel/ParcelEvents.hpp>
+#include <Shmurho/Loader/Loader.hpp>
+#include <Shmurho/Loader/LoaderEvents.hpp>
 
 #include <Urho3D/IO/Log.h>
 #include <Urho3D/Input/Input.h>
@@ -77,7 +74,6 @@ namespace Demo
 
 App::App(Context* context)
 : Application(context)
-, loader_(new Loader(context))
 , startMenu_(new StartMenu(context))
 , bgScene_(nullptr)
 , levelScene_(nullptr)
@@ -96,12 +92,11 @@ void App::Setup()
 
     SetRandomSeed(Random(1, M_MAX_INT));
 
-    context_->RegisterSubsystem(new PhaseSwitcher(context_));
     context_->RegisterSubsystem(new Script(context_));
+    context_->RegisterSubsystem(new PhaseSwitcher(context_));
+    context_->RegisterSubsystem(new Loader::Loader(context_));
 
     DevKbdController::RegisterObject(context_);
-    Shmurho::Parcel::Parcel::RegisterObject(context_);
-    Shmurho::Parcel::ParcelLoader::RegisterObject(context_);
 }
 
 void App::Start()
@@ -166,17 +161,22 @@ void App::Start()
         }
     }
 
-    loader_->AddParcelToQueue("Parcels/Common.json");
-    loader_->AddParcelToQueue("Parcels/StartMenu.json");
-    loader_->AddSceneToQueue("Scenes/Bg.xml");
-    loader_->AddSceneToQueue("Scenes/Level.xml");
+    auto loader{GetSubsystem<Loader::Loader>()};
+    loader->AddToQueue("Scenes/Bg.xml");
+    loader->AddToQueue("Scenes/Level.xml");
+    // loader_->AddParcelToQueue("Parcels/Common.json");
+    // loader_->AddParcelToQueue("Parcels/StartMenu.json");
+    // loader_->AddSceneToQueue("Scenes/Bg.xml");
+    // loader_->AddSceneToQueue("Scenes/Level.xml");
     switcher->Push({ GAMEPHASE_START_MENU, GAMEPHASE_LOADER });
     switcher->Switch();
 
     SubscribeToEvent(switcher, Shmurho::Phase::E_PHASELEAVE, URHO3D_HANDLER(App, HandlePhaseLeave));
     SubscribeToEvent(switcher, Shmurho::Phase::E_PHASEENTER, URHO3D_HANDLER(App, HandlePhaseEnter));
-    SubscribeToEvent(loader_.Get(), E_LOADER_SCENELOADFINISHED, URHO3D_HANDLER(App, HandleSceneLoadFinished));
-    SubscribeToEvent(loader_.Get(), E_LOADER_LOADINGFINISHED, URHO3D_HANDLER(App, HandleLoadingFinished));
+    SubscribeToEvent(loader, Shmurho::Loader::E_LOADER_SCENELOADFINISHED,
+                     URHO3D_HANDLER(App, HandleSceneLoadFinished));
+    SubscribeToEvent(loader, Shmurho::Loader::E_LOADER_LOADINGFINISHED,
+                     URHO3D_HANDLER(App, HandleLoadingFinished));
 }
 
 void App::Stop()
@@ -276,7 +276,7 @@ void App::HandlePhaseEnter(StringHash eventType, VariantMap& eventData)
             loaderSprite_->SetEnabled(true);
             loaderSprite_->SetVisible(true);
         }
-        loader_->StartLoading();
+        GetSubsystem<Loader::Loader>()->StartLoading();
     }
     break;
 
@@ -315,8 +315,12 @@ void App::HandlePhaseEnter(StringHash eventType, VariantMap& eventData)
 
 void App::HandleSceneLoadFinished(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData)
 {
-    String sceneName{ eventData[ SceneLoadFinished::P_SCENE_NAME ].GetString() };
-    Scene* scene{ static_cast<Scene*>(eventData[ SceneLoadFinished::P_SCENE ].GetPtr()) };
+    String sceneName{ eventData[ Shmurho::Loader::SceneLoadFinished::P_SCENE_NAME ].GetString() };
+    Scene* scene{ static_cast<Scene*>(eventData[ Shmurho::Loader::SceneLoadFinished::P_SCENE ].GetPtr()) };
+    if (scene == nullptr)
+    {
+        GetSubsystem<Log>()->Write(LOG_ERROR, ToString("SCENE '%s' is NULL", sceneName.CString()));
+    }
     assert(scene);
 
     GetSubsystem<Log>()->Write(LOG_DEBUG, ToString("** Scene load finished: %s", sceneName.CString()));
@@ -344,6 +348,10 @@ void App::HandleSceneLoadFinished(Urho3D::StringHash eventType, Urho3D::VariantM
 void App::HandleLoadingFinished(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData)
 {
     GetSubsystem<Log>()->Write(LOG_DEBUG, "** Loading finished");
+    auto switcher{GetSubsystem<PhaseSwitcher>()};
+
+    switcher->Pop();
+    switcher->Switch();
 }
 
 

@@ -15,20 +15,20 @@ set( MODULE_SOURCES "" )
 set( GROUP_HEADERS
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/App.hpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/GameState.hpp
-    ${MODULE_ROOT}/src/${MODULE_NSPATH}/ParcelLoader.hpp
+    # ${MODULE_ROOT}/src/${MODULE_NSPATH}/ParcelLoader.hpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/DevKbdController.hpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/PhaseSwitcher.hpp
-    ${MODULE_ROOT}/src/${MODULE_NSPATH}/Loader.hpp
+    # ${MODULE_ROOT}/src/${MODULE_NSPATH}/Loader.hpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/LoaderEvents.hpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/StartMenu.hpp
 )
 set( GROUP_SOURCES
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/App.cpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/GameState.cpp
-    ${MODULE_ROOT}/src/${MODULE_NSPATH}/ParcelLoader.cpp
+    # ${MODULE_ROOT}/src/${MODULE_NSPATH}/ParcelLoader.cpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/DevKbdController.cpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/PhaseSwitcher.cpp
-    ${MODULE_ROOT}/src/${MODULE_NSPATH}/Loader.cpp
+    # ${MODULE_ROOT}/src/${MODULE_NSPATH}/Loader.cpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/StartMenu.cpp
     ${MODULE_ROOT}/src/main.cpp
 )
@@ -48,7 +48,7 @@ set( MODULE_SOURCES ${MODULE_SOURCES} ${GROUP_SOURCES} )
 set( TARGET_NAME ${MODULE_TGT} )
 set( SOURCE_FILES ${MODULE_SOURCES} )
 set( INCLUDE_DIRS ${MODULE_ROOT}/src ${MODULE_ROOT}/include ${URHO3D_INCLUDE_DIRS} )
-set( LIBS shmurho-parcel shmurho-phase )
+set( LIBS shmurho-loader shmurho-phase )
 set( TARGET_PROPERTIES LINKER_LANGUAGE CXX )
 setup_main_executable()
 
@@ -58,7 +58,6 @@ setup_main_executable()
 add_custom_command(
     TARGET ${MODULE_TGT}
     POST_BUILD
-#     COMMAND ${CMAKE_COMMAND} -E copy_directory ${MODULE_ROOT} $<TARGET_FILE_DIR:"${MODULE_TGT}">
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${MODULE_ROOT}/assets/ ${CMAKE_BINARY_DIR}/share/Shmurho/Demo/
 )
 

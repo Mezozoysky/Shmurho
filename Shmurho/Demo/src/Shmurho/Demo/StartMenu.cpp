@@ -86,7 +86,7 @@ bool StartMenu::Setup()
 {
     if (window_.Null())
     {
-        auto xmlfile = GetSubsystem<ResourceCache>()->GetExistingResource<XMLFile>("UI/StartMenuWindow.xml");
+        auto xmlfile = GetSubsystem<ResourceCache>()->GetResource<XMLFile>("UI/StartMenuWindow.xml");
         assert(xmlfile);
         auto ui = GetSubsystem<UI>();
         window_ = StaticCast<Window>(ui->LoadLayout(xmlfile));

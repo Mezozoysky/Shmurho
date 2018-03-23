@@ -6,11 +6,13 @@
 				"Fonts/Anonymous Pro.ttf"
 			]
 		},
+		/*
 		{
 			"type" : "Parcel",
 			"names" : [
 				"Parcels/Big.json"
 			]
 		}
+		*/
 	]
 }

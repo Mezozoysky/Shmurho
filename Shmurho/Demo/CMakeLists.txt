@@ -15,20 +15,16 @@ set( MODULE_SOURCES "" )
 set( GROUP_HEADERS
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/App.hpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/GameState.hpp
-    # ${MODULE_ROOT}/src/${MODULE_NSPATH}/ParcelLoader.hpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/DevKbdController.hpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/PhaseSwitcher.hpp
-    # ${MODULE_ROOT}/src/${MODULE_NSPATH}/Loader.hpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/LoaderEvents.hpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/StartMenu.hpp
 )
 set( GROUP_SOURCES
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/App.cpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/GameState.cpp
-    # ${MODULE_ROOT}/src/${MODULE_NSPATH}/ParcelLoader.cpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/DevKbdController.cpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/PhaseSwitcher.cpp
-    # ${MODULE_ROOT}/src/${MODULE_NSPATH}/Loader.cpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/StartMenu.cpp
     ${MODULE_ROOT}/src/main.cpp
 )

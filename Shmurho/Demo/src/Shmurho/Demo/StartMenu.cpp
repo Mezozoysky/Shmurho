@@ -57,19 +57,25 @@ void StartMenu::RegisterObject(Context* context)
 
 StartMenu::StartMenu(Context* context)
 : Object(context)
-, PartakerBaseT()
+, Partaker<StartMenu>()
 {
 }
 
-void StartMenu::OnPhaseLeave(unsigned phaseNext)
+void StartMenu::OnPhaseLeave(unsigned phase, unsigned phaseNext)
 {
+    if (phase != GAMEPHASE_START_MENU)
+        return;
+
     assert(window_.NotNull());
     window_->SetEnabled(false);
     window_->SetVisible(false);
 }
 
-void StartMenu::OnPhaseEnter(unsigned phasePrev)
+void StartMenu::OnPhaseEnter(unsigned phase, unsigned phasePrev)
 {
+    if (phase != GAMEPHASE_START_MENU)
+        return;
+
     Setup();
     assert(window_.NotNull());
     window_->SetEnabled(true);

@@ -85,7 +85,7 @@ void App::Setup()
     engineParameters_[ "LogName" ] = "../shmurho-demo.log";
     engineParameters_[ "LogLevel" ] = Urho3D::LOG_DEBUG;
     engineParameters_[ "ResourcePaths" ] = "../share/Shmurho/Demo/Data;../share/Shmurho/Demo/CoreData;";
-    engineParameters_[ "Fullscreen" ] = false;
+    engineParameters_[ "FullScreen" ] = false;
     engineParameters_[ "WindowWidth" ] = 1440;
     engineParameters_[ "WindowHeight" ] = 900;
     engineParameters_[ "WindowResizable" ] = true;

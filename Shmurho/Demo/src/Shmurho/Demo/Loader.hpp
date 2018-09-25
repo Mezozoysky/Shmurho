@@ -41,13 +41,13 @@ class Sprite;
 class Scene;
 }
 
-namespace Shmurho
-{
-namespace Parcel
-{
-class ParcelLoader;
-}
-}
+// namespace Shmurho
+// {
+// namespace Parcel
+// {
+// class ParcelLoader;
+// }
+// }
 
 namespace Shmurho
 {

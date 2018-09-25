@@ -33,8 +33,8 @@
 #include "Loader.hpp"
 #include "LoaderEvents.hpp"
 #include "PhaseSwitcher.hpp"
-#include <Shmurho/Parcel/ParcelLoader.hpp>
-#include <Shmurho/Parcel/ParcelEvents.hpp>
+// #include <Shmurho/Parcel/ParcelLoader.hpp>
+// #include <Shmurho/Parcel/ParcelEvents.hpp>
 #include <Urho3D/Core/Context.h>
 #include <Urho3D/Core/CoreEvents.h>
 #include <Urho3D/IO/Log.h>

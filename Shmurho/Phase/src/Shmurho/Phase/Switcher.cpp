@@ -1,6 +1,6 @@
 // Shmurho
 //
-// Shmurho - Copyright (C) 2017 Stanislav Demyanovich
+// Shmurho - Copyright (C) 2017-2018 Stanislav Demyanovich
 //
 // This software is provided 'as-is', without any express or
 // implied warranty. In no event will the authors be held
@@ -25,7 +25,7 @@
 /// \file
 /// \brief Shmurho's trivial phase switcher implementation
 /// \author Stanislav Demyanovich <mezozoysky@gmail.com>
-/// \date 2017
+/// \date 2018
 /// \copyright Shmurho is released under the terms of zlib/libpng license
 /// \details --
 
@@ -46,9 +46,9 @@ namespace Phase
 
 Switcher::Switcher(Urho3D::Context* context)
 : Object(context)
-, phaseCurrent_(0)
-, phasePrevious_(0)
-, isSwitchRequested_(false)
+, phaseCurrent_(String::EMPTY)
+, phasePrevious_(String::EMPTY)
+, isSwitching_(false)
 {
     SubscribeToEvent(Urho3D::E_BEGINFRAME, URHO3D_HANDLER(Switcher, HandleBeginFrame));
 }
@@ -56,22 +56,22 @@ Switcher::Switcher(Urho3D::Context* context)
 void Switcher::OnPhaseLeave()
 {
     Urho3D::VariantMap& eventData = GetEventDataMap();
-    eventData[ Phase::PhaseLeave::P_PHASE ] = phaseCurrent_; // unsigned
-    eventData[ Phase::PhaseLeave::P_PHASE_NEXT ] = GetTopPhase(); // unsigned
+    eventData[ Phase::PhaseLeave::P_PHASE ] = phaseCurrent_; // Urho3D::String
+    eventData[ Phase::PhaseLeave::P_PHASE_NEXT ] = GetTopPhase(); // Urho3D::String
     SendEvent(Phase::E_PHASELEAVE, eventData); // bool
 }
 
 void Switcher::OnPhaseEnter()
 {
     Urho3D::VariantMap& eventData = GetEventDataMap();
-    eventData[ Phase::PhaseEnter::P_PHASE ] = phaseCurrent_; // unsigned
-    eventData[ Phase::PhaseEnter::P_PHASE_PREV ] = phasePrevious_; // unsigned
+    eventData[ Phase::PhaseEnter::P_PHASE ] = phaseCurrent_; // Urho3D::String
+    eventData[ Phase::PhaseEnter::P_PHASE_PREV ] = phasePrevious_; // Urho3D::String
     SendEvent(Phase::E_PHASEENTER, eventData);
 }
 
-void Switcher::HandleBeginFrame(StringHash eventType, VariantMap& eventData)
+void Switcher::UpdateSwitching()
 {
-    if (isSwitchRequested_)
+    if (isSwitching_)
     {
         if (phaseCurrent_ != GetTopPhase())
         {
@@ -81,8 +81,13 @@ void Switcher::HandleBeginFrame(StringHash eventType, VariantMap& eventData)
             OnPhaseEnter();
         }
 
-        isSwitchRequested_ = false;
+        isSwitching_ = false;
     }
+}
+
+void Switcher::HandleBeginFrame(StringHash eventType, VariantMap& eventData)
+{
+	UpdateSwitching();
 }
 
 } // namespace Phase

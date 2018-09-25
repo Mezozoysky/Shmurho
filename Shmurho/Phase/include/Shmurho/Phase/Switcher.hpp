@@ -33,7 +33,6 @@
 
 #include <Urho3D/Core/Object.h>
 #include <Urho3D/Container/Str.h>
-#include <Urho3D/Container/Vector.h>
 #include <Urho3D/Container/List.h>
 
 namespace Shmurho
@@ -41,13 +40,12 @@ namespace Shmurho
 namespace Phase
 {
 
-class Switcher : public Urho3D::Object
-{
-    URHO3D_OBJECT(Switcher, Urho3D::Object);
 
+class SwitcherBase
+{
 public:
-    Switcher(Urho3D::Context* context);
-    virtual ~Switcher() noexcept = default;
+    SwitcherBase() = default;
+    virtual ~SwitcherBase() noexcept = default;
 
     inline void Push(const Urho3D::String& phase) noexcept;
     inline void Push(const Urho3D::List<Urho3D::String>& phases) noexcept;
@@ -62,68 +60,81 @@ public:
     inline bool IsSwitching() const noexcept;
 
 protected:
-    virtual void OnPhaseLeave();
-    virtual void OnPhaseEnter();
+    virtual void OnPhaseLeave() = 0;
+    virtual void OnPhaseEnter() = 0;
 
     void UpdateSwitching();
 
 private:
-    void HandleBeginFrame(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
-
-private:
     Urho3D::List<Urho3D::String> stack_;
-    Urho3D::String phaseCurrent_;
-    Urho3D::String phasePrevious_;
-    bool isSwitching_;
+    Urho3D::String phaseCurrent_{ Urho3D::String::EMPTY };
+    Urho3D::String phasePrevious_{ Urho3D::String::EMPTY };
+    bool isSwitching_{ false };
 };
 
-inline void Switcher::Push(const Urho3D::String& phase) noexcept
+inline void SwitcherBase::Push(const Urho3D::String& phase) noexcept
 {
     stack_.Push(phase);
 }
 
-inline void Switcher::Push(const Urho3D::List<Urho3D::String>& phases) noexcept
+inline void SwitcherBase::Push(const Urho3D::List<Urho3D::String>& phases) noexcept
 {
 //    stack_.Push(phases);
 	stack_ += phases;
 }
 
-inline void Switcher::Pop() noexcept
+inline void SwitcherBase::Pop() noexcept
 {
     stack_.Pop();
 }
 
-inline void Switcher::Replace(const Urho3D::String& phase) noexcept
+inline void SwitcherBase::Replace(const Urho3D::String& phase) noexcept
 {
     stack_.Pop();
     stack_.Push(phase);
 }
 
-inline void Switcher::Switch() noexcept
+inline void SwitcherBase::Switch() noexcept
 {
-    Switcher::isSwitching_ = true;
+    SwitcherBase::isSwitching_ = true;
 }
 
-inline Urho3D::String Switcher::GetTopPhase() const noexcept
+inline Urho3D::String SwitcherBase::GetTopPhase() const noexcept
 {
     return (stack_.Empty() ? Urho3D::String::EMPTY : stack_.Back());
 }
 
-inline Urho3D::String Switcher::GetCurrPhase() const noexcept
+inline Urho3D::String SwitcherBase::GetCurrPhase() const noexcept
 {
     return (phaseCurrent_);
 }
 
-inline Urho3D::String Switcher::GetPrevPhase() const noexcept
+inline Urho3D::String SwitcherBase::GetPrevPhase() const noexcept
 {
     return (phasePrevious_);
 }
 
-inline bool Switcher::IsSwitching() const noexcept
+inline bool SwitcherBase::IsSwitching() const noexcept
 {
-	return (isSwitching_);
+    return (isSwitching_);
 }
 
+
+class Switcher: public Urho3D::Object, public SwitcherBase
+{
+    URHO3D_OBJECT(SwitcherBase, Urho3D::Object);
+
+public:
+    Switcher(Urho3D::Context* context);
+    virtual ~Switcher() noexcept = default;
+
+protected:
+    virtual void OnPhaseLeave() override;
+    virtual void OnPhaseEnter() override;
+
+private:
+    void HandleBeginFrame(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
+};
 
 } // namespace Phase
 } // namespace Shmurho

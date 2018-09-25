@@ -10,7 +10,7 @@
 # Defines:
 # Shmurho_INCLUDE_DIR   path to Shmurho includes
 # Shmurho_LIBRARIES     list of found Shmurho libraries
-# Shmurho_XXX_LIBRARY   found library file (XXX for component name: Phase, Parcel, etc)
+# Shmurho_XXX_LIBRARY   found library file (XXX for component name: Phase, Loader, etc)
 # Shmurho_FOUND         true if Shmurho components were found
 #
 # Note:  Works with static library only. No time for more.
@@ -23,7 +23,7 @@ set( Shmurho_LOCATION_PREFIX_HINTS
 
 if( NOT Shmurho_LOCATION_PREFIX )
     find_path( Shmurho_LOCATION_PREFIX
-		NAMES include/Shmurho/Phase/Switcher.hpp include/Shmurho/Parcel/Loader.hpp
+        NAMES include/Shmurho/Phase/Switcher.hpp include/Shmurho/Loader/Loader.hpp
         HINTS ${Shmurho_LOCATION_PREFIX_HINTS}
         DOC "Top-level directory, usually its /usr/local"
     )

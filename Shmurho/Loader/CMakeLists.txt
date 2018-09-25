@@ -19,19 +19,19 @@ set( GROUP_HEADERS
 set( GROUP_SOURCES
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/Loader.cpp
 )
-source_group( "${MODULE_NAME}\\${MODULE_NSPATH}"
-  FILES ${GROUP_HEADERS} ${GROUP_SOURCES}
-)
+# source_group( "${MODULE_NAME}\\${MODULE_NSPATH}"
+#     FILES ${GROUP_HEADERS} ${GROUP_SOURCES}
+# )
 set( MODULE_HEADERS ${MODULE_HEADERS} ${GROUP_HEADERS} )
 set( MODULE_SOURCES ${MODULE_SOURCES} ${GROUP_SOURCES} )
 
 
-include( UrhoCommon )
-find_package( Urho3D REQUIRED )
-
 set( TARGET_NAME ${MODULE_TGT} )
-set( SOURCE_FILES ${MODULE_SOURCES} )
-set( INCLUDE_DIRS ${MODULE_ROOT}/src ${MODULE_ROOT}/include ${URHO3D_INCLUDE_DIRS} )
+set( SOURCE_FILES ${MODULE_SOURCES} ${MODULE_HEADERS} )
+# define_source_files( GLOB_CPP_PATTERNS "${MODULE_ROOT}/src/*.cpp"
+#                      GLOB_H_PATTERNS "${MODULE_ROOT}/src/*hpp"
+#                      RECURSE GROUP )
+set( INCLUDE_DIRS ${MODULE_ROOT}/src ${MODULE_ROOT}/include )
 set( TARGET_PROPERTIES LINKER_LANGUAGE CXX )
 setup_library( NODEPS STATIC )
 

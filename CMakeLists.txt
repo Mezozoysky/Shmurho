@@ -41,6 +41,7 @@ option( SHMURHO_BUILD_DEMO "Build the demo game" ON )
 
 include( UrhoCommon )
 find_package( Urho3D REQUIRED )
+include_directories( ${URHO3D_INCLUDE_DIRS} )
 
 #
 # Modules
@@ -48,15 +49,15 @@ find_package( Urho3D REQUIRED )
 add_subdirectory( Shmurho/Phase )
 add_subdirectory( Shmurho/Loader )
 if( SHMURHO_BUILD_DEMO )
-	add_subdirectory( Shmurho/Demo )
+	# add_subdirectory( Shmurho/Demo )
 endif()
 
 install(
-	DIRECTORY ./CMake
-	DESTINATION share/Shmurho
+	DIRECTORY ${CMAKE_SOURCE_DIR}/CMake/
+	DESTINATION share/Shmurho/CMake/
 )
 install(
-	FILES ./README.md ./LICENSE.md
-	DESTINATION share/Shmurho
+	FILES ${CMAKE_SOURCE_DIR}/README.md ${CMAKE_SOURCE_DIR}/LICENSE.md
+	DESTINATION share/Shmurho/
 )
 

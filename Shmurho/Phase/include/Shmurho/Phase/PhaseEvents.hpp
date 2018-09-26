@@ -1,6 +1,6 @@
 // Shmurho
 //
-// Shmurho - Copyright (C) 2017 Stanislav Demyanovich
+// Shmurho - Copyright (C) 2017-2018 Stanislav Demyanovich
 //
 // This software is provided 'as-is', without any express or
 // implied warranty. In no event will the authors be held
@@ -25,7 +25,7 @@
 /// \file
 /// \brief Phases related events
 /// \author Stanislav Demyanovich <mezozoysky@gmail.com>
-/// \date 2017
+/// \date 2018
 /// \copyright Shmurho is released under the terms of zlib/libpng license
 /// \details --
 

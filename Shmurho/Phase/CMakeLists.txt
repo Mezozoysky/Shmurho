@@ -13,11 +13,13 @@ set( MODULE_SOURCES "" )
 # ==== ${MODULE_ROOT}/${MODULE_NSPATH} group ====
 # ===============================================
 set( GROUP_HEADERS
+    ${MODULE_ROOT}/include/${MODULE_NSPATH}/SwitcherBase.hpp
     ${MODULE_ROOT}/include/${MODULE_NSPATH}/Switcher.hpp
     ${MODULE_ROOT}/include/${MODULE_NSPATH}/PhaseEvents.hpp
     ${MODULE_ROOT}/include/${MODULE_NSPATH}/Partaker.hpp
 )
 set( GROUP_SOURCES
+    ${MODULE_ROOT}/src/${MODULE_NSPATH}/SwitcherBase.cpp
     ${MODULE_ROOT}/src/${MODULE_NSPATH}/Switcher.cpp
 )
 # source_group( "${MODULE_NAME}\\${MODULE_NSPATH}"

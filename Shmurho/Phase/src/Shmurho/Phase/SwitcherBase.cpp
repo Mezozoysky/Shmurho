@@ -1,6 +1,6 @@
 // Shmurho
 //
-// Shmurho - Copyright (C) 2017-2018 Stanislav Demyanovich
+// Shmurho - Copyright (C) 2018 Stanislav Demyanovich
 //
 // This software is provided 'as-is', without any express or
 // implied warranty. In no event will the authors be held
@@ -23,21 +23,15 @@
 // source distribution.
 
 /// \file
-/// \brief Shmurho's trivial phase switcher implementation
+/// \brief Abstract base class for phase switchers - partial implementation
 /// \author Stanislav Demyanovich <mezozoysky@gmail.com>
 /// \date 2018
 /// \copyright Shmurho is released under the terms of zlib/libpng license
 /// \details --
 
 
-#include <Urho3D/Core/CoreEvents.h>
+#include <Shmurho/Phase/SwitcherBase.hpp>
 
-#include <Shmurho/Phase/Switcher.hpp>
-#include <Shmurho/Phase/PhaseEvents.hpp>
-
-
-using namespace Urho3D;
-using namespace Shmurho;
 
 namespace Shmurho
 {
@@ -45,33 +39,22 @@ namespace Phase
 {
 
 
-Switcher::Switcher(Urho3D::Context* context)
-: Object(context)
-, SwitcherBase()
+void SwitcherBase::UpdateSwitching()
 {
-    SubscribeToEvent(Urho3D::E_BEGINFRAME, URHO3D_HANDLER(Switcher, HandleBeginFrame));
+    if (isSwitching_)
+    {
+        if (phaseCurrent_ != GetTopPhase())
+        {
+            OnPhaseLeave();
+            phasePrevious_ = phaseCurrent_;
+            phaseCurrent_ = GetTopPhase();
+            OnPhaseEnter();
+        }
+
+        isSwitching_ = false;
+    }
 }
 
-void Switcher::OnPhaseLeave()
-{
-    Urho3D::VariantMap& eventData = GetEventDataMap();
-    eventData[ Phase::PhaseLeave::P_PHASE ] = GetCurrPhase();
-    eventData[ Phase::PhaseLeave::P_PHASE_NEXT ] = GetTopPhase();
-    SendEvent(Phase::E_PHASELEAVE, eventData);
-}
-
-void Switcher::OnPhaseEnter()
-{
-    Urho3D::VariantMap& eventData = GetEventDataMap();
-    eventData[ Phase::PhaseEnter::P_PHASE ] = GetCurrPhase();
-    eventData[ Phase::PhaseEnter::P_PHASE_PREV ] = GetPrevPhase();
-    SendEvent(Phase::E_PHASEENTER, eventData);
-}
-
-void Switcher::HandleBeginFrame(StringHash eventType, VariantMap& eventData)
-{
-    UpdateSwitching();
-}
 
 } // namespace Phase
 } // namespace Shmurho

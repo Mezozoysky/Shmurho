@@ -32,92 +32,12 @@
 #pragma once
 
 #include <Urho3D/Core/Object.h>
-#include <Urho3D/Container/Str.h>
-#include <Urho3D/Container/List.h>
+#include "SwitcherBase.hpp"
 
 namespace Shmurho
 {
 namespace Phase
 {
-
-
-class SwitcherBase
-{
-public:
-    SwitcherBase() = default;
-    virtual ~SwitcherBase() noexcept = default;
-
-    inline void Push(const Urho3D::String& phase) noexcept;
-    inline void Push(const Urho3D::List<Urho3D::String>& phases) noexcept;
-    inline void Pop() noexcept;
-    inline void Replace(const Urho3D::String& phase) noexcept;
-    inline void Switch() noexcept;
-
-    inline Urho3D::String GetTopPhase() const noexcept;
-    inline Urho3D::String GetCurrPhase() const noexcept;
-    inline Urho3D::String GetPrevPhase() const noexcept;
-
-    inline bool IsSwitching() const noexcept;
-
-protected:
-    virtual void OnPhaseLeave() = 0;
-    virtual void OnPhaseEnter() = 0;
-
-    void UpdateSwitching();
-
-private:
-    Urho3D::List<Urho3D::String> stack_;
-    Urho3D::String phaseCurrent_{ Urho3D::String::EMPTY };
-    Urho3D::String phasePrevious_{ Urho3D::String::EMPTY };
-    bool isSwitching_{ false };
-};
-
-inline void SwitcherBase::Push(const Urho3D::String& phase) noexcept
-{
-    stack_.Push(phase);
-}
-
-inline void SwitcherBase::Push(const Urho3D::List<Urho3D::String>& phases) noexcept
-{
-//    stack_.Push(phases);
-	stack_ += phases;
-}
-
-inline void SwitcherBase::Pop() noexcept
-{
-    stack_.Pop();
-}
-
-inline void SwitcherBase::Replace(const Urho3D::String& phase) noexcept
-{
-    stack_.Pop();
-    stack_.Push(phase);
-}
-
-inline void SwitcherBase::Switch() noexcept
-{
-    SwitcherBase::isSwitching_ = true;
-}
-
-inline Urho3D::String SwitcherBase::GetTopPhase() const noexcept
-{
-    return (stack_.Empty() ? Urho3D::String::EMPTY : stack_.Back());
-}
-
-inline Urho3D::String SwitcherBase::GetCurrPhase() const noexcept
-{
-    return (phaseCurrent_);
-}
-
-inline Urho3D::String SwitcherBase::GetPrevPhase() const noexcept
-{
-    return (phasePrevious_);
-}
-
-inline bool SwitcherBase::IsSwitching() const noexcept
-{
-    return (isSwitching_);
-}
 
 
 class Switcher: public Urho3D::Object, public SwitcherBase

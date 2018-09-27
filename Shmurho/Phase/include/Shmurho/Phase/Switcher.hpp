@@ -52,8 +52,7 @@ protected:
     virtual void OnPhaseLeave() override;
     virtual void OnPhaseEnter() override;
 
-private:
-    void HandleBeginFrame(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
+    virtual void HandleBeginFrame(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
 };
 
 } // namespace Phase

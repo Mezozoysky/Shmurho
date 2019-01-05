@@ -49,7 +49,7 @@ include_directories( ${URHO3D_INCLUDE_DIRS} )
 add_subdirectory( Shmurho/Phase )
 add_subdirectory( Shmurho/Loader )
 if( SHMURHO_BUILD_DEMO )
-	# add_subdirectory( Shmurho/Demo )
+       # add_subdirectory( Shmurho/Demo )
 endif()
 
 install(

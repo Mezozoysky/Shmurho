@@ -55,14 +55,16 @@ public:
 public:
     Partaker();
     Partaker(Switcher* switcher,
-             Urho3D::Vector<Urho3D::String>&& phaseList = Urho3D::Vector<Urho3D::String>{},
+             const Urho3D::Vector<Urho3D::String>& phaseList = Urho3D::Vector<Urho3D::String>{},
              bool subscribe = true);
 
     virtual ~Partaker() noexcept = default;
 
 protected:
     void TakePartIn(const Urho3D::String& phase) noexcept;
+    void TakePartIn(const Urho3D::Vector<Urho3D::String>& phaseList) noexcept;
     void DropPartIn(const Urho3D::String& phase) noexcept;
+    void DropPartIn(const Urho3D::Vector<Urho3D::String>& phaseList) noexcept;
     void SubscribeOnSwitcher() noexcept;
     void UnsubscribeFromSwitcher() noexcept;
     void SetSwitcher(Switcher* switcher, bool subscribe = false) noexcept;
@@ -94,13 +96,13 @@ Partaker<DerivedT>::Partaker()
 }
 
 template <typename DerivedT>
-Partaker<DerivedT>::Partaker(Switcher* switcher, Urho3D::Vector<Urho3D::String>&& phaseList, bool subscribe)
+Partaker<DerivedT>::Partaker(Switcher* switcher, const Urho3D::Vector<Urho3D::String>& phaseList, bool subscribe)
 {
-    static_assert(std::is_base_of<::Urho3D::Object, DerivedT>::value,
+    static_assert(std::is_base_of<Urho3D::Object, DerivedT>::value,
                   "DerivedT should extend Urho3D::Object");
 
     SetSwitcher(switcher, subscribe);
-    phasesToTakePart_ = std::move(phaseList);
+    TakePartIn(phaseList);
 }
 
 template <typename DerivedT>
@@ -110,9 +112,27 @@ void Partaker<DerivedT>::TakePartIn(const Urho3D::String& phase) noexcept
 };
 
 template <typename DerivedT>
+void Partaker<DerivedT>::TakePartIn(const Urho3D::Vector<Urho3D::String>& phaseList) noexcept
+{
+    for (const auto& phase: phaseList)
+    {
+        TakePartIn(phase);
+    }
+};
+
+template <typename DerivedT>
 void Partaker<DerivedT>::DropPartIn(const Urho3D::String& phase) noexcept
 {
     phasesToTakePart_.Erase(phase);
+};
+
+template <typename DerivedT>
+void Partaker<DerivedT>::DropPartIn(const Urho3D::Vector<Urho3D::String>& phaseList) noexcept
+{
+    for (const auto& phase: phaseList)
+    {
+        DropPartIn(phase);
+    }
 };
 
 template <typename DerivedT>

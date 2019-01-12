@@ -57,6 +57,7 @@ public:
     inline Urho3D::String GetPrevPhase() const noexcept;
 
     inline bool IsSwitching() const noexcept;
+    inline bool IsPhaseOnStack(const Urho3D::String& phase) const noexcept;
 
 protected:
     virtual void OnPhaseLeave() = 0;
@@ -79,7 +80,7 @@ inline void SwitcherBase::Push(const Urho3D::String& phase) noexcept
 inline void SwitcherBase::Push(const Urho3D::List<Urho3D::String>& phases) noexcept
 {
 //    stack_.Push(phases);
-	stack_ += phases;
+    stack_ += phases;
 }
 
 inline void SwitcherBase::Pop() noexcept
@@ -118,6 +119,10 @@ inline bool SwitcherBase::IsSwitching() const noexcept
     return (isSwitching_);
 }
 
+inline bool SwitcherBase::IsPhaseOnStack(const Urho3D::String& phase) const noexcept
+{
+    return stack_.Contains(phase);
+}
 
 } // namespace Phase
 } // namespace Shmurho

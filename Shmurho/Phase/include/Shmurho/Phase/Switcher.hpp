@@ -51,6 +51,8 @@ public:
 protected:
     virtual void OnPhaseLeave() override;
     virtual void OnPhaseEnter() override;
+    virtual void OnPhaseArise(const Urho3D::String& phase) override;
+    virtual void OnPhaseDrop(const Urho3D::String& phase) override;
 
     virtual void HandleBeginFrame(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
 };

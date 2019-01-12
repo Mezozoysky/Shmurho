@@ -62,11 +62,15 @@ public:
 protected:
     virtual void OnPhaseLeave() = 0;
     virtual void OnPhaseEnter() = 0;
+    virtual void OnPhaseArise(const Urho3D::String& phase) = 0;
+    virtual void OnPhaseDrop(const Urho3D::String& phase) = 0;
 
     void UpdateSwitching();
 
 private:
     Urho3D::List<Urho3D::String> stack_;
+    Urho3D::List<Urho3D::String> ariseList_;
+    Urho3D::List<Urho3D::String> dropList_;
     Urho3D::String phaseCurrent_{ Urho3D::String::EMPTY };
     Urho3D::String phasePrevious_{ Urho3D::String::EMPTY };
     bool isSwitching_{ false };
@@ -74,18 +78,28 @@ private:
 
 inline void SwitcherBase::Push(const Urho3D::String& phase) noexcept
 {
+    bool arise = !IsPhaseOnStack(phase);
     stack_.Push(phase);
+    if (arise)
+    {
+        ariseList_.Push(phase);
+    }
 }
 
 inline void SwitcherBase::Push(const Urho3D::List<Urho3D::String>& phases) noexcept
 {
-//    stack_.Push(phases);
+    // TODO: SwitcherBasE::Push by one in loop
     stack_ += phases;
 }
 
 inline void SwitcherBase::Pop() noexcept
 {
+    auto popPhase = GetTopPhase();
     stack_.Pop();
+    if (!IsPhaseOnStack(popPhase))
+    {
+        dropList_.Push(popPhase);
+    }
 }
 
 inline void SwitcherBase::Replace(const Urho3D::String& phase) noexcept

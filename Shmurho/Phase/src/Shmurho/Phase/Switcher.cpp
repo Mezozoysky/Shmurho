@@ -68,6 +68,20 @@ void Switcher::OnPhaseEnter()
     SendEvent(Phase::E_PHASEENTER, eventData);
 }
 
+void Switcher::OnPhaseArise(const Urho3D::String& phase)
+{
+    Urho3D::VariantMap& eventData = GetEventDataMap();
+    eventData[ Phase::PhaseArise::P_PHASE ] = phase;
+    SendEvent(Phase::E_PHASEARISE, eventData);
+}
+
+void Switcher::OnPhaseDrop(const Urho3D::String& phase)
+{
+    Urho3D::VariantMap& eventData = GetEventDataMap();
+    eventData[ Phase::PhaseDrop::P_PHASE ] = phase;
+    SendEvent(Phase::E_PHASEDROP, eventData);
+}
+
 void Switcher::HandleBeginFrame(StringHash eventType, VariantMap& eventData)
 {
     UpdateSwitching();

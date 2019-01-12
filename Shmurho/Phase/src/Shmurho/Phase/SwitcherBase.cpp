@@ -46,6 +46,24 @@ void SwitcherBase::UpdateSwitching()
         if (phaseCurrent_ != GetTopPhase())
         {
             OnPhaseLeave();
+            if (dropList_.Size() > 0)
+            {
+                auto it = dropList_.Begin();
+                while (it != dropList_.End())
+                {
+                    OnPhaseDrop(*it);
+                    it = dropList_.Erase(it);
+                }
+            }
+            if (ariseList_.Size() > 0)
+            {
+                auto it = ariseList_.Begin();
+                while (it != ariseList_.End())
+                {
+                    OnPhaseArise(*it);
+                    it = ariseList_.Erase(it);
+                }
+            }
             phasePrevious_ = phaseCurrent_;
             phaseCurrent_ = GetTopPhase();
             OnPhaseEnter();

@@ -30,7 +30,7 @@
 /// \details --
 
 
-#include <Shmurho/Phase/SwitcherBase.hpp>
+#include "SwitcherBase.hpp"
 
 
 namespace Shmurho

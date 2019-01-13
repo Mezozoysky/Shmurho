@@ -32,8 +32,8 @@
 
 #include <Urho3D/Core/CoreEvents.h>
 
-#include <Shmurho/Phase/Switcher.hpp>
-#include <Shmurho/Phase/PhaseEvents.hpp>
+#include "Switcher.hpp"
+#include "PhaseEvents.hpp"
 
 
 using namespace Urho3D;

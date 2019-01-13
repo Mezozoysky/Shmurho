@@ -34,11 +34,12 @@
 
 #include <cassert>
 #include <type_traits>
-#include <Shmurho/Phase/Switcher.hpp>
-#include <Shmurho/Phase/PhaseEvents.hpp>
+
 #include <Urho3D/Core/Object.h>
 #include <Urho3D/Container/HashSet.h>
 
+#include "Switcher.hpp"
+#include "PhaseEvents.hpp"
 
 namespace Shmurho
 {
@@ -279,7 +280,7 @@ void Partaker<DerivedT>::HandlePhaseDrop(Urho3D::StringHash eventType,
     auto phase = eventData[ PhaseDrop::P_PHASE ].GetString();
     if (phasesToTakePart_.Empty() || phasesToTakePart_.Contains(phase))
     {
-        OnPhase(phase);
+        OnPhaseDrop(phase);
     }
 }
 

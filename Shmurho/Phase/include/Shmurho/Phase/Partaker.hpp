@@ -74,10 +74,16 @@ protected:
 
     virtual void OnPhaseLeave(const Urho3D::String& phase, const Urho3D::String& phaseNext) = 0;
     virtual void OnPhaseEnter(const Urho3D::String& phase, const Urho3D::String& phasePrev) = 0;
+    virtual void OnPhaseArise(const Urho3D::String& phase) = 0;
+    virtual void OnPhaseDrop(const Urho3D::String& phase) = 0;
 
     void HandlePhaseLeave(Urho3D::StringHash eventType,
                                  Urho3D::VariantMap& eventData);
     void HandlePhaseEnter(Urho3D::StringHash eventType,
+                                 Urho3D::VariantMap& eventData);
+    void HandlePhaseArise(Urho3D::StringHash eventType,
+                                 Urho3D::VariantMap& eventData);
+    void HandlePhaseDrop(Urho3D::StringHash eventType,
                                  Urho3D::VariantMap& eventData);
 
 private:
@@ -149,15 +155,26 @@ void Partaker<DerivedT>::SubscribeOnSwitcher() noexcept
         return;
     }
 
-    ((PartakerType*)this)->SubscribeToEvent(
+    auto* partaker = static_cast<PartakerType*>(this);
+    partaker->SubscribeToEvent(
             switcher_,
             E_PHASELEAVE,
-            new Urho3D::EventHandlerImpl<PartakerType>((PartakerType*)this,
+            new Urho3D::EventHandlerImpl<PartakerType>(partaker,
                                                        &PartakerType::HandlePhaseLeave));
-    ((PartakerType*)this)->SubscribeToEvent(
+    partaker->SubscribeToEvent(
             switcher_,
             E_PHASEENTER,
-            new Urho3D::EventHandlerImpl<PartakerType>((PartakerType*)this,
+            new Urho3D::EventHandlerImpl<PartakerType>(partaker,
+                                                       &PartakerType::HandlePhaseEnter));
+    partaker->SubscribeToEvent(
+            switcher_,
+            E_PHASEARISE,
+            new Urho3D::EventHandlerImpl<PartakerType>(partaker,
+                                                       &PartakerType::HandlePhaseLeave));
+    partaker->SubscribeToEvent(
+            switcher_,
+            E_PHASEDROP,
+            new Urho3D::EventHandlerImpl<PartakerType>(partaker,
                                                        &PartakerType::HandlePhaseEnter));
     isSubscribedOnSwitcher_ = true;
 }
@@ -175,6 +192,8 @@ void Partaker<DerivedT>::UnsubscribeFromSwitcher() noexcept
     {
         ((PartakerType*)this)->UnsubscribeFromEvent(switcher_.Get(), E_PHASELEAVE);
         ((PartakerType*)this)->UnsubscribeFromEvent(switcher_.Get(), E_PHASEENTER);
+        ((PartakerType*)this)->UnsubscribeFromEvent(switcher_.Get(), E_PHASEARISE);
+        ((PartakerType*)this)->UnsubscribeFromEvent(switcher_.Get(), E_PHASEDROP);
     }
     isSubscribedOnSwitcher_ = false;
 }
@@ -239,6 +258,28 @@ void Partaker<DerivedT>::HandlePhaseEnter(Urho3D::StringHash eventType,
     {
         auto phasePrev = eventData[ PhaseEnter::P_PHASE_PREV ].GetString();
         OnPhaseEnter(phase, phasePrev);
+    }
+}
+
+template <typename DerivedT>
+void Partaker<DerivedT>::HandlePhaseArise(Urho3D::StringHash eventType,
+                                          Urho3D::VariantMap& eventData)
+{
+    auto phase = eventData[ PhaseArise::P_PHASE ].GetString();
+    if (phasesToTakePart_.Empty() || phasesToTakePart_.Contains(phase))
+    {
+        OnPhaseArise(phase);
+    }
+}
+
+template <typename DerivedT>
+void Partaker<DerivedT>::HandlePhaseDrop(Urho3D::StringHash eventType,
+                                          Urho3D::VariantMap& eventData)
+{
+    auto phase = eventData[ PhaseDrop::P_PHASE ].GetString();
+    if (phasesToTakePart_.Empty() || phasesToTakePart_.Contains(phase))
+    {
+        OnPhase(phase);
     }
 }
 

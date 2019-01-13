@@ -46,10 +46,9 @@ public:
     SwitcherBase() = default;
     virtual ~SwitcherBase() noexcept = default;
 
-    inline void Push(const Urho3D::String& phase) noexcept;
-    inline void Push(const Urho3D::List<Urho3D::String>& phases) noexcept;
-    inline void Pop() noexcept;
-    inline void Replace(const Urho3D::String& phase) noexcept;
+    void Push(const Urho3D::String& phase) noexcept;
+    void Pop() noexcept;
+    void Replace(const Urho3D::String& phase) noexcept;
     inline void Switch() noexcept;
 
     inline Urho3D::String GetTopPhase() const noexcept;
@@ -75,38 +74,6 @@ private:
     Urho3D::String phasePrevious_{ Urho3D::String::EMPTY };
     bool isSwitching_{ false };
 };
-
-inline void SwitcherBase::Push(const Urho3D::String& phase) noexcept
-{
-    bool arise = !IsPhaseOnStack(phase);
-    stack_.Push(phase);
-    if (arise)
-    {
-        ariseList_.Push(phase);
-    }
-}
-
-inline void SwitcherBase::Push(const Urho3D::List<Urho3D::String>& phases) noexcept
-{
-    // TODO: SwitcherBasE::Push by one in loop
-    stack_ += phases;
-}
-
-inline void SwitcherBase::Pop() noexcept
-{
-    auto popPhase = GetTopPhase();
-    stack_.Pop();
-    if (!IsPhaseOnStack(popPhase))
-    {
-        dropList_.Push(popPhase);
-    }
-}
-
-inline void SwitcherBase::Replace(const Urho3D::String& phase) noexcept
-{
-    stack_.Pop();
-    stack_.Push(phase);
-}
 
 inline void SwitcherBase::Switch() noexcept
 {

@@ -38,6 +38,31 @@ namespace Shmurho
 namespace Phase
 {
 
+void SwitcherBase::Push(const Urho3D::String& phase) noexcept
+{
+    bool arise = !IsPhaseOnStack(phase);
+    stack_.Push(phase);
+    if (arise)
+    {
+        ariseList_.Push(phase);
+    }
+}
+
+void SwitcherBase::Pop() noexcept
+{
+    auto popPhase = GetTopPhase();
+    stack_.Pop();
+    if (!IsPhaseOnStack(popPhase))
+    {
+        dropList_.Push(popPhase);
+    }
+}
+
+void SwitcherBase::Replace(const Urho3D::String& phase) noexcept
+{
+    stack_.Pop();
+    stack_.Push(phase);
+}
 
 void SwitcherBase::UpdateSwitching()
 {

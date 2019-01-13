@@ -1,9 +1,0 @@
-<cubemap>
-    <face name="space_ft.png" />
-    <face name="space_bk.png" />
-    <face name="space_up.png" />
-    <face name="space_dn.png" />
-    <face name="space_rt.png" />
-    <face name="space_lf.png" />
-    <quality low="0" />
-</cubemap>

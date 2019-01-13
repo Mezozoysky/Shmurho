@@ -5,7 +5,7 @@
 #
 # Usage:
 #	set( ENV{SHMURHO_HOME} /path/to/shmurho )
-#	find_package( Shmurho REQUIRED Phase Parcel )
+#	find_package( Shmurho REQUIRED Phase Loader )
 #
 # Defines:
 # Shmurho_INCLUDE_DIR   path to Shmurho includes
@@ -50,23 +50,23 @@ endif()
 foreach( component ${Shmurho_FIND_COMPONENTS} )
 	if( NOT Shmurho_${component}_LIBRARY )
 
-		string(TOLOWER "${component}" component_lower )
+		#string(TOLOWER "${component}" component_lower )
 		find_library(
 			Shmurho_${component}_LIBRARY
-			NAMES shmurho-${component_lower}
+			NAMES Shmurho${component}
 			HINTS ${Shmurho_LOCATION_PREFIX}
 			PATH_SUFFIXES
 			lib
 		)
 		if ( NOT Shmurho_${component}_LIBRARY )
 			if( Shmurho_FIND_REQUIRED )
-				message( FATAL_ERROR "Cant find shmurho-${component_lower} library" )
+				message( FATAL_ERROR "Cant find Shmurho${component} library" )
 			endif()
 			if( NOT Shmurho_FIND_QUIETLY )
-				message( STATUS "Cant find shmurho-${component_lower} library" )
+				message( STATUS "Cant find Shmurho${component} library" )
 			endif()
 		else()
-			message( STATUS "Found shmurho-${component_lower} library: ${Shmurho_${component}_LIBRARY}" )
+			message( STATUS "Found Shmurho${component} library: ${Shmurho_${component}_LIBRARY}" )
 			list( APPEND Shmurho_LIBRARIES ${Shmurho_${component}_LIBRARY} )
 			mark_as_advanced( Shmurho_${component}_LIBRARY )
 			set( Shmurho_${component}_FOUND TRUE )

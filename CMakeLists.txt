@@ -1,6 +1,7 @@
-cmake_minimum_required( VERSION 3.5.2 )
+cmake_minimum_required( VERSION 3.2.3 )
 
 if( COMMAND cmake_policy )
+    # Libraries linked via full path no longer produce linker search paths
 	cmake_policy( SET CMP0003 NEW )
 	# INTERFACE_LINK_LIBRARIES defines the link interface
 	cmake_policy( SET CMP0022 NEW )
@@ -8,17 +9,15 @@ if( COMMAND cmake_policy )
 	cmake_policy( SET CMP0026 OLD )
 	# MACOSX_RPATH is enabled by default
 	cmake_policy( SET CMP0042 NEW )
+    # Honor the visibility properties for SHARED target types only
+    cmake_policy (SET CMP0063 OLD)
 endif()
 
-set( CMAKE_BUILD_TYPE "Debug" CACHE STRING "Project build type" )
-set( CMAKE_INSTALL_PREFIX "../install" CACHE PATH "Install prefix" )
-set( EXECUTABLE_OUTPUT_PATH "${CMAKE_BINARY_DIR}/bin" )
-set( LIBRARY_OUTPUT_PATH "${CMAKE_BINARY_DIR}/lib" )
-set( CMAKE_MACOSX_RPATH ON )
-set( CMAKE_VERBOSE_MAKEFILE ON )
+#set_property( GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake" )
 
-set_property( GLOBAL PROPERTY USE_FOLDERS ON )
-set_property( GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake" )
+set( CMAKE_BUILD_TYPE "Debug" CACHE STRING "Project build type" )
+set( CMAKE_INSTALL_PREFIX "/usr/local/" CACHE PATH "Shmurho install prefix" )
+set( CMAKE_VERBOSE_MAKEFILE ON )
 
 set( URHO3D_HOME $ENV{URHO3D_HOME} CACHE PATH "Top directory containing Urho3D library and includes" )
 
@@ -35,21 +34,13 @@ set( CMAKE_CXX_STANDARD_REQURED ON )
 
 option( SHMURHO_BUILD_DEMO "Build the demo game" ON )
 
-#
-# Global dependencies
-#
-
 include( UrhoCommon )
 find_package( Urho3D REQUIRED )
 include_directories( ${URHO3D_INCLUDE_DIRS} )
 
-#
-# Modules
-#
-add_subdirectory( Shmurho/Phase )
-add_subdirectory( Shmurho/Loader )
+add_subdirectory( Shmurho/ )
 if( SHMURHO_BUILD_DEMO )
-       # add_subdirectory( Shmurho/Demo )
+       # add_subdirectory( Demo/ )
 endif()
 
 install(

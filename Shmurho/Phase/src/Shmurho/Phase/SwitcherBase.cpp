@@ -32,13 +32,14 @@
 
 #include "SwitcherBase.hpp"
 
+using Urho3D::String;
 
 namespace Shmurho
 {
 namespace Phase
 {
 
-void SwitcherBase::Push(const Urho3D::String& phase) noexcept
+void SwitcherBase::Push(const String& phase) noexcept
 {
     bool arise = !IsPhaseOnStack(phase);
     stack_.Push(phase);
@@ -58,10 +59,15 @@ void SwitcherBase::Pop() noexcept
     }
 }
 
-void SwitcherBase::Replace(const Urho3D::String& phase) noexcept
+void SwitcherBase::Replace(const String& phase) noexcept
 {
     stack_.Pop();
     stack_.Push(phase);
+}
+
+String SwitcherBase::GetTopPhase() const noexcept
+{
+    return (stack_.Empty() ? String::EMPTY : stack_.Back());
 }
 
 void SwitcherBase::UpdateSwitching()

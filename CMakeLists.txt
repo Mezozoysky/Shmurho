@@ -33,6 +33,8 @@ set( CMAKE_CXX_STANDARD 11 )
 set( CMAKE_CXX_STANDARD_REQURED ON )
 
 option( SHMURHO_BUILD_DEMO "Build the demo game" ON )
+find_package( Doxygen )
+option( SHMURHO_BUILD_DOCS "Build the HTML-base documentation (requires Dixygen)" ${DOXYGEN_FOUND} )
 
 include( UrhoCommon )
 find_package( Urho3D REQUIRED )
@@ -41,6 +43,9 @@ include_directories( ${URHO3D_INCLUDE_DIRS} )
 add_subdirectory( Shmurho/ )
 if( SHMURHO_BUILD_DEMO )
        # add_subdirectory( Demo/ )
+endif()
+if( SHMURHO_BUILD_DOCS )
+    add_subdirectory( Docs/ )
 endif()
 
 install(

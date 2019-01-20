@@ -1,6 +1,6 @@
 // Shmurho
 //
-// Shmurho - Copyright (C) 2017-2018 Stanislav Demyanovich
+// Shmurho - Copyright (C) 2017-2019 Stanislav Demyanovich
 //
 // This software is provided 'as-is', without any express or
 // implied warranty. In no event will the authors be held
@@ -23,9 +23,9 @@
 // source distribution.
 
 /// \file
-/// \brief Loader related events
+/// \brief Preload related events
 /// \author Stanislav Demyanovich <mezozoysky@gmail.com>
-/// \date 2018
+/// \date 2017
 /// \copyright Shmurho is released under the terms of zlib/libpng license
 /// \details --
 
@@ -35,16 +35,16 @@
 
 namespace Shmurho
 {
-namespace Loader
+namespace Preload
 {
 
-URHO3D_EVENT(E_LOADER_SCENELOADFINISHED, SceneLoadFinished)
+URHO3D_EVENT(E_PRELOADER_SCENELOADFINISHED, SceneLoadFinished)
 {
     URHO3D_PARAM(P_SCENE_NAME, SceneName); // String
     URHO3D_PARAM(P_SCENE, Scene); // Scene ptr
 }
 
-URHO3D_EVENT(E_LOADER_LOADINGFINISHED, LoadingFinished) {}
+URHO3D_EVENT(E_PRELOADER_LOADINGFINISHED, LoadingFinished) {}
 
-} // namespace Loader
+} // namespace Preload
 } // namespace Shmurho

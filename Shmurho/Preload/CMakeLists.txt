@@ -1,4 +1,4 @@
-set( TARGET_NAME ShmurhoLoader )
+set( TARGET_NAME ShmurhoPreload )
 define_source_files( GLOB_CPP_PATTERNS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp"
                      GLOB_H_PATTERNS "${CMAKE_CURRENT_SOURCE_DIR}/src/*hpp"
                      GROUP RECURSE )
@@ -18,6 +18,6 @@ install(
 )
 install(
 	FILES ${H_FILES}
-	DESTINATION include/Shmurho/Loader/
+	DESTINATION include/Shmurho/Preload/
 )
 

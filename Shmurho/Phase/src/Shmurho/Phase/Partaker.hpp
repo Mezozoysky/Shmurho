@@ -23,7 +23,7 @@
 // source distribution.
 
 /// \file
-/// \brief Phase partaker mixin template
+/// \brief Phase partaker template mixin
 /// \author Stanislav Demyanovich <mezozoysky@gmail.com>
 /// \date 2018
 /// \copyright Shmurho is released under the terms of zlib/libpng license
@@ -46,51 +46,104 @@ namespace Shmurho
 namespace Phase
 {
 
+/// \class Partaker
+/// \brief Phase partaker template mixin
+/// \details Provides boilerplate code for classes which want to take a part in phase/phases.
+/// Use like that:
+/// \code
+/// #include <Urho3D/Core/Object.h>
+/// #include <Shmurho/Phase/Partaker.hpp>
+///
+/// class MyPartaker
+/// : public Urho3D::Object
+/// , public Shmurho::Phase::Partaker
+/// {
+/// public:
+///     URHO3D_OBJECT(MyPartaker, Urho3D::Object);
+///
+///     explicit MyPartaker(Urho3D::Context* context);
+///
+/// protected:
+///     virtual void OnPhaseLeave(const Urho3D::String& phase, const Urho3D::String& phaseNext) override;
+///     virtual void OnPhaseEnter(const Urho3D::String& phase, const Urho3D::String& phasePrev) override;
+///     virtual void OnPhaseArise(const Urho3D::String& phase) override;
+///     virtual void OnPhaseDrop(const Urho3D::String& phase) override;
+/// };
+/// \endcode
 template <typename DerivedT>
 class Partaker
 {
 public:
-    using PartakerType = DerivedT;
-    using PartakerBaseType = Partaker<DerivedT>;
+    using PartakerType = DerivedT; ///< Actual partaker type
+    using PartakerBaseType = Partaker<DerivedT>; ///< Base partaker type
 
 public:
+    /// Default constructor
     Partaker();
+    /// \brief Constructor from arguments
+    /// \param switcher Phase switcher to listen to
+    /// \param subscribe Optional; Subscribe on switcher immideately if \em true
+    /// \param phaseList Optional filter list of phases to take part in (no filter by default)
     Partaker(Switcher* switcher,
-             const Urho3D::Vector<Urho3D::String>& phaseList = Urho3D::Vector<Urho3D::String>{},
-             bool subscribe = true);
+             bool subscribe = true,
+             const Urho3D::Vector<Urho3D::String>& phaseList = Urho3D::Vector<Urho3D::String>{});
 
+    /// Virtual destructor
     virtual ~Partaker() noexcept = default;
 
 protected:
+    /// \brief Take part in the given \em phase
+    /// \details Actually adds the \em phase into filter phase list
     void TakePartIn(const Urho3D::String& phase) noexcept;
+    /// List version of \em TakePartIn
     void TakePartIn(const Urho3D::Vector<Urho3D::String>& phaseList) noexcept;
+    /// \brief Drop taking part in the given \em phase
+    /// \details Actually removes the \em phase from filter phase list
     void DropPartIn(const Urho3D::String& phase) noexcept;
+    /// List version of \em DropPartIn
     void DropPartIn(const Urho3D::Vector<Urho3D::String>& phaseList) noexcept;
+    /// Subscrib on switcher
     void SubscribeOnSwitcher() noexcept;
+    /// Unsubscribe from switcher
     void UnsubscribeFromSwitcher() noexcept;
+    /// \brief Set switcher to listen to
+    /// \param switcher The phase switcher
+    /// \param subscribe Oprional; Subscribe on switcher immideately if \em true
     void SetSwitcher(Switcher* switcher, bool subscribe = false) noexcept;
+    /// Reset switcher
     void ResetSwitcher() noexcept;
+    /// Get switcher pointer
     inline Switcher* GetSwitcher() const noexcept;
+    /// Test if subscribed on switcher
+    /// \return \em true if subscribed
     inline bool IsSubscribedOnSwitcher() const noexcept;
 
+    /// Callback called on phase leave; Must be overrided
     virtual void OnPhaseLeave(const Urho3D::String& phase, const Urho3D::String& phaseNext) = 0;
+    /// Callback called on phase enter; Must be overrided
     virtual void OnPhaseEnter(const Urho3D::String& phase, const Urho3D::String& phasePrev) = 0;
+    /// Callback called on phase arise; Must be overrided
     virtual void OnPhaseArise(const Urho3D::String& phase) = 0;
+    /// Callback called on phase drop; Must be overrided
     virtual void OnPhaseDrop(const Urho3D::String& phase) = 0;
 
+    /// Handle phase leave event
     void HandlePhaseLeave(Urho3D::StringHash eventType,
                                  Urho3D::VariantMap& eventData);
+    /// Handle phase enter event
     void HandlePhaseEnter(Urho3D::StringHash eventType,
                                  Urho3D::VariantMap& eventData);
+    /// Handle phase arise event
     void HandlePhaseArise(Urho3D::StringHash eventType,
                                  Urho3D::VariantMap& eventData);
+    /// Handle phase drop event
     void HandlePhaseDrop(Urho3D::StringHash eventType,
                                  Urho3D::VariantMap& eventData);
 
 private:
-    Urho3D::WeakPtr<Switcher> switcher_;
-    Urho3D::HashSet<Urho3D::String> phasesToTakePart_;
-    bool isSubscribedOnSwitcher_;
+    Urho3D::WeakPtr<Switcher> switcher_; ///< The phase switcher
+    Urho3D::HashSet<Urho3D::String> phasesToTakePart_; ///< Filter list of phases to take part in
+    bool isSubscribedOnSwitcher_; ///< Subscribed on switcher flag
 };
 
 template <typename DerivedT>

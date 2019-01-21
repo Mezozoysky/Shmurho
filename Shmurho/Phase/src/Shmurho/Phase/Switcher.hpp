@@ -1,6 +1,6 @@
 // Shmurho
 //
-// Shmurho - Copyright (C) 2017-2018 Stanislav Demyanovich
+// Shmurho - Copyright (C) 2017-2019 Stanislav Demyanovich
 //
 // This software is provided 'as-is', without any express or
 // implied warranty. In no event will the authors be held
@@ -25,7 +25,7 @@
 /// \file
 /// \brief Shmurho's trivial phase switcher
 /// \author Stanislav Demyanovich <mezozoysky@gmail.com>
-/// \date 2018
+/// \date 2017
 /// \copyright Shmurho is released under the terms of zlib/libpng license
 /// \details --
 
@@ -39,21 +39,29 @@ namespace Shmurho
 namespace Phase
 {
 
-
+/// \brief Minimal phase switcher designed to be an Urho3D subsystem
 class Switcher: public Urho3D::Object, public SwitcherBase
 {
     URHO3D_OBJECT(SwitcherBase, Urho3D::Object);
 
 public:
+    /// Constructor from Urho3D Context
     Switcher(Urho3D::Context* context);
+    /// Virtual destructor
     virtual ~Switcher() noexcept = default;
 
 protected:
+    /// \brief Handle phase leaving
     virtual void OnPhaseLeave() override;
+    /// \brief Handle phase entering
     virtual void OnPhaseEnter() override;
+    /// \brief Handle phase arising
     virtual void OnPhaseArise(const Urho3D::String& phase) override;
+    /// \brief Handle phase droping
     virtual void OnPhaseDrop(const Urho3D::String& phase) override;
 
+    /// \brief Handle E_BEGINFRAME event
+    /// \details Calls SwitcherBase's UpdateSwitching internaly
     virtual void HandleBeginFrame(Urho3D::StringHash eventType, Urho3D::VariantMap& eventData);
 };
 

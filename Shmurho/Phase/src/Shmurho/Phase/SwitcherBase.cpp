@@ -1,6 +1,6 @@
 // Shmurho
 //
-// Shmurho - Copyright (C) 2018 Stanislav Demyanovich
+// Shmurho - Copyright (C) 2017-2019 Stanislav Demyanovich
 //
 // This software is provided 'as-is', without any express or
 // implied warranty. In no event will the authors be held
@@ -23,9 +23,9 @@
 // source distribution.
 
 /// \file
-/// \brief Abstract base class for phase switchers - partial implementation
+/// \brief Abstract base for phase switcher - partial implementation
 /// \author Stanislav Demyanovich <mezozoysky@gmail.com>
-/// \date 2018
+/// \date 2017
 /// \copyright Shmurho is released under the terms of zlib/libpng license
 /// \details --
 

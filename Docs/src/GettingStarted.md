@@ -26,6 +26,7 @@ or '/usr/local' will be used.
 
  Use PATH as Shmurho install prefix.
 
+
 ### Set up basic Urho3D/Shmurho based game/application project
 
 Assuming basic project layout:
@@ -35,6 +36,8 @@ Assuming basic project layout:
     + Resources/
       + CoreData/    # core Urho3D resource files will be here
       + Data/        # MyProjects resource files will be here
+
+#### Set up default Urho3D application
 
 Add `MyProject/CMakeLists.txt` file with the following contents:
 
@@ -98,5 +101,76 @@ Add `MyProject/Sources/main.cpp` file with the following contents:
     
     URHO3D_DEFINE_APPLICATION_MAIN(Urho3D::Application);
 
-At this point we have a very empty application -- it shows fullscreen black rectangle and quits on Alt+F4 /
-Cmd+Q / etc., that is all.
+Copy contents of `${URHO3D_HOME}/share/Urho3D/Resources/CoreData/` folder (if installed Urho3D is used) or
+`${URHO3D_HOME}/bin/CoreData/` folder (if dev Urho3D is used) into `MyProject/Resources/CoreData` folder.
+
+> At this point we have empty default application -- it shows fullscreen black rectangle and quits on
+> Alt+F4 / Cmd+Q / etc., that is all.
+
+#### Add MyApplication class
+
+Default Urho3D application designed for inheritance and mostly does nothing by itself so we should derive from
+Urho3D::Application.
+
+Add `MyProject/Sources/MyApplication.hpp` file with the following contents:
+
+    #pragma once
+    
+    #include <Urho3D/Engine/Application.h>
+    
+    namespace Urho3D {
+    class Context;
+    };
+    
+    namespace My
+    {
+    
+    class MyApplication
+    : public Urho3D::Application
+    {
+        URHO3D_OBJECT(MyApplication, Urho3D::Application);
+    
+    public:
+        explicit MyApplication(Urho3D::Context* context);
+        virtual ~MyApplication() = default;
+    
+        virtual void Setup() override;
+        virtual void Start() override;
+        virtual void Stop() override;
+    };
+    
+    } // namespace My
+
+Add `MyProject/Sources/MyApplication.cpp` file the following contents:
+
+    #include "MyApplication.hpp"
+    
+    using Urho3D::Context;
+    using Urho3D::Random;
+    using Urho3D::SetRandomSeed;
+    
+    namespace My
+    {
+    
+    MyApplication::MyApplication(Context* context)
+    : Urho3D::Application(context)
+    {
+    }
+    
+    void MyApplication::Setup()
+    {
+        SetRandomSeed(Random(1, Urho3D::M_MAX_INT));
+    }
+    
+    void MyApplication::Start()
+    {
+    }
+    
+    void MyApplication::Stop()
+    {
+        engine_->DumpResources(true);
+    }
+    
+    } // namespace My
+
+> At this point our application is still empty but now we can extend it as needed.

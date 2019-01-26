@@ -1,6 +1,6 @@
 Shmurho is a set of helper libraries for C++ development with Urho3D engine.
 
-Where are some high-level features, which are not provided (and/or should not be provided) by Urho3D itself
+There are some high-level features, which are not provided (and/or should not be provided) by Urho3D itself
 but are regularly useful in (my) Urho3D-based gamedev practice. One of Shmurho's goals is to provide these
 features as small distinct libraries.
 

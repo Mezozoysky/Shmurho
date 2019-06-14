@@ -65,8 +65,8 @@ public:
     /// \param subscribe Optional; Subscribe on switcher immideately if \em true
     /// \param phaseList Optional filter list of phases to take part in (no filter by default)
     Partaker(Switcher* switcher,
-             bool subscribe = true,
-             const Urho3D::Vector<Urho3D::String>& phaseList = Urho3D::Vector<Urho3D::String>{});
+             const Urho3D::Vector<Urho3D::String>& phaseList = Urho3D::Vector<Urho3D::String>{},
+             bool subscribe = true);
 
     /// Virtual destructor
     virtual ~Partaker() noexcept = default;

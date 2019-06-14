@@ -38,6 +38,7 @@
 namespace Urho3D
 {
 class Scene;
+class Resource;
 struct ResourceRef;
 }
 

@@ -19,10 +19,18 @@ set( CMAKE_BUILD_TYPE "Debug" CACHE STRING "Project build type" )
 set( CMAKE_INSTALL_PREFIX "/usr/local/" CACHE PATH "Shmurho install prefix" )
 set( CMAKE_VERBOSE_MAKEFILE ON )
 
-set( URHO3D_HOME $ENV{URHO3D_HOME} CACHE PATH "Top directory containing Urho3D library and includes" )
+if( NOT URHO3D_HOME )
+	set( URHO3D_HOME $ENV{URHO3D_HOME} )
+endif()
+if( NOT URHO3D_HOME )
+	message( FATAL_ERROR "URHO3D_HOME isnt set!" )
+endif()
+set( URHO3D_HOME ${URHO3D_HOME} CACHE PATH "Top directory containing Urho3D library and includes" )
 
+message( STATUS "URHO3D_HOME: ${URHO3D_HOME}" )
+list( APPEND CMAKE_MODULE_PATH "${URHO3D_HOME}/share/CMake/Modules" )
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake/Modules" )
-list( APPEND CMAKE_MODULE_PATH "${URHO3D_HOME}/share/Urho3D/CMake/Modules" )
+message( STATUS "Current CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}" )
 
 #
 # Project
@@ -37,7 +45,7 @@ find_package( Doxygen )
 option( SHMURHO_BUILD_DOCS "Build the HTML-base documentation (requires Dixygen)" ${DOXYGEN_FOUND} )
 
 include( UrhoCommon )
-find_package( Urho3D REQUIRED )
+find_package( Urho3D MODULE REQUIRED )
 include_directories( ${URHO3D_INCLUDE_DIRS} )
 
 add_subdirectory( Shmurho/ )

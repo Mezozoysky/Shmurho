@@ -427,7 +427,7 @@ void Preloader::HandleResourceBackgroundLoaded(StringHash eventType, VariantMap&
             {
                 isMainParcelLoading_ = false;
                 SharedPtr<Parcel> mainParcel{new Parcel(context_)};
-                mainParcel_.Swap(mainParcel);
+                mainParcel_ = mainParcel;
                 OnResourcesLoaded(mainParcel);
             }
             else

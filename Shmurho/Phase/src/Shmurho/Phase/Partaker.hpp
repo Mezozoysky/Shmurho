@@ -204,12 +204,12 @@ void Partaker<DerivedT>::SubscribeOnSwitcher() noexcept
             switcher_,
             E_PHASEARISE,
             new Urho3D::EventHandlerImpl<PartakerType>(partaker,
-                                                       &PartakerType::HandlePhaseLeave));
+                                                       &PartakerType::HandlePhaseArise));
     partaker->SubscribeToEvent(
             switcher_,
             E_PHASEDROP,
             new Urho3D::EventHandlerImpl<PartakerType>(partaker,
-                                                       &PartakerType::HandlePhaseEnter));
+                                                       &PartakerType::HandlePhaseDrop));
     isSubscribedOnSwitcher_ = true;
 }
 

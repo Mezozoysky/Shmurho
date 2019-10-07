@@ -28,14 +28,22 @@ endif()
 set( URHO3D_HOME ${URHO3D_HOME} CACHE PATH "Top directory containing Urho3D library and includes" )
 
 message( STATUS "URHO3D_HOME: ${URHO3D_HOME}" )
-list( APPEND CMAKE_MODULE_PATH "${URHO3D_HOME}/share/CMake/Modules" )
 list( APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMake/Modules" )
+if( CMAKE_HOST_UNIX )
+    list( APPEND CMAKE_MODULE_PATH "${URHO3D_HOME}/share/Urho3D/CMake/Modules" )
+else()
+    if( CMAKE_HOST_WIN32 )
+        list( APPEND CMAKE_MODULE_PATH "${URHO3D_HOME}/share/CMake/Modules" )
+    else()
+        message( FATAL_ERROR "Unsupported host system: ${CMAKE_HOST_SYSTEM_NAME}" )
+    endif()
+endif()
 message( STATUS "Current CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}" )
 
 #
 # Project
 #
-project( Shmurho C CXX )
+project( Shmurho CXX )
 
 set( CMAKE_CXX_STANDARD 11 )
 set( CMAKE_CXX_STANDARD_REQURED ON )

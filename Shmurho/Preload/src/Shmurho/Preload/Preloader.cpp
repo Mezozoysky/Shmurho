@@ -105,7 +105,7 @@ void Preloader::QueueResource(StringHash resType, const String& resName) noexcep
     if (mainParcel_.Null())
     {
         GetSubsystem<Log>()->Write(LOG_ERROR,
-                                   ToString("Failed to queue resource '%s': main parcel is null", resName));
+                                   ToString("Failed to queue resource '%s': main parcel is null", resName.CString()));
         return;
     }
 
@@ -283,7 +283,7 @@ bool Preloader::StartLoadingScene(const String& sceneName)
     bool success = currScenePtr_->LoadAsyncXML(file.Get(), LOAD_SCENE_AND_RESOURCES);
     if (!success)
     {
-        log->Write(LOG_ERROR, ToString("Failed to start loading scene: %s", sceneQueue_.Front()));
+        log->Write(LOG_ERROR, ToString("Failed to start loading scene: %s", sceneQueue_.Front().CString()));
         currScenePtr_ = nullptr; //IsSceneLoading() returns false after that
     }
     return success;

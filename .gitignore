@@ -1,6 +1,7 @@
-build
-build-*
-cmake-build-*
+build/
+build-*/
+cmake-build-*/
+.build/
 *.kdev4
 .idea
 CMakeLists.txt.user

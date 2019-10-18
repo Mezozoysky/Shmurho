@@ -23,7 +23,7 @@ set( Shmurho_LOCATION_PREFIX_HINTS
 
 if( NOT Shmurho_LOCATION_PREFIX )
     find_path( Shmurho_LOCATION_PREFIX
-        NAMES include/Shmurho/Phase/Switcher.hpp include/Shmurho/Loader/Loader.hpp
+        NAMES include/Shmurho/Phase/Switcher.hpp
         HINTS ${Shmurho_LOCATION_PREFIX_HINTS}
         DOC "Top-level directory, usually its /usr/local"
     )

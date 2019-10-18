@@ -5,23 +5,24 @@ if(NOT CMAKE_SCRIPT_MODE_FILE OR CMAKE_PARENT_LIST_FILE)
 endif()
 
 get_filename_component(SCRIPT_NAME "${CMAKE_SCRIPT_MODE_FILE}" NAME)
-get_filename_component(SCRIPTS_DIR "${CMAKE_SCRIPT_MODE_FILE}" DIRECTORY)
-get_filename_component(PROJECT_ROOT_DIR "${SCRIPTS_DIR}" DIRECTORY)
+get_filename_component(PRJ_SCRIPTS_DIR "${CMAKE_SCRIPT_MODE_FILE}" DIRECTORY)
+get_filename_component(PRJ_CMAKE_DIR "${PRJ_SCRIPTS_DIR}" DIRECTORY)
+get_filename_component(PRJ_ROOT_DIR "${PRJ_CMAKE_DIR}" DIRECTORY)
+set(PRJ_MODULES_DIR "${PRJ_ROOT_DIR}/CMake/Modules")
+set(PRJ_SOURCE_DIR "${PRJ_ROOT_DIR}")
+set(PRJ_BUILD_DIR "${PRJ_ROOT_DIR}/build")
+set(PRJ_DEPS_DIR "${PRJ_ROOT_DIR}/deps")
+
+list(INSERT CMAKE_MODULE_PATH 0 "${PRJ_MODULES_DIR}")
 
 
 message("${SCRIPT_NAME} starts!")
 
-if(NOT GIT_CMD)
-    set(GIT_CMD "git")
+if(NOT REMOTE)
+    set(REMOTE "https://github.com/Mezozoysky/Urho3D.git")
 endif()
-if(NOT GIT_BRANCH)
-    set(GIT_BRANCH "master")
-endif()
-if(NOT GIT_REMOTE)
-    set(GIT_REMOTE "https://github.com/Mezozoysky/Urho3D.git")
-endif()
-if(NOT GIT_LOCAL)
-    set(GIT_LOCAL "${PROJECT_ROOT_DIR}/.build/Urho3D")
+if(NOT LOCAL)
+    set(LOCAL "${PRJ_ROOT_DIR}/Urho3D")
 endif()
 
 set(GIT_ARGS clone

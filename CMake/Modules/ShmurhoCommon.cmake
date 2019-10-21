@@ -1,0 +1,53 @@
+cmake_minimum_required(VERSION 3.13 FATAL_ERROR)
+
+function(collect_variables)
+    cmake_parse_arguments(__local_ARGS
+                          "ECHO"
+                          "OUTPUT_VAR;PREFIX"
+                          ""
+                          ${ARGN}
+                          )
+    set(__local_prefix)
+    if(__local_ARGS_PREFIX)
+        set(__local_prefix "${__local_ARGS_PREFIX}")
+    endif()
+    set(__local_list)
+    get_cmake_property(__local_var_name_list VARIABLES)
+    list(SORT __local_var_name_list)
+    foreach(__local_var_name ${__local_var_name_list})
+        set(__local_matched_name)
+        if(__local_prefix)
+            string(REGEX MATCH "^${__local_prefix}[a-zA-Z0-9_]*" __local_matched_name ${__local_var_name})
+        else()
+            string(REGEX MATCH "^__local_" matched_local ${__local_var_name})
+            if(NOT matched_local)
+                string(REGEX MATCH "^ARGC$" matched_local ${__local_var_name})
+            endif()
+            if(NOT matched_local)
+                string(REGEX MATCH "^ARGN$" matched_local ${__local_var_name})
+            endif()
+            if(NOT matched_local)
+                string(REGEX MATCH "^ARGV[0-9]*$" matched_local ${__local_var_name})
+            endif()
+            if(matched_local)
+                continue()
+            endif()
+            set(__local_matched_name ${__local_var_name})
+        endif()
+        if("${__local_matched_name}" STREQUAL "")
+            continue()
+        endif()
+        if(__local_ARGS_ECHO)
+            message("${__local_matched_name}=${${__local_matched_name}}")
+        endif()
+        if(__local_ARGS_OUTPUT_VAR)
+            set(__local_list
+                ${__local_list}
+                "${__local_matched_name}"
+                )
+        endif()
+    endforeach()
+    if(__local_ARGS_OUTPUT_VAR)
+        set(${__local_ARGS_OUTPUT_VAR} ${__local_list} PARENT_SCOPE)
+    endif()
+endfunction()

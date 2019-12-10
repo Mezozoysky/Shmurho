@@ -57,12 +57,12 @@ function(fetch_git_repo)
     if(branch)
         set(git_args ${git_args} --branch ${branch})
     endif()
-    
+
     set(git_args ${git_args} --
         "${remote}"
         "${local}")
 
-    message(STATUS "fetch_fit_repo():: Git args: " ${git_args})
+    message(STATUS "fetch_git_repo():: Git args: " ${git_args})
 
     set(git_exit_code)
     execute_process(COMMAND ${git_cmd} ${git_args}

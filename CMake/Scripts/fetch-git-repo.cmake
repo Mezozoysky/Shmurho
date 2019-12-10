@@ -11,7 +11,6 @@ get_filename_component(PRJ_ROOT_DIR "${PRJ_CMAKE_DIR}" DIRECTORY)
 set(PRJ_MODULES_DIR "${PRJ_ROOT_DIR}/CMake/Modules")
 set(PRJ_SOURCE_DIR "${PRJ_ROOT_DIR}")
 set(PRJ_BUILD_DIR "${PRJ_ROOT_DIR}/build")
-set(PRJ_DEPS_DIR "${PRJ_ROOT_DIR}/deps")
 
 list(INSERT CMAKE_MODULE_PATH 0 "${PRJ_MODULES_DIR}")
 

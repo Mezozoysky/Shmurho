@@ -2,7 +2,7 @@
 
 - `fetch-urho3d.cmake` -- clone Urho3D repo (w/o history) onto local FS
 
-    Usage: `cmake [options] -P editor-urho3d.cmake`.
+    Usage: `cmake [options] -P fetch-urho3d.cmake`.
 
     Possible options are:
     - `-DGIT_CMD=</path/to/git/executable>` (`git` by default)
